@@ -1,0 +1,373 @@
+{
+  "version": "1.0",
+  "created_at": "2025-09-20T17:30:00.000Z",
+  "project_id": "heygen-default",
+  "scenes": [
+    {
+      "slide_id": 1,
+      "scene_id": "scene-0",
+      "layers": [
+        {
+          "id": "layer-text-1",
+          "type": "text",
+          "name": "Título Principal",
+          "value": "NR 11 – SEGURANÇA NA OPERAÇÃO DE EMPILHADEIRAS",
+          "x": 0.1,
+          "y": 0.05,
+          "width": 0.8,
+          "height": 0.15,
+          "z_index": 10,
+          "style": {
+            "fontSize": "2.5rem",
+            "fontWeight": "bold",
+            "fontFamily": "Inter, sans-serif",
+            "color": "#1f2937",
+            "textAlign": "center",
+            "lineHeight": 1.2,
+            "textShadow": "0 2px 4px rgba(0,0,0,0.1)"
+          },
+          "animation": {
+            "type": "fadeIn",
+            "duration": 1000,
+            "delay": 500,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        },
+        {
+          "id": "layer-background-1",
+          "type": "image",
+          "name": "Plano de Fundo",
+          "src": "/images/industrial-background.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1,
+          "z_index": 1,
+          "style": {
+            "opacity": 0.3,
+            "filter": "blur(2px)"
+          },
+          "animation": null,
+          "visible": true,
+          "locked": true
+        }
+      ]
+    },
+    {
+      "slide_id": 2,
+      "scene_id": "scene-1",
+      "layers": [
+        {
+          "id": "layer-text-2",
+          "type": "text",
+          "name": "Subtítulo",
+          "value": "Aprovado pelo Decreto Estadual nº 1.218/2014",
+          "x": 0.1,
+          "y": 0.25,
+          "width": 0.8,
+          "height": 0.1,
+          "z_index": 10,
+          "style": {
+            "fontSize": "1.5rem",
+            "fontWeight": "normal",
+            "fontFamily": "Inter, sans-serif",
+            "color": "#374151",
+            "textAlign": "center",
+            "lineHeight": 1.4
+          },
+          "animation": {
+            "type": "slideUp",
+            "duration": 800,
+            "delay": 1000,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        },
+        {
+          "id": "layer-logo-1",
+          "type": "image",
+          "name": "Logo Empresa",
+          "src": "/images/company-logo.png",
+          "x": 0.02,
+          "y": 0.02,
+          "width": 0.15,
+          "height": 0.08,
+          "z_index": 20,
+          "style": {
+            "opacity": 0.8
+          },
+          "animation": null,
+          "visible": true,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "slide_id": 3,
+      "scene_id": "scene-2",
+      "layers": [
+        {
+          "id": "layer-title-3",
+          "type": "text",
+          "name": "Título da Seção",
+          "value": "Objetivos do Treinamento",
+          "x": 0.05,
+          "y": 0.1,
+          "width": 0.9,
+          "height": 0.1,
+          "z_index": 10,
+          "style": {
+            "fontSize": "2rem",
+            "fontWeight": "600",
+            "fontFamily": "Inter, sans-serif",
+            "color": "#dc2626",
+            "textAlign": "left",
+            "lineHeight": 1.3
+          },
+          "animation": {
+            "type": "typewriter",
+            "duration": 2000,
+            "delay": 300,
+            "easing": "linear"
+          },
+          "visible": true,
+          "locked": false
+        },
+        {
+          "id": "layer-bullet-list",
+          "type": "text",
+          "name": "Lista de Objetivos",
+          "value": "• Conhecer as normas de segurança NR-11\n• Identificar riscos na operação de empilhadeiras\n• Aplicar procedimentos de segurança\n• Utilizar EPIs adequados",
+          "x": 0.05,
+          "y": 0.25,
+          "width": 0.9,
+          "height": 0.4,
+          "z_index": 10,
+          "style": {
+            "fontSize": "1.2rem",
+            "fontWeight": "normal",
+            "fontFamily": "Inter, sans-serif",
+            "color": "#374151",
+            "textAlign": "left",
+            "lineHeight": 1.6
+          },
+          "animation": {
+            "type": "fadeInSequence",
+            "duration": 1500,
+            "delay": 2500,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        },
+        {
+          "id": "layer-icon-safety",
+          "type": "graphic",
+          "name": "Ícone Segurança",
+          "content": {
+            "type": "icon",
+            "name": "shield-check",
+            "size": 64,
+            "color": "#059669"
+          },
+          "x": 0.85,
+          "y": 0.15,
+          "width": 0.1,
+          "height": 0.1,
+          "z_index": 15,
+          "style": {
+            "opacity": 1
+          },
+          "animation": {
+            "type": "bounceIn",
+            "duration": 1000,
+            "delay": 4000,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "slide_id": 4,
+      "scene_id": "scene-3",
+      "layers": [
+        {
+          "id": "layer-warning-banner",
+          "type": "graphic",
+          "name": "Banner de Atenção",
+          "content": {
+            "type": "rectangle",
+            "fill": "#fef3c7",
+            "border": {
+              "width": 2,
+              "color": "#f59e0b",
+              "style": "solid"
+            },
+            "cornerRadius": 8
+          },
+          "x": 0.05,
+          "y": 0.05,
+          "width": 0.9,
+          "height": 0.12,
+          "z_index": 5,
+          "style": {
+            "opacity": 0.9
+          },
+          "animation": {
+            "type": "pulse",
+            "duration": 2000,
+            "delay": 0,
+            "easing": "ease-in-out",
+            "repeat": true
+          },
+          "visible": true,
+          "locked": false
+        },
+        {
+          "id": "layer-warning-text",
+          "type": "text",
+          "name": "Texto de Atenção",
+          "value": "⚠️ ATENÇÃO: Este treinamento é obrigatório conforme NR-11",
+          "x": 0.1,
+          "y": 0.07,
+          "width": 0.8,
+          "height": 0.08,
+          "z_index": 15,
+          "style": {
+            "fontSize": "1.1rem",
+            "fontWeight": "600",
+            "fontFamily": "Inter, sans-serif",
+            "color": "#92400e",
+            "textAlign": "center",
+            "lineHeight": 1.4
+          },
+          "animation": {
+            "type": "fadeIn",
+            "duration": 800,
+            "delay": 500,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "slide_id": 5,
+      "scene_id": "scene-4",
+      "layers": [
+        {
+          "id": "layer-conclusion-title",
+          "type": "text",
+          "name": "Título Conclusão",
+          "value": "Certificação de Conclusão",
+          "x": 0.1,
+          "y": 0.15,
+          "width": 0.8,
+          "height": 0.15,
+          "z_index": 10,
+          "style": {
+            "fontSize": "2.2rem",
+            "fontWeight": "bold",
+            "fontFamily": "Inter, sans-serif",
+            "color": "#059669",
+            "textAlign": "center",
+            "lineHeight": 1.2
+          },
+          "animation": {
+            "type": "zoomIn",
+            "duration": 1200,
+            "delay": 300,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        },
+        {
+          "id": "layer-certificate-graphic",
+          "type": "graphic",
+          "name": "Gráfico Certificado",
+          "content": {
+            "type": "icon",
+            "name": "award",
+            "size": 120,
+            "color": "#d97706"
+          },
+          "x": 0.42,
+          "y": 0.35,
+          "width": 0.16,
+          "height": 0.2,
+          "z_index": 15,
+          "style": {
+            "opacity": 1
+          },
+          "animation": {
+            "type": "rotateIn",
+            "duration": 1500,
+            "delay": 1500,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        },
+        {
+          "id": "layer-completion-text",
+          "type": "text",
+          "name": "Texto de Conclusão",
+          "value": "Parabéns! Você concluiu com sucesso o treinamento de NR-11.\nSeu certificado será emitido automaticamente.",
+          "x": 0.1,
+          "y": 0.6,
+          "width": 0.8,
+          "height": 0.15,
+          "z_index": 10,
+          "style": {
+            "fontSize": "1.1rem",
+            "fontWeight": "normal",
+            "fontFamily": "Inter, sans-serif",
+            "color": "#374151",
+            "textAlign": "center",
+            "lineHeight": 1.5
+          },
+          "animation": {
+            "type": "fadeIn",
+            "duration": 1000,
+            "delay": 3000,
+            "easing": "ease-out"
+          },
+          "visible": true,
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "global_settings": {
+    "canvas_size": {
+      "width": 1920,
+      "height": 1080,
+      "aspect_ratio": "16:9"
+    },
+    "default_styles": {
+      "text": {
+        "fontFamily": "Inter, sans-serif",
+        "fontSize": "1rem",
+        "color": "#374151",
+        "textAlign": "left",
+        "lineHeight": 1.4
+      },
+      "animations": {
+        "default_duration": 1000,
+        "default_easing": "ease-out"
+      }
+    },
+    "grid_settings": {
+      "snap_to_grid": true,
+      "grid_size": 0.05,
+      "show_grid": false
+    }
+  }
+}
