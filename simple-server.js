@@ -7,12 +7,16 @@ import rateLimit from 'express-rate-limit';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { createReadStream } from 'fs';
+import { promises as fsPromises } from 'fs';
 
 // Import avatar management handlers
 import sceneConfigHandlers from './api/scene-config/index.js';
 import avatarGenerateHandlers from './api/avatars/generate.js';
 // Import render API handlers  
 import renderApi from './server/api/render.js';
+// Import missing route handlers
+import sceneLayersRoutes from './server/routes/scene-layers.js';
 
 // Store for tracking render jobs and their event streams
 const renderJobStreams = new Map();
@@ -72,6 +76,9 @@ app.use(helmet({
 
 // Compression middleware
 app.use(compression());
+
+// Configure Express to trust proxy (fixes rate limiting issues)
+app.set('trust proxy', 1);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -285,6 +292,67 @@ app.post('/api/avatars/generate', avatarGenerateHandlers.handlePost);
 // Render API Routes
 app.use('/api/render', renderApi);
 
+// Scene Layers Routes
+app.use('/api/scene-layers', sceneLayersRoutes);
+
+// Secure download endpoint for rendered files
+app.get('/api/download', async (req, res) => {
+  try {
+    const { path: filePath } = req.query;
+    
+    if (!filePath) {
+      return res.status(400).json({ error: 'File path is required' });
+    }
+    
+    // Security: Sanitize path and restrict to render output directory
+    const sanitizedPath = filePath.replace(/\.\./g, '').replace(/\/$/, '');
+    const renderOutputRoot = path.resolve('./project/data/renders');
+    const fullPath = path.resolve(renderOutputRoot, sanitizedPath);
+    
+    // Security: Ensure file is within allowed directory
+    if (!fullPath.startsWith(renderOutputRoot)) {
+      console.warn(`⚠️ [Security] Blocked path traversal attempt: ${filePath}`);
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    // Check if file exists
+    try {
+      const stats = await fsPromises.stat(fullPath);
+      
+      if (!stats.isFile()) {
+        return res.status(404).json({ error: 'File not found' });
+      }
+      
+      // Set appropriate headers
+      const fileName = path.basename(fullPath);
+      const ext = path.extname(fileName).toLowerCase();
+      
+      let contentType = 'application/octet-stream';
+      if (ext === '.mp4') contentType = 'video/mp4';
+      else if (ext === '.webm') contentType = 'video/webm';
+      else if (ext === '.srt') contentType = 'application/x-subrip';
+      
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      res.setHeader('Content-Length', stats.size);
+      
+      // Stream the file
+      const fileStream = createReadStream(fullPath);
+      fileStream.pipe(res);
+      
+      console.log(`📥 [Download] Served file: ${fileName} (${stats.size} bytes)`);
+      
+    } catch (error) {
+      console.error(`❌ [Download] File access error:`, error);
+      return res.status(404).json({ error: 'File not found or inaccessible' });
+    }
+    
+  } catch (error) {
+    console.error('❌ [Download] Endpoint error:', error);
+    res.status(500).json({ error: 'Download failed' });
+  }
+});
+
 // Server-Sent Events endpoint for render progress
 app.get('/api/render/:jobId/stream', (req, res) => {
   const jobId = req.params.jobId;
@@ -362,10 +430,13 @@ app.get('/api/info', (req, res) => {
       '/api/health',
       '/api/info',
       '/api/scene-config',
+      '/api/scene-layers',
       '/api/avatars/generate',
       '/api/pptx/upload',
       '/api/pptx/status/:jobId',
       '/api/pptx/jobs',
+      '/api/render',
+      '/api/download',
     ],
   });
 });
