@@ -113,6 +113,7 @@
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.2",
     "jszip": "^3.10.1",
+    "libreoffice-convert": "^1.7.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.294.0",
     "mime-types": "^3.0.1",
