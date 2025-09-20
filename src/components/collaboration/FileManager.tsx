@@ -112,7 +112,7 @@ const FileManager = React.memo<FileManagerProps>(({
 
   // Filtrar e ordenar arquivos
   const filteredAndSortedFiles = useCallback(() => {
-    let filtered = files.filter(file => 
+    const filtered = files.filter(file => 
       file.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
       file.folderId === currentFolder
     );

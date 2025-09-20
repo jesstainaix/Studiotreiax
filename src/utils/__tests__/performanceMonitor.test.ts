@@ -19,7 +19,7 @@ describe('PerformanceMonitor', () => {
     };
 
     // Mock performance.now()
-    let currentTime = 0;
+    const currentTime = 0;
     mockPerformance = {
       now: vi.fn(() => currentTime),
       memory: {

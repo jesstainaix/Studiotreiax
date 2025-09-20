@@ -137,7 +137,7 @@ const BundleOptimizationManager = React.memo<BundleOptimizationManagerProps>(({ 
   
   // Filter and sort functions
   const filteredChunks = useMemo(() => {
-    let filtered = chunks.filter(chunk => {
+    const filtered = chunks.filter(chunk => {
       const matchesSearch = chunk.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesFilter = filterType === 'all' || chunk.priority === filterType;
       return matchesSearch && matchesFilter;

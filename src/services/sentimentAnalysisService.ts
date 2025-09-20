@@ -383,7 +383,7 @@ export const useSentimentAnalysisStore = create<SentimentAnalysisState>()(subscr
   get filteredAnalyses() {
     const { analyses, filter, searchQuery, sortBy, sortOrder } = get();
     
-    let filtered = analyses.filter(analysis => {
+    const filtered = analyses.filter(analysis => {
       // Date range filter
       if (analysis.timestamp < filter.dateRange.start || analysis.timestamp > filter.dateRange.end) {
         return false;
@@ -927,7 +927,7 @@ export const useSentimentAnalysisStore = create<SentimentAnalysisState>()(subscr
   
   exportAnalyses: async (format: 'json' | 'csv', filter) => {
     // Apply additional filter if provided
-    let analyses = get().filteredAnalyses;
+    const analyses = get().filteredAnalyses;
     
     if (filter) {
       // Apply additional filtering logic here

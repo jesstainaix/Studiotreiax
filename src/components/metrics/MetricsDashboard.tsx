@@ -85,7 +85,7 @@ const MetricsDashboard: React.FC = () => {
   
   // Filter and sort metrics
   const filteredMetrics = useMemo(() => {
-    let filtered = metrics.filter(metric => {
+    const filtered = metrics.filter(metric => {
       const matchesSearch = metric.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            metric.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = filterCategory === 'all' || metric.category === filterCategory;

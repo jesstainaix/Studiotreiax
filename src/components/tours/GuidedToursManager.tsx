@@ -108,7 +108,7 @@ const GuidedToursManager: React.FC<GuidedToursManagerProps> = ({ className = '' 
   
   // Filtered and sorted data
   const processedTours = useMemo(() => {
-    let result = [...filteredTours];
+    const result = [...filteredTours];
     
     // Sort
     result.sort((a, b) => {

@@ -252,7 +252,7 @@ export const ExportHistory: React.FC<ExportHistoryProps> = ({ onReExport, onClos
 
   // Filter and sort history
   useEffect(() => {
-    let filtered = exportHistory.filter(record => {
+    const filtered = exportHistory.filter(record => {
       const matchesSearch = record.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            record.fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            record.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));

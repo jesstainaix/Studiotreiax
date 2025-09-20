@@ -168,7 +168,7 @@ export function RealTimePerformanceMonitor() {
   const startFPSMonitoring = () => {
     let frames = 0;
     let lastTime = performance.now();
-    let fpsHistory: number[] = [];
+    const fpsHistory: number[] = [];
     let rafId: number;
     
     const measureFPS = (currentTime: number) => {

@@ -605,7 +605,7 @@ export const useCollaborationStore = create<CollaborationStore>()(subscribeWithS
 
     transformOperation: (operation: CollaborationOperation, against: CollaborationOperation[]) => {
       // Simplified operational transformation
-      let transformedOp = { ...operation };
+      const transformedOp = { ...operation };
       
       for (const againstOp of against) {
         if (againstOp.timestamp < operation.timestamp) {

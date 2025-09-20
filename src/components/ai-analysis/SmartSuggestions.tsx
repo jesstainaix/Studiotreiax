@@ -516,7 +516,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
   const analyzeFrameForThumbnail = (imageData: ImageData) => {
     const data = imageData.data;
     let colorfulness = 0;
-    let contrast = 0;
+    const contrast = 0;
     let edgeCount = 0;
     
     // Calcular colorfulness (variação de cores)

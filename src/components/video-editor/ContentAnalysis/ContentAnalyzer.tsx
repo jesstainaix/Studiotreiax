@@ -525,7 +525,7 @@ export const ContentAnalyzer: React.FC<ContentAnalyzerProps> = ({
   };
 
   const calculateExposureBalance = (pixels: Uint8ClampedArray): number => {
-    let histogram = new Array(256).fill(0);
+    const histogram = new Array(256).fill(0);
     
     for (let i = 0; i < pixels.length; i += 4) {
       const gray = Math.floor((pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3);

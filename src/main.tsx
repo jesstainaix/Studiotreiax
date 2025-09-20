@@ -4,7 +4,7 @@ import App from './App.tsx'
 import './index.css'
 
 // Performance monitoring imports (lazy loaded)
-let webVitals: any = null
+const webVitals: any = null
 
 // Get performance log level from environment
 const PERF_LOG_LEVEL = import.meta.env.VITE_PERFORMANCE_LOG_LEVEL || 'warn'

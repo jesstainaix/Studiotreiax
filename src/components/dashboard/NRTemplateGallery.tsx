@@ -78,7 +78,7 @@ const NRTemplateGallery: React.FC<NRTemplateGalleryProps> = ({
 
   // Filtrar e ordenar templates
   const filteredTemplates = useMemo(() => {
-    let filtered = templates.filter(template => {
+    const filtered = templates.filter(template => {
       // Filtro de busca
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();

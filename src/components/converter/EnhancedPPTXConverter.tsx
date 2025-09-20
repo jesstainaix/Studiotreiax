@@ -293,7 +293,7 @@ export const EnhancedPPTXConverter: React.FC<EnhancedPPTXConverterProps> = ({
   const filteredTemplates = useMemo(() => {
     // Use aiRecommendations from backend instead of mockTemplates
     const templates = aiRecommendations.length > 0 ? aiRecommendations : mockTemplates;
-    let filtered = templates.filter(template => {
+    const filtered = templates.filter(template => {
       const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))

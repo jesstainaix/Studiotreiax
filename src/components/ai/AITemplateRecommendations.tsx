@@ -61,7 +61,7 @@ const AITemplateRecommendations: React.FC<AITemplateRecommendationsProps> = ({
 
   // Filter and sort recommendations
   const filteredRecommendations = useMemo(() => {
-    let filtered = recommendations.filter(template => {
+    const filtered = recommendations.filter(template => {
       const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            template.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))

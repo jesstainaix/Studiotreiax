@@ -292,7 +292,7 @@ export class AutoCorrectionService {
    */
   private cleanText(slide: PPTXSlide, slideIndex: number): CorrectionResult {
     const corrections: string[] = [];
-    let confidence = 1.0;
+    const confidence = 1.0;
 
     // Limpar título
     if (slide.title) {
@@ -350,7 +350,7 @@ export class AutoCorrectionService {
    */
   private normalizeStructure(slide: PPTXSlide, slideIndex: number): CorrectionResult {
     const corrections: string[] = [];
-    let confidence = 1.0;
+    const confidence = 1.0;
 
     // Garantir que arrays existam
     if (!slide.textContent) {

@@ -140,7 +140,7 @@ class CacheService {
   async get<T>(key: string): Promise<T | null> {
     try {
       // Tentar buscar na memória primeiro
-      let entry = this.memoryCache.get(key)
+      const entry = this.memoryCache.get(key)
       
       if (entry) {
         // Verificar se não expirou

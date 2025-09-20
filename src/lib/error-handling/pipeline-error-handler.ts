@@ -196,7 +196,7 @@ export class PipelineErrorHandler {
     // Find matching strategies
     const strategies = this.findMatchingStrategies(error);
 
-    let finalResult: ErrorHandlingResult = {
+    const finalResult: ErrorHandlingResult = {
       success: false,
       finalAction: 'abort',
       totalAttempts: 0,

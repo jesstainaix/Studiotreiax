@@ -929,7 +929,7 @@ export const useRecommendationStore = create<RecommendationStore>()(subscribeWit
     
     getTrendingContent: (category?: string) => {
       const { contentItems } = get();
-      let trending = contentItems
+      const trending = contentItems
         .filter(item => category ? item.category === category : true)
         .sort((a, b) => {
           const scoreA = a.analytics.views + a.analytics.likes * 2 + a.analytics.shares * 3;

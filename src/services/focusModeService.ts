@@ -946,7 +946,7 @@ export const focusUtils = {
     calculateStreak: (sessions: FocusSession[]): number => {
       const today = new Date().toDateString();
       let streak = 0;
-      let currentDate = new Date();
+      const currentDate = new Date();
       
       while (true) {
         const dateStr = currentDate.toDateString();

@@ -127,7 +127,7 @@ class PipelineMonitoringService {
     let failedJobs = 0;
     let totalDuration = 0;
     let totalRetries = 0;
-    let stageStats: Map<string, { total: number; duration: number; errors: number }> = new Map();
+    const stageStats: Map<string, { total: number; duration: number; errors: number }> = new Map();
 
     allJobs.forEach(([_, metrics]) => {
       const jobCompleted = metrics.every(m => m.status === 'completed');

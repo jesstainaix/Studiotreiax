@@ -794,7 +794,7 @@ export const useThumbnailGenerationStore = create<
     get filteredTemplates() {
       const { templates, searchQuery, categoryFilter, sortBy, sortOrder } = get();
       
-      let filtered = templates.filter(template => {
+      const filtered = templates.filter(template => {
         const matchesSearch = !searchQuery || 
           template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           template.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -819,7 +819,7 @@ export const useThumbnailGenerationStore = create<
     get filteredThumbnails() {
       const { generatedThumbnails, searchQuery, qualityFilter, sortBy, sortOrder } = get();
       
-      let filtered = generatedThumbnails.filter(thumbnail => {
+      const filtered = generatedThumbnails.filter(thumbnail => {
         const matchesSearch = !searchQuery || 
           thumbnail.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           thumbnail.description.toLowerCase().includes(searchQuery.toLowerCase());

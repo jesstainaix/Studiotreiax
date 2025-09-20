@@ -746,7 +746,7 @@ export const useSmartEditing = create<SmartEditingStore>((set, get) => ({
   getFilteredSuggestions: () => {
     const { suggestions, filterOptions, sortBy, sortOrder } = get();
     
-    let filtered = suggestions.filter(suggestion => {
+    const filtered = suggestions.filter(suggestion => {
       if (filterOptions.types && !filterOptions.types.includes(suggestion.type)) return false;
       if (filterOptions.priorities && !filterOptions.priorities.includes(suggestion.priority)) return false;
       if (filterOptions.status && !filterOptions.status.includes(suggestion.status)) return false;

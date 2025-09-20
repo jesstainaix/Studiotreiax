@@ -602,7 +602,7 @@ export const useAnalyticsStore = create<AnalyticsStore>()(subscribeWithSelector(
     if (report && report.schedule) {
       // Calculate next run time based on schedule
       const now = new Date();
-      let nextRun = new Date(now);
+      const nextRun = new Date(now);
       
       switch (report.schedule.type) {
         case 'daily':

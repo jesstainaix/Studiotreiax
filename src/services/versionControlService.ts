@@ -820,7 +820,7 @@ export const useVersionControlStore = create<VersionControlStore>()(subscribeWit
   applyPatch: (diff: FileDiff, content: string) => {
     // Simple patch application
     const lines = content.split('\n');
-    let result = [...lines];
+    const result = [...lines];
     
     // Apply chunks in reverse order to maintain line numbers
     for (let i = diff.chunks.length - 1; i >= 0; i--) {

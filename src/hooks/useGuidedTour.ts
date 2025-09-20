@@ -247,7 +247,7 @@ export const useGuidedTour = () => {
     } = store;
     
     // Filter tours
-    let filteredTours = tours.filter(tour => {
+    const filteredTours = tours.filter(tour => {
       const matchesSearch = !searchQuery || 
         tour.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tour.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
