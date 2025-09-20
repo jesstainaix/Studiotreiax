@@ -34,6 +34,8 @@ import { TimelineEngine } from '../../../modules/video-editor/core/TimelineEngin
 import { ErrorHandlingService, ErrorType, ErrorSeverity, ErrorCategory } from '../../../services/errorHandlingService';
 import { toast } from 'sonner';
 import { StatusDashboard } from '../StatusDashboard/StatusDashboard';
+import AdvancedDropZone from '../DragDrop/AdvancedDropZone';
+import MultiFileUploadProgress, { UploadItem } from '../Upload/MultiFileUploadProgress';
 
 interface MediaLibraryProps {
   engine: TimelineEngine;
@@ -70,6 +72,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [uploadQueue, setUploadQueue] = useState<UploadItem[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const dropZoneRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1129,28 +1132,23 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
         </div>
       )}
 
-      {/* Drop Zone */}
-      <div
-        ref={dropZoneRef}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`flex-1 overflow-auto p-4 relative transition-all duration-200 ${
-          isDragOver ? 'bg-blue-900/20 border-2 border-dashed border-blue-400' : ''
-        }`}
+      {/* Advanced Drop Zone */}
+      <AdvancedDropZone
+        id="media-library"
+        acceptedTypes={['.mp4', '.mov', '.avi', '.webm', '.mp3', '.wav', '.flac', '.jpg', '.jpeg', '.png', '.gif', '.pptx', '.ppt']}
+        maxFileSize={500 * 1024 * 1024} // 500MB
+        maxFiles={10}
+        onFilesSelected={handleFilesSelected}
+        className="flex-1 p-4"
+        showPreview={true}
+        enableDirectoryUpload={true}
+        customMessages={{
+          dropText: 'Arraste arquivos de mídia aqui ou clique para selecionar',
+          browseText: 'Selecionar Arquivos de Mídia',
+          dragActiveText: 'Solte os arquivos na biblioteca de mídia',
+          errorText: 'Alguns arquivos não são compatíveis'
+        }}
       >
-        {/* Drag Overlay */}
-        {isDragOver && (
-          <div className="absolute inset-0 bg-blue-900/40 flex items-center justify-center z-10 rounded-lg">
-            <div className="bg-gray-800 border-2 border-dashed border-blue-400 rounded-lg p-8 text-center">
-              <Upload className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">Solte seus arquivos aqui</h3>
-              <p className="text-gray-300 text-sm">
-                Suporte para vídeos, áudios, imagens e apresentações
-              </p>
-            </div>
-          </div>
-        )}
         {/* Actions Bar */}
         {selectedAssets.length > 0 && (
           <div className="flex items-center justify-between mb-4 p-2 bg-gray-800 rounded">
@@ -1320,6 +1318,16 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
       <StatusDashboard
         isOpen={isStatusDashboardOpen}
         onToggle={() => setIsStatusDashboardOpen(!isStatusDashboardOpen)}
+      />
+
+      {/* Multi-File Upload Progress */}
+      <MultiFileUploadProgress
+        uploads={uploadQueue}
+        onCancel={handleUploadCancel}
+        onRetry={handleUploadRetry}
+        onPause={handleUploadPause}
+        onResume={handleUploadResume}
+        onClearCompleted={handleClearCompleted}
       />
     </Card>
   );
