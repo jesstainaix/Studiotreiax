@@ -21,7 +21,7 @@ interface AdvancedDropZoneProps {
   };
 }
 
-export const AdvancedDropZone: React.FC<AdvancedDropZoneProps> = ({
+const AdvancedDropZone: React.FC<AdvancedDropZoneProps> = ({
   id,
   acceptedTypes,
   maxFileSize,
@@ -66,17 +66,17 @@ export const AdvancedDropZone: React.FC<AdvancedDropZoneProps> = ({
     };
   }, [id, acceptedTypes, maxFileSize, maxFiles, enableDirectoryUpload, onFilesSelected]);
 
-  // Update state when drag operations happen
+  // Subscribe to drag state changes for better performance
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newState = dragDropService.getState();
+    const unsubscribe = dragDropService.subscribe((newState) => {
+      // Only update if relevant to this drop zone
       if (newState.dragOverTarget === id || 
-          (dropState.isDragOver !== newState.isDragOver)) {
+          newState.isDragOver !== dropState.isDragOver) {
         setDropState(newState);
       }
-    }, 50);
+    });
 
-    return () => clearInterval(interval);
+    return unsubscribe;
   }, [id, dropState.isDragOver]);
 
   // Create drag handlers

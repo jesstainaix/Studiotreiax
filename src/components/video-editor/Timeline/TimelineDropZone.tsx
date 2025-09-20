@@ -5,7 +5,7 @@ import { MediaAsset } from '../../../modules/video-editor/types/Media.types';
 import { TimelineEngine } from '../../../modules/video-editor/core/TimelineEngine';
 import { toast } from 'sonner';
 
-interface TimelineDropZoneProps {
+interface TimelineDropZoneProps extends React.HTMLAttributes<HTMLDivElement> {
   engine: TimelineEngine;
   trackId: string;
   startTime: number;
@@ -14,13 +14,15 @@ interface TimelineDropZoneProps {
   children?: React.ReactNode;
 }
 
-export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
+const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
   engine,
   trackId,
   startTime,
   onAssetDropped,
   className = '',
-  children
+  children,
+  style,
+  ...restProps
 }) => {
   const dragDropService = DragDropService.getInstance();
   const [dropState, setDropState] = useState(dragDropService.getState());
@@ -59,10 +61,9 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
     };
   }, [dropZoneId, trackId, startTime, onAssetDropped]);
 
-  // Monitor drag state
+  // Subscribe to drag state changes for better performance
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newState = dragDropService.getState();
+    const unsubscribe = dragDropService.subscribe((newState) => {
       if (newState.dragOverTarget === dropZoneId || 
           dropState.isDragOver !== newState.isDragOver) {
         setDropState(newState);
@@ -75,9 +76,9 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
           setIsValidDrop(false);
         }
       }
-    }, 50);
+    });
 
-    return () => clearInterval(interval);
+    return unsubscribe;
   }, [dropZoneId, dropState.isDragOver]);
 
   // Create drag handlers
@@ -88,7 +89,7 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
     const fileType = getFileType(file);
     const fileId = `timeline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    // Create object URL for preview
+    // Create object URL for preview (will be revoked after metadata extraction)
     const url = URL.createObjectURL(file);
     
     const asset: MediaAsset = {
@@ -108,25 +109,31 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
       }
     };
 
-    // Add type-specific properties
-    if (fileType === 'video') {
-      // Get video duration and dimensions
-      const videoData = await getVideoMetadata(file);
-      asset.duration = videoData.duration;
-      asset.resolution = videoData.resolution;
-      asset.frameRate = videoData.frameRate;
-    } else if (fileType === 'audio') {
-      // Get audio duration
-      const audioData = await getAudioMetadata(file);
-      asset.duration = audioData.duration;
-    } else if (fileType === 'image') {
-      // Get image dimensions
-      const imageData = await getImageMetadata(file);
-      asset.resolution = imageData.resolution;
-      asset.duration = 5; // Default 5 seconds for images
-    }
+    try {
+      // Add type-specific properties
+      if (fileType === 'video') {
+        // Get video duration and dimensions
+        const videoData = await getVideoMetadata(file);
+        asset.duration = videoData.duration;
+        asset.resolution = videoData.resolution;
+        asset.frameRate = videoData.frameRate;
+      } else if (fileType === 'audio') {
+        // Get audio duration
+        const audioData = await getAudioMetadata(file);
+        asset.duration = audioData.duration;
+      } else if (fileType === 'image') {
+        // Get image dimensions
+        const imageData = await getImageMetadata(file);
+        asset.resolution = imageData.resolution;
+        asset.duration = 5; // Default 5 seconds for images
+      }
 
-    return asset;
+      return asset;
+    } catch (error) {
+      // Clean up on error
+      URL.revokeObjectURL(url);
+      throw error;
+    }
   };
 
   // Get file type from file
@@ -185,6 +192,11 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
         URL.revokeObjectURL(video.src);
       };
       
+      // Cleanup timeout after 10 seconds to prevent memory leaks
+      setTimeout(() => {
+        URL.revokeObjectURL(video.src);
+      }, 10000);
+      
       video.src = URL.createObjectURL(file);
     });
   };
@@ -206,6 +218,11 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
         resolve({ duration: 0 });
         URL.revokeObjectURL(audio.src);
       };
+      
+      // Cleanup timeout
+      setTimeout(() => {
+        URL.revokeObjectURL(audio.src);
+      }, 10000);
       
       audio.src = URL.createObjectURL(file);
     });
@@ -232,6 +249,11 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
         });
         URL.revokeObjectURL(img.src);
       };
+      
+      // Cleanup timeout
+      setTimeout(() => {
+        URL.revokeObjectURL(img.src);
+      }, 10000);
       
       img.src = URL.createObjectURL(file);
     });
@@ -263,6 +285,8 @@ export const TimelineDropZone: React.FC<TimelineDropZoneProps> = ({
   return (
     <div
       {...dragHandlers}
+      {...restProps}
+      style={style}
       className={`
         relative transition-all duration-200 ease-in-out
         ${isDragActive 

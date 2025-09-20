@@ -26,6 +26,8 @@ export interface FileValidationResult {
   suggestedFormat?: string;
 }
 
+type StateChangeListener = (state: DropZoneState) => void;
+
 export class DragDropService {
   private static instance: DragDropService;
   private dropZones: Map<string, DragDropConfig> = new Map();
@@ -35,6 +37,7 @@ export class DragDropService {
     previewFiles: [],
     validationErrors: []
   };
+  private listeners: Set<StateChangeListener> = new Set();
 
   static getInstance(): DragDropService {
     if (!DragDropService.instance) {
@@ -115,16 +118,19 @@ export class DragDropService {
         e.preventDefault();
         e.stopPropagation();
         
-        this.currentState.isDragOver = true;
-        this.currentState.dragOverTarget = dropZoneId;
-        
         // Extract files for preview
         const files = this.extractFilesFromDataTransfer(e.dataTransfer);
-        this.currentState.previewFiles = files;
         
         // Validate files
         const validation = this.validateFiles(files, dropZoneId);
-        this.currentState.validationErrors = validation.errors;
+        
+        // Update state and notify listeners
+        this.updateState({
+          isDragOver: true,
+          dragOverTarget: dropZoneId,
+          previewFiles: files,
+          validationErrors: validation.errors
+        });
         
         config.onDragEnter?.(e.nativeEvent);
       },
@@ -148,10 +154,12 @@ export class DragDropService {
         // Only clear if actually leaving the drop zone
         const target = e.currentTarget as HTMLElement;
         if (!target.contains(e.relatedTarget as Node)) {
-          this.currentState.isDragOver = false;
-          this.currentState.dragOverTarget = null;
-          this.currentState.previewFiles = [];
-          this.currentState.validationErrors = [];
+          this.updateState({
+            isDragOver: false,
+            dragOverTarget: null,
+            previewFiles: [],
+            validationErrors: []
+          });
           
           config.onDragLeave?.(e.nativeEvent);
         }
@@ -161,8 +169,12 @@ export class DragDropService {
         e.preventDefault();
         e.stopPropagation();
         
-        this.currentState.isDragOver = false;
-        this.currentState.dragOverTarget = null;
+        this.updateState({
+          isDragOver: false,
+          dragOverTarget: null,
+          previewFiles: [],
+          validationErrors: []
+        });
         
         const files = Array.from(e.dataTransfer.files);
         
@@ -188,6 +200,30 @@ export class DragDropService {
   // Get current state for UI updates
   getState(): DropZoneState {
     return { ...this.currentState };
+  }
+
+  // Subscribe to state changes
+  subscribe(listener: StateChangeListener): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  // Notify all listeners of state changes
+  private notifyListeners(): void {
+    const state = this.getState();
+    this.listeners.forEach(listener => {
+      try {
+        listener(state);
+      } catch (error) {
+        console.error('Error in drag drop state listener:', error);
+      }
+    });
+  }
+
+  // Update state and notify listeners
+  private updateState(updates: Partial<DropZoneState>): void {
+    this.currentState = { ...this.currentState, ...updates };
+    this.notifyListeners();
   }
 
   // Process directory uploads (when supported)

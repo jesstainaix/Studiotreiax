@@ -44,6 +44,7 @@ import { HistoryPanel } from '../../HistoryPanel';
 import { useKeyboardShortcuts } from '../../../hooks/useKeyboardShortcuts';
 import { createTimelineShortcuts, TimelineControls, TIMELINE_SHORTCUTS_REFERENCE } from './TimelineShortcuts';
 import ShortcutsHelpPanel from './ShortcutsHelpPanel';
+import TimelineDropZone from './TimelineDropZone';
 
 // Import types from TimelineEngine
 import { TimelineTrack, TimelineItem } from '../../../modules/video-editor/types/Timeline.types';
@@ -592,6 +593,29 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
       }))
     }));
   };
+
+  // Handle asset drop on timeline
+  const handleAssetDropped = useCallback((asset: any, trackId: string, startTime: number) => {
+    const newItem: TimelineItem = {
+      id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name: asset.name,
+      type: asset.type as 'video' | 'audio' | 'image',
+      startTime: startTime,
+      duration: asset.duration || 5, // Default 5 seconds for images
+      source: asset.url,
+      trackId: trackId,
+      locked: false,
+      muted: false,
+      volume: 1,
+      metadata: {
+        originalAsset: asset,
+        droppedAt: new Date().toISOString()
+      }
+    };
+
+    // Add the item to the timeline
+    handleAddItem(newItem, trackId);
+  }, [handleAddItem]);
 
   // Rendering functions
   const renderTimeline = () => {
@@ -1682,8 +1706,12 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
         {/* Track Headers */}
         <div className="absolute left-0 top-0 w-48 bg-gray-800 border-r border-gray-700 z-10">
           {timelineState.tracks.map((track, index) => (
-            <div
+            <TimelineDropZone
               key={track.id}
+              engine={engine}
+              trackId={track.id}
+              startTime={timelineState.currentTime}
+              onAssetDropped={handleAssetDropped}
               className="flex items-center justify-between p-2 border-b border-gray-700"
               style={{ 
                 height: trackHeight,
@@ -1749,7 +1777,7 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
                   {track.locked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
                 </Button>
               </div>
-            </div>
+            </TimelineDropZone>
           ))}
         </div>
       </div>
