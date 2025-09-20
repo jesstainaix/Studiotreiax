@@ -30,6 +30,8 @@ import { toast } from 'sonner';
 import { HeyGenSceneManager, HeyGenProject, HeyGenScene } from '../../lib/pptx/heygen-scene-manager';
 import { AvatarSelectionPanel } from './AvatarSelectionPanel';
 import { ScenePreviewWithAvatar } from './ScenePreviewWithAvatar';
+import { VoicePreviewPanel } from './VoicePreviewPanel';
+import { ttsService, TTSVoice } from '../../lib/tts/TTSService';
 
 // Use unified HeyGen data model from scene manager
 // No local interface definitions needed - use HeyGenProject and HeyGenScene directly
@@ -98,33 +100,22 @@ const AVATAR_LIBRARY = [
   }
 ];
 
-// Voice library with proper provider fields
-const VOICE_LIBRARY = [
-  {
-    id: 'voice-1',
-    name: 'Beatriz',
-    language: 'pt-BR' as const,
-    gender: 'female' as const,
-    sample: 'Voz feminina profissional e clara',
-    provider: 'elevenlabs' as const
-  },
-  {
-    id: 'voice-2',
-    name: 'Roberto',
-    language: 'pt-BR' as const,
-    gender: 'male' as const,
-    sample: 'Voz masculina confiante e educativa',
-    provider: 'heygen' as const
-  },
-  {
-    id: 'voice-3',
-    name: 'Sofia',
-    language: 'pt-BR' as const,
-    gender: 'female' as const,
-    sample: 'Voz feminina jovem e envolvente',
-    provider: 'google' as const
-  }
-];
+// Enhanced voice library integration with TTS service
+const initializeVoiceLibrary = () => {
+  const ttsVoices = ttsService.getVoices();
+  return ttsVoices.map(voice => ({
+    id: voice.id,
+    name: voice.name,
+    language: voice.language as 'pt-BR',
+    gender: voice.gender as 'male' | 'female',
+    sample: `Voz ${voice.gender === 'female' ? 'feminina' : 'masculina'} ${voice.style}`,
+    provider: voice.provider as 'elevenlabs' | 'heygen' | 'google' | 'azure',
+    style: voice.style,
+    characteristics: voice.characteristics
+  }));
+};
+
+const VOICE_LIBRARY = initializeVoiceLibrary();
 
 const HeyGenStudioInterface: React.FC = () => {
   const [currentProject, setCurrentProject] = useState<HeyGenProject | null>(null);
@@ -230,6 +221,36 @@ const HeyGenStudioInterface: React.FC = () => {
     await updateSceneInBackend(sceneId, { voice });
     
     toast.success(`Voz ${voice.name} atribuída à cena`);
+  };
+
+  // Enhanced voice assignment with TTS integration
+  const handleVoiceSelect = async (voice: TTSVoice) => {
+    if (!selectedScene) return;
+    
+    const updatedProject = sceneManagerRef.current.updateSceneVoice(currentProject!, selectedScene, {
+      id: voice.id,
+      name: voice.name,
+      language: voice.language as 'pt-BR',
+      gender: voice.gender,
+      sample: `Voz ${voice.gender === 'female' ? 'feminina' : 'masculina'} ${voice.style}`,
+      provider: voice.provider as 'elevenlabs' | 'heygen' | 'google' | 'azure'
+    });
+    
+    setCurrentProject(updatedProject);
+    
+    // Persist to backend
+    await updateSceneInBackend(selectedScene, { 
+      voice: {
+        id: voice.id,
+        name: voice.name,
+        language: voice.language as 'pt-BR',
+        gender: voice.gender,
+        sample: `Voz ${voice.gender === 'female' ? 'feminina' : 'masculina'} ${voice.style}`,
+        provider: voice.provider as 'elevenlabs' | 'heygen' | 'google' | 'azure'
+      }
+    });
+    
+    toast.success(`Voz ${voice.name} atribuída à cena ${getCurrentScene()?.title}`);
   };
 
   // Backend integration functions
@@ -471,31 +492,13 @@ const HeyGenStudioInterface: React.FC = () => {
                 />
               </TabsContent>
               
-              <TabsContent value="voices" className="flex-1 overflow-y-auto px-4">
-                <div className="space-y-3">
-                  {VOICE_LIBRARY.map((voice) => (
-                    <Card 
-                      key={voice.id}
-                      className="cursor-pointer hover:shadow-md transition-shadow"
-                      onClick={() => selectedScene && assignVoiceToScene(selectedScene, voice.id)}
-                    >
-                      <CardContent className="p-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium text-gray-900">{voice.name}</h4>
-                            <p className="text-sm text-gray-600">{voice.sample}</p>
-                            <Badge variant="secondary" className="text-xs mt-1">
-                              {voice.gender} • {voice.language}
-                            </Badge>
-                          </div>
-                          <Button size="sm" variant="ghost">
-                            <Play className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+              <TabsContent value="voices" className="flex-1 overflow-hidden">
+                <VoicePreviewPanel
+                  selectedVoice={getCurrentScene()?.voice ? ttsService.getVoices().find(v => v.id === getCurrentScene()?.voice?.id) : undefined}
+                  onVoiceSelect={handleVoiceSelect}
+                  sampleText={getCurrentScene()?.content}
+                  className="h-full"
+                />
               </TabsContent>
             </Tabs>
           </div>
