@@ -144,6 +144,8 @@ export default defineConfig(({ mode }) => ({
     host: '0.0.0.0',
     strictPort: true,
     cors: true,
+    // Allow all hosts for Replit compatibility
+    allowedHosts: 'all',
     // Proxy API requests to backend
     proxy: {
       '/api': {
