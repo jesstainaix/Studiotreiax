@@ -41,6 +41,9 @@ import UndoRedoToolbar from './UndoRedoToolbar';
 import { useCommandManager } from '../../../hooks/useCommandManager';
 import { createTimelineCommands } from './TimelineCommands';
 import { HistoryPanel } from '../../HistoryPanel';
+import { useKeyboardShortcuts } from '../../../hooks/useKeyboardShortcuts';
+import { createTimelineShortcuts, TimelineControls, TIMELINE_SHORTCUTS_REFERENCE } from './TimelineShortcuts';
+import ShortcutsHelpPanel from './ShortcutsHelpPanel';
 
 // Import types from TimelineEngine
 import { TimelineTrack, TimelineItem } from '../../../modules/video-editor/types/Timeline.types';
@@ -128,6 +131,9 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
 
   // Undo/Redo and History Panel State
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
+  const [playbackRate, setPlaybackRateState] = useState(1.0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [showAutomation, setShowAutomation] = useState(false);
 
   // Estados
@@ -1360,6 +1366,221 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
     setTimelineState(prev => ({ ...prev, snapEnabled: !prev.snapEnabled }));
   };
 
+  // ===== TIMELINE KEYBOARD SHORTCUTS IMPLEMENTATION =====
+  
+  // Timeline controls implementation
+  const timelineControls: TimelineControls = {
+    // Playback controls
+    togglePlayback: () => {
+      setIsPlaying(prev => !prev);
+      // Integration with video player would go here
+    },
+    frameStep: (direction: 'forward' | 'backward') => {
+      const frameTime = 1 / 30; // 30 FPS
+      const newTime = direction === 'forward' 
+        ? timelineState.currentTime + frameTime
+        : Math.max(0, timelineState.currentTime - frameTime);
+      updateCurrentTime(newTime);
+    },
+    skipSeconds: (seconds: number) => {
+      const newTime = Math.max(0, Math.min(timelineState.duration, timelineState.currentTime + seconds));
+      updateCurrentTime(newTime);
+    },
+    goToStart: () => updateCurrentTime(0),
+    goToEnd: () => updateCurrentTime(timelineState.duration),
+    setPlaybackRate: (rate: number) => {
+      setPlaybackRateState(rate);
+      // Integration with video player would go here
+    },
+
+    // Timeline operations
+    splitAtPlayhead: () => {
+      const selectedItems = timelineState.items.filter(item => 
+        timelineState.selectedItems.includes(item.id)
+      );
+      
+      if (selectedItems.length === 0) return;
+      
+      selectedItems.forEach(item => {
+        if (timelineState.currentTime > item.startTime && 
+            timelineState.currentTime < item.startTime + item.duration) {
+          
+          const splitTime = timelineState.currentTime - item.startTime;
+          const command = commands.splitItem(item.id, splitTime);
+          commandManager.execute(command);
+        }
+      });
+    },
+    deleteSelected: deleteSelectedItems,
+    copySelected: copySelectedItems,
+    pasteAtPlayhead: () => {
+      // Implementation would paste from clipboard at current playhead position
+      console.log('Paste at playhead:', timelineState.currentTime);
+    },
+    duplicateSelected: () => {
+      const selectedItems = timelineState.items.filter(item => 
+        timelineState.selectedItems.includes(item.id)
+      );
+      
+      selectedItems.forEach(item => {
+        const duplicateItem = {
+          ...item,
+          id: `${item.id}-copy-${Date.now()}`,
+          startTime: item.startTime + item.duration + 0.1 // Slight offset
+        };
+        
+        const command = commands.addItem(duplicateItem, item.trackId);
+        commandManager.execute(command);
+      });
+    },
+    selectAll: selectAllItems,
+    deselectAll: () => {
+      setTimelineState(prev => ({ ...prev, selectedItems: [] }));
+    },
+
+    // Timeline navigation
+    zoomIn,
+    zoomOut,
+    zoomToFit,
+    zoomToSelection: () => {
+      const selectedItems = timelineState.items.filter(item => 
+        timelineState.selectedItems.includes(item.id)
+      );
+      
+      if (selectedItems.length === 0) return;
+      
+      const startTime = Math.min(...selectedItems.map(item => item.startTime));
+      const endTime = Math.max(...selectedItems.map(item => item.startTime + item.duration));
+      const duration = endTime - startTime;
+      
+      if (duration > 0) {
+        const containerWidth = timelineRef.current?.clientWidth || 1000;
+        const newZoom = containerWidth / duration * 0.8; // 80% of container
+        setTimelineState(prev => ({
+          ...prev,
+          zoom: newZoom,
+          scrollX: startTime * newZoom - containerWidth * 0.1 // 10% padding
+        }));
+      }
+    },
+
+    // Track operations
+    addVideoTrack: () => {
+      const newTrack = {
+        id: `video-track-${Date.now()}`,
+        name: `Video Track ${timelineState.tracks.filter(t => t.type === 'video').length + 1}`,
+        type: 'video' as const,
+        height: 80,
+        locked: false,
+        muted: false,
+        solo: false,
+        visible: true,
+        color: '#3b82f6',
+        items: []
+      };
+      
+      const command = commands.addTrack(newTrack);
+      commandManager.execute(command);
+    },
+    addAudioTrack: () => {
+      const newTrack = {
+        id: `audio-track-${Date.now()}`,
+        name: `Audio Track ${timelineState.tracks.filter(t => t.type === 'audio').length + 1}`,
+        type: 'audio' as const,
+        height: 60,
+        locked: false,
+        muted: false,
+        solo: false,
+        visible: true,
+        color: '#10b981',
+        items: []
+      };
+      
+      const command = commands.addTrack(newTrack);
+      commandManager.execute(command);
+    },
+    deleteActiveTrack: () => {
+      // Find the first track with selected items or first track
+      const activeTrack = timelineState.tracks.find(track => 
+        track.items.some(item => timelineState.selectedItems.includes(item.id))
+      ) || timelineState.tracks[0];
+      
+      if (activeTrack && timelineState.tracks.length > 1) {
+        const command = commands.removeTrack(activeTrack.id);
+        commandManager.execute(command);
+      }
+    },
+
+    // Timeline state
+    toggleSnap,
+    toggleRipple: () => {
+      console.log('Toggle ripple edit mode');
+      // Implementation for ripple edit mode
+    },
+    toggleMagnetism: () => {
+      console.log('Toggle magnetism');
+      // Implementation for magnetic timeline
+    },
+
+    // Advanced operations
+    groupSelected: () => {
+      const selectedItems = timelineState.items.filter(item => 
+        timelineState.selectedItems.includes(item.id)
+      );
+      
+      if (selectedItems.length > 1) {
+        console.log('Group selected items:', selectedItems.length);
+        // Implementation for grouping items
+      }
+    },
+    ungroupSelected: () => {
+      console.log('Ungroup selected items');
+      // Implementation for ungrouping items
+    },
+    trimToPlayhead: () => {
+      const selectedItems = timelineState.items.filter(item => 
+        timelineState.selectedItems.includes(item.id)
+      );
+      
+      selectedItems.forEach(item => {
+        if (timelineState.currentTime > item.startTime && 
+            timelineState.currentTime < item.startTime + item.duration) {
+          
+          const newDuration = timelineState.currentTime - item.startTime;
+          const command = commands.resizeItem(item.id, newDuration, item.startTime);
+          commandManager.execute(command);
+        }
+      });
+    },
+    rippleDelete: () => {
+      // Implementation for ripple delete
+      deleteSelectedItems();
+      console.log('Ripple delete executed');
+    }
+  };
+
+  // Initialize keyboard shortcuts
+  const shortcuts = [
+    ...createTimelineShortcuts(timelineControls),
+    // Help shortcuts
+    {
+      key: '?',
+      action: () => setShowShortcutsHelp(true),
+      description: 'Show Keyboard Shortcuts Help'
+    },
+    {
+      key: 'F1',
+      action: () => setShowShortcutsHelp(true),
+      description: 'Show Help (F1)'
+    }
+  ];
+  
+  useKeyboardShortcuts({
+    shortcuts,
+    enabled: true,
+    ignoreInputs: true
+  });
+
   return (
     <div 
       ref={timelineRef}
@@ -1406,6 +1627,16 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
           <Button variant="outline" size="sm">
             <Grid3X3 className="w-4 h-4 mr-1" />
             Grid
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowShortcutsHelp(true)}
+            title="Atalhos de Teclado (? ou F1)"
+          >
+            <Keyboard className="w-4 h-4 mr-1" />
+            Atalhos
           </Button>
 
           <Button
@@ -1623,6 +1854,12 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
           />
         </div>
       )}
+
+      {/* Shortcuts Help Panel */}
+      <ShortcutsHelpPanel 
+        isOpen={showShortcutsHelp}
+        onClose={() => setShowShortcutsHelp(false)}
+      />
     </div>
   );
 };
