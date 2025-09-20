@@ -177,9 +177,9 @@ export const TimelineEditor: React.FC<TimelineEditorProps> = ({
             <span className="text-sm text-gray-600">
               {formatTime(timeline.timelineState.currentTime)} / {formatTime(timeline.timelineState.totalDuration)}
             </span>
-            {currentSceneInfo && (
+            {timeline.currentSceneInfo && (
               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                Cena: {currentSceneInfo.scene.title}
+                Cena: {timeline.currentSceneInfo.scene.title}
               </span>
             )}
           </div>
