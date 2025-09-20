@@ -31,7 +31,11 @@ import {
   Clock,
   Target,
   Maximize2,
-  Grid3X3
+  Grid3X3,
+  MousePointer2,
+  Split,
+  FlipHorizontal,
+  ArrowLeftRight
 } from 'lucide-react';
 import { TimelineEngine } from '../../../modules/video-editor/core/TimelineEngine';
 import { WaveformRenderer } from './WaveformRenderer';
@@ -45,6 +49,7 @@ import { useKeyboardShortcuts } from '../../../hooks/useKeyboardShortcuts';
 import { createTimelineShortcuts, TimelineControls, TIMELINE_SHORTCUTS_REFERENCE } from './TimelineShortcuts';
 import ShortcutsHelpPanel from './ShortcutsHelpPanel';
 import TimelineDropZone from './TimelineDropZone';
+import AdvancedTimelineFeatures, { AdvancedTimelineState, SnapPoint, MagneticTarget } from './AdvancedTimelineFeatures';
 
 // Import types from TimelineEngine
 import { TimelineTrack, TimelineItem } from '../../../modules/video-editor/types/Timeline.types';
@@ -77,6 +82,12 @@ interface TimelineState {
   };
   snapEnabled: boolean;
   snapTolerance: number;
+  // Advanced features state
+  rippleEnabled: boolean;
+  magneticEnabled: boolean;
+  trimMode: 'normal' | 'ripple' | 'roll' | 'slip' | 'slide';
+  enhancedSnapPoints: SnapPoint[];
+  magneticTargets: MagneticTarget[];
 }
 
 interface ProfessionalTimelineProps {
@@ -124,6 +135,9 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
   const { execute, getHistoryState } = useCommandManager();
   const timelineCommands = useMemo(() => createTimelineCommands(engine), [engine]);
   
+  // Advanced Timeline Features Integration
+  const advancedFeatures = useMemo(() => new AdvancedTimelineFeatures(engine), [engine]);
+  
   // Refs
   const timelineRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -163,7 +177,13 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
       startTime: 0
     },
     snapEnabled: true,
-    snapTolerance: 5
+    snapTolerance: 5,
+    // Advanced features initialization
+    rippleEnabled: false,
+    magneticEnabled: true,
+    trimMode: 'normal',
+    enhancedSnapPoints: [],
+    magneticTargets: []
   });
 
   const [trackHeight] = useState(60);
@@ -406,12 +426,86 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
         }));
       }
     } else if (timelineState.dragState.dragType === 'item') {
-      // Mover item(s) selecionado(s)
+      // Enhanced item movement with magnetic and ripple support
+      let targetTime = timelineState.dragState.startTime + deltaTime;
+      
+      // Apply magnetic snapping if enabled (with proper parameters)
+      if (timelineState.magneticEnabled && timelineState.selectedItems.length === 1) {
+        const magneticResult = advancedFeatures.calculateMagneticSnap(
+          timelineState.selectedItems[0], 
+          targetTime,
+          timelineState.magneticEnabled,
+          0.2 // magnetic strength
+        );
+        targetTime = magneticResult.snappedTime;
+        
+        // Store magnetic feedback for visual indicators
+        if (magneticResult.visualFeedback && magneticResult.magneticTarget) {
+          setTimelineState(prev => ({ 
+            ...prev, 
+            magneticTargets: [magneticResult.magneticTarget!] 
+          }));
+        }
+      }
+      
+      // Apply regular snapping
       const snappedTime = timelineState.snapEnabled 
-        ? getSnappedTime(timelineState.dragState.startTime + deltaTime)
-        : timelineState.dragState.startTime + deltaTime;
+        ? getSnappedTime(targetTime)
+        : targetTime;
 
-      moveSelectedItems(snappedTime - timelineState.dragState.startTime);
+      // Apply ripple movement if enabled
+      if (timelineState.rippleEnabled && timelineState.selectedItems.length === 1) {
+        const selectedItem = timelineState.items.find(item => 
+          item.id === timelineState.selectedItems[0]
+        );
+        if (selectedItem) {
+          const rippleCommands = advancedFeatures.performRippleMove(
+            selectedItem.id, 
+            snappedTime, 
+            selectedItem.trackId,
+            timelineState.rippleEnabled
+          );
+          
+          // Execute ripple commands through the command system
+          const commands: any[] = [];
+          
+          // First add the primary move command
+          const moveCommand = timelineCommands.moveItem(
+            selectedItem.id, 
+            snappedTime, 
+            selectedItem.trackId
+          );
+          commands.push(moveCommand);
+          
+          // Then add ripple update commands
+          rippleCommands.forEach(cmd => {
+            if (cmd.type === 'update') {
+              const updateCommand = timelineCommands.updateItem(cmd.itemId, {
+                startTime: cmd.startTime,
+                duration: cmd.duration
+              });
+              commands.push(updateCommand);
+            }
+          });
+          
+          // Execute all commands as a batch
+          commands.forEach(command => execute(command));
+        }
+      } else {
+        // Normal move without ripple
+        const deltaTime = snappedTime - timelineState.dragState.startTime;
+        timelineState.selectedItems.forEach(itemId => {
+          const item = timelineState.items.find(i => i.id === itemId);
+          if (item) {
+            const moveCommand = timelineCommands.moveItem(
+              itemId,
+              item.startTime + deltaTime,
+              item.trackId
+            );
+            execute(moveCommand);
+          }
+        });
+      }
     }
   }, [timelineState.dragState, timelineState.scrollX, timelineState.zoom, timelineState.snapEnabled]);
 
@@ -421,7 +515,8 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
       dragState: {
         ...prev.dragState,
         isDragging: false
-      }
+      },
+      magneticTargets: [] // Clear magnetic feedback on drag end
     }));
   }, []);
 
@@ -566,6 +661,26 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
   const getSnappedTime = (time: number): number => {
     if (!timelineState.snapEnabled) return time;
 
+    // Use enhanced snap points if available, otherwise fall back to basic snap points
+    const useEnhancedSnap = timelineState.enhancedSnapPoints && timelineState.enhancedSnapPoints.length > 0;
+    
+    if (useEnhancedSnap) {
+      try {
+        const bestSnapPoint = advancedFeatures.findBestSnapPoint(time, timelineState.enhancedSnapPoints);
+        if (bestSnapPoint) {
+          const snapTolerance = timelineState.snapTolerance / timelineState.zoom;
+          const distance = Math.abs(time - bestSnapPoint.time);
+          // Check if within tolerance, accounting for point strength
+          if (distance <= snapTolerance * (bestSnapPoint.strength || 1.0)) {
+            return bestSnapPoint.time;
+          }
+        }
+      } catch (error) {
+        console.error('Enhanced snap error:', error);
+      }
+    }
+    
+    // Fallback to basic snap functionality
     const tolerance = timelineState.snapTolerance / timelineState.zoom;
     
     for (const snapPoint of snapPoints) {
@@ -1390,6 +1505,55 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
     setTimelineState(prev => ({ ...prev, snapEnabled: !prev.snapEnabled }));
   };
 
+  const toggleRipple = () => {
+    const newRippleState = !timelineState.rippleEnabled;
+    setTimelineState(prev => ({ ...prev, rippleEnabled: newRippleState }));
+    toast.success(`🌊 Ripple Edit ${newRippleState ? 'Enabled' : 'Disabled'}`);
+  };
+
+  const toggleMagnetic = () => {
+    const newMagneticState = !timelineState.magneticEnabled;
+    setTimelineState(prev => ({ ...prev, magneticEnabled: newMagneticState }));
+    toast.success(`🧲 Magnetic Timeline ${newMagneticState ? 'Enabled' : 'Disabled'}`);
+  };
+
+  const setTrimMode = (mode: 'normal' | 'ripple' | 'roll' | 'slip' | 'slide') => {
+    setTimelineState(prev => ({ ...prev, trimMode: mode }));
+    toast.success(`✂️ Trim Mode: ${mode.charAt(0).toUpperCase() + mode.slice(1)}`);
+  };
+
+  // Update enhanced snap points when timeline changes (optimized to avoid infinite loops)
+  useEffect(() => {
+    const updateSnapPoints = () => {
+      try {
+        advancedFeatures.updateSnapPoints();
+        const newSnapPoints = advancedFeatures.generateEnhancedSnapPoints();
+        setTimelineState(prev => ({ ...prev, enhancedSnapPoints: newSnapPoints }));
+      } catch (error) {
+        console.error('Error updating snap points:', error);
+      }
+    };
+
+    // Only update if we have meaningful content
+    if (timelineState.tracks.length > 0 || timelineState.items.length > 0) {
+      updateSnapPoints();
+    }
+  }, [timelineState.tracks.length, timelineState.items.length, timelineState.duration]);
+
+  // Enhanced snap points integration
+  useEffect(() => {
+    if (timelineState.snapEnabled) {
+      try {
+        const enhancedPoints = advancedFeatures.generateEnhancedSnapPoints();
+        // Update both the timeline state and the cache
+        advancedFeatures.updateSnapPoints();
+        setTimelineState(prev => ({ ...prev, enhancedSnapPoints: enhancedPoints }));
+      } catch (error) {
+        console.error('Error generating enhanced snap points:', error);
+      }
+    }
+  }, [timelineState.tracks.length, timelineState.items.length, timelineState.duration, timelineState.snapEnabled]);
+
   // ===== TIMELINE KEYBOARD SHORTCUTS IMPLEMENTATION =====
   
   // Timeline controls implementation
@@ -1537,14 +1701,8 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
 
     // Timeline state
     toggleSnap,
-    toggleRipple: () => {
-      console.log('Toggle ripple edit mode');
-      // Implementation for ripple edit mode
-    },
-    toggleMagnetism: () => {
-      console.log('Toggle magnetism');
-      // Implementation for magnetic timeline
-    },
+    toggleRipple,
+    toggleMagnetism: toggleMagnetic,
 
     // Advanced operations
     groupSelected: () => {
@@ -1577,9 +1735,38 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
       });
     },
     rippleDelete: () => {
-      // Implementation for ripple delete
-      deleteSelectedItems();
-      console.log('Ripple delete executed');
+      if (timelineState.rippleEnabled && timelineState.selectedItems.length > 0) {
+        try {
+          // Get ripple commands from advanced features
+          const rippleCommands = advancedFeatures.performRippleDelete(
+            timelineState.selectedItems,
+            timelineState.rippleEnabled
+          );
+          
+          // Execute all commands through the command system for proper undo/redo
+          rippleCommands.forEach(cmd => {
+            if (cmd.type === 'delete') {
+              const deleteCommand = timelineCommands.removeItem(cmd.itemId);
+              execute(deleteCommand);
+            } else if (cmd.type === 'update') {
+              const updateCommand = timelineCommands.updateItem(cmd.itemId, {
+                startTime: cmd.startTime!,
+                duration: cmd.duration!
+              });
+              execute(updateCommand);
+            }
+          });
+          
+          setTimelineState(prev => ({ ...prev, selectedItems: [] }));
+          toast.success('🌊 Ripple Delete Applied');
+        } catch (error) {
+          console.error('Ripple delete error:', error);
+          toast.error('Failed to apply ripple delete');
+          deleteSelectedItems(); // Fallback to normal delete
+        }
+      } else {
+        deleteSelectedItems();
+      }
     }
   };
 
@@ -1642,11 +1829,57 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
             variant="outline"
             size="sm"
             onClick={toggleSnap}
-            className={timelineState.snapEnabled ? 'bg-blue-600' : ''}
+            className={timelineState.snapEnabled ? 'bg-blue-600 text-white' : ''}
+            title="Toggle Smart Snap (S)"
           >
             <Target className="w-4 h-4 mr-1" />
             Snap
           </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleRipple}
+            className={timelineState.rippleEnabled ? 'bg-green-600 text-white' : ''}
+            title="Toggle Ripple Edit Mode (R)"
+          >
+            <div className="w-4 h-4 mr-1 flex items-center justify-center text-xs font-bold">🌊</div>
+            Ripple
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleMagnetic}
+            className={timelineState.magneticEnabled ? 'bg-purple-600 text-white' : ''}
+            title="Toggle Magnetic Timeline (M)"
+          >
+            <div className="w-4 h-4 mr-1 flex items-center justify-center text-xs font-bold">🧲</div>
+            Magnetic
+          </Button>
+
+          {/* Trim Mode Selector */}
+          <div className="flex items-center space-x-1 ml-4">
+            <span className="text-xs text-gray-400">Trim:</span>
+            {([
+              { mode: 'normal', icon: MousePointer2, label: 'Normal' },
+              { mode: 'ripple', icon: Split, label: 'Ripple' },
+              { mode: 'roll', icon: ArrowLeftRight, label: 'Roll' },
+              { mode: 'slip', icon: FlipHorizontal, label: 'Slip' },
+              { mode: 'slide', icon: Move, label: 'Slide' }
+            ] as const).map(({ mode, icon: Icon, label }) => (
+              <Button
+                key={mode}
+                variant="outline"
+                size="sm"
+                onClick={() => setTrimMode(mode)}
+                className={`px-2 py-1 ${timelineState.trimMode === mode ? 'bg-orange-600 text-white' : ''}`}
+                title={`${label} Trim Mode`}
+              >
+                <Icon className="w-3 h-3" />
+              </Button>
+            ))}
+          </div>
           
           <Button variant="outline" size="sm">
             <Grid3X3 className="w-4 h-4 mr-1" />
