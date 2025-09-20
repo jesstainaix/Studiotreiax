@@ -353,6 +353,5 @@ export class HeyGenSceneManager {
   }
 }
 
-// Export types and manager
-export { HeyGenSceneManager };
+// Export types
 export type { HeyGenScene, HeyGenProject };
