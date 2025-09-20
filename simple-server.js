@@ -8,6 +8,10 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
+// Import avatar management handlers
+import sceneConfigHandlers from './api/scene-config/index.js';
+import avatarGenerateHandlers from './api/avatars/generate.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -264,6 +268,15 @@ app.get('/api/pptx/jobs', (req, res) => {
   });
 });
 
+// Avatar Management API Routes
+// Scene Configuration Routes
+app.get('/api/scene-config', sceneConfigHandlers.handleGet);
+app.post('/api/scene-config', sceneConfigHandlers.handlePost);
+app.put('/api/scene-config', sceneConfigHandlers.handlePut);
+
+// Avatar Generation Routes
+app.post('/api/avatars/generate', avatarGenerateHandlers.handlePost);
+
 // API info endpoint
 app.get('/api/info', (req, res) => {
   res.json({
@@ -272,6 +285,8 @@ app.get('/api/info', (req, res) => {
     endpoints: [
       '/api/health',
       '/api/info',
+      '/api/scene-config',
+      '/api/avatars/generate',
       '/api/pptx/upload',
       '/api/pptx/status/:jobId',
       '/api/pptx/jobs',

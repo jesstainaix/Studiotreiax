@@ -27,12 +27,19 @@ export class AvatarProviderManager {
   }
   
   private initializeProviders(): void {
-    // Initialize all providers
-    this.providers.set('mock', new MockAvatarProvider());
-    this.providers.set('reallusion', new ReallusionAvatarProvider());
-    this.providers.set('did', new DIdAvatarProvider());
+    // Only initialize mock provider in browser environment
+    // Real providers (Reallusion, D-ID) are handled server-side for security
+    if (typeof window !== 'undefined') {
+      this.providers.set('mock', new MockAvatarProvider());
+      console.log(`[AvatarManager] Browser: Initialized mock provider only`);
+    } else {
+      // Server-side: initialize all providers
+      this.providers.set('mock', new MockAvatarProvider());
+      this.providers.set('reallusion', new ReallusionAvatarProvider());
+      this.providers.set('did', new DIdAvatarProvider());
+      console.log(`[AvatarManager] Server: Initialized all providers`);
+    }
     
-    console.log(`[AvatarManager] Initialized providers: ${Array.from(this.providers.keys()).join(', ')}`);
     console.log(`[AvatarManager] Primary provider: ${this.config.primary}`);
     console.log(`[AvatarManager] Fallback providers: ${this.config.fallbacks.join(', ')}`);
   }
@@ -195,10 +202,10 @@ export class AvatarProviderManager {
   }
 }
 
-// Singleton instance for global use
+// Singleton instance for global use with better fallback configuration
 export const avatarManager = new AvatarProviderManager({
-  primary: process.env.AVATAR_PRIMARY_PROVIDER || 'mock',
-  fallbacks: (process.env.AVATAR_FALLBACK_PROVIDERS || 'mock').split(','),
+  primary: process.env.AVATAR_PRIMARY_PROVIDER || 'reallusion',
+  fallbacks: (process.env.AVATAR_FALLBACK_PROVIDERS || 'did,mock').split(','),
   retryAttempts: parseInt(process.env.AVATAR_RETRY_ATTEMPTS || '3'),
   retryDelay: parseInt(process.env.AVATAR_RETRY_DELAY || '1000')
 });

@@ -118,10 +118,28 @@ const ScenePreview: React.FC<ScenePreviewProps> = ({
     setIsLoading(true);
 
     try {
-      const data = event.dataTransfer.getData('application/json');
-      const dragData = JSON.parse(data);
+      // Try multiple data formats for better compatibility
+      let avatarId = null;
+      let dragData = null;
 
-      if (dragData.type === 'avatar' && dragData.avatarId) {
+      // Try JSON format first
+      try {
+        const jsonData = event.dataTransfer.getData('application/json');
+        if (jsonData) {
+          dragData = JSON.parse(jsonData);
+          avatarId = dragData.avatarId;
+        }
+      } catch (jsonError) {
+        console.warn('[ScenePreview] Failed to parse JSON drag data, trying alternatives');
+      }
+
+      // Fallback to text formats
+      if (!avatarId) {
+        avatarId = event.dataTransfer.getData('text/avatar-id') || 
+                  event.dataTransfer.getData('text/plain');
+      }
+
+      if (avatarId && (dragData?.type === 'avatar' || !dragData)) {
         // Calculate drop position relative to preview area
         const rect = previewRef.current?.getBoundingClientRect();
         if (rect) {
@@ -135,20 +153,26 @@ const ScenePreview: React.FC<ScenePreviewProps> = ({
             scale: 0.9
           };
 
+          console.log('[ScenePreview] Assigning avatar to scene:', { slideId, avatarId, placement });
+
           // Assign avatar to scene
           await sceneManager.assignAvatarToScene(
             slideId,
-            dragData.avatarId,
+            avatarId,
             placement
           );
 
           if (onAvatarAssigned) {
-            onAvatarAssigned(slideId, dragData.avatarId);
+            onAvatarAssigned(slideId, avatarId);
           }
         }
+      } else {
+        console.warn('[ScenePreview] Invalid drop data - no avatarId found');
       }
     } catch (error) {
       console.error('[ScenePreview] Failed to handle drop:', error);
+      // Add user-friendly error notification
+      alert('Erro ao atribuir avatar à cena. Tente novamente.');
     } finally {
       setIsLoading(false);
     }

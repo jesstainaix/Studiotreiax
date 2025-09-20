@@ -155,15 +155,29 @@ const AvatarsLibrary: React.FC<AvatarsLibraryProps> = ({
         setUploadProgress(prev => Math.min(prev + 10, 90));
       }, 200);
 
-      // Generate avatar
-      const request: AvatarGenerationRequest = {
+      // Generate avatar via server API
+      const request = {
         photoBase64: base64,
         quality: 'medium',
         style: 'realistic',
-        tags: ['custom', 'uploaded']
+        tags: ['custom', 'uploaded'],
+        userId: `user_${Date.now()}`, // Ensure userId is provided
+        provider: 'mock' // Start with mock for demo
       };
 
-      const result = await avatarManager.generateAvatar(request);
+      const response = await fetch('/api/avatars/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(request)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const result = await response.json();
       
       clearInterval(progressInterval);
       setUploadProgress(100);
@@ -208,12 +222,14 @@ const AvatarsLibrary: React.FC<AvatarsLibraryProps> = ({
   };
 
   const handleDragStart = (avatar: AvatarGenerationResult, event: React.DragEvent) => {
-    // Set drag data
+    // Set multiple data formats for better compatibility
+    event.dataTransfer.setData('text/plain', avatar.avatarId);
     event.dataTransfer.setData('application/json', JSON.stringify({
       type: 'avatar',
       avatarId: avatar.avatarId,
       avatar: avatar
     }));
+    event.dataTransfer.setData('text/avatar-id', avatar.avatarId);
     
     // Set drag effect
     event.dataTransfer.effectAllowed = 'copy';

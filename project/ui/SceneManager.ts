@@ -19,18 +19,17 @@ export class SceneManager {
 
   async loadConfiguration(): Promise<SceneConfiguration> {
     try {
-      // In a real implementation, this would fetch from the backend
-      // For now, we'll simulate loading the config
       const response = await fetch('/api/scene-config');
       if (response.ok) {
         const config = await response.json();
         this.sceneConfig = config;
+        console.log('[SceneManager] Configuration loaded successfully');
       } else {
-        // Create default configuration if none exists
+        console.warn('[SceneManager] Failed to load config, creating default');
         this.sceneConfig = this.createDefaultConfiguration();
       }
     } catch (error) {
-      console.warn('[SceneManager] Failed to load configuration, using default:', error);
+      console.warn('[SceneManager] Network error loading configuration, using default:', error);
       this.sceneConfig = this.createDefaultConfiguration();
     }
     return this.sceneConfig;
@@ -64,7 +63,6 @@ export class SceneManager {
     try {
       this.sceneConfig.updated_at = new Date().toISOString();
       
-      // In a real implementation, this would save to the backend
       const response = await fetch('/api/scene-config', {
         method: 'POST',
         headers: {
@@ -74,10 +72,12 @@ export class SceneManager {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to save configuration: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Failed to save configuration: ${response.status} - ${errorData.error || response.statusText}`);
       }
 
-      console.log('[SceneManager] Configuration saved successfully');
+      const result = await response.json();
+      console.log('[SceneManager] Configuration saved successfully:', result.message);
     } catch (error) {
       console.error('[SceneManager] Failed to save configuration:', error);
       
@@ -87,6 +87,7 @@ export class SceneManager {
         console.log('[SceneManager] Configuration saved to localStorage as fallback');
       } catch (storageError) {
         console.error('[SceneManager] Failed to save to localStorage:', storageError);
+        throw new Error('Failed to save configuration to both server and localStorage');
       }
     }
   }
