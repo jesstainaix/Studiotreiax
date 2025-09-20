@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { performanceOptimizer } from '../../services/PerformanceOptimizer';
+// Lightweight debounce/throttle utilities to avoid lodash dependency issues
+const throttle = (func: (...args: any[]) => void, delay: number) => {
+  let timeoutId: number | undefined;
+  let lastExecTime = 0;
+  return (...args: any[]) => {
+    const currentTime = Date.now();
+    if (currentTime - lastExecTime > delay) {
+      func(...args);
+      lastExecTime = currentTime;
+    } else {
+      clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(() => {
+        func(...args);
+        lastExecTime = Date.now();
+      }, delay - (currentTime - lastExecTime));
+    }
+  };
+};
 
 // Responsive design hooks and utilities for Phase 4
 export const useResponsiveDesign = () => {
@@ -14,7 +31,7 @@ export const useResponsiveDesign = () => {
   });
 
   useEffect(() => {
-    const handleResize = performanceOptimizer.createThrottledScrollHandler(() => {
+    const handleResize = throttle(() => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       

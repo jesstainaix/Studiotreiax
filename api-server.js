@@ -42,6 +42,10 @@ app.use('/api/auth', authRoutes);
 // PPTX endpoints - Phase 1 Implementation
 app.use('/api/pptx', pptxRoutes);
 
+// Scene layers endpoints - Phase 4 Implementation
+const sceneLayersRoutes = await import('./server/routes/scene-layers.js');
+app.use('/api/scene-layers', sceneLayersRoutes.default);
+
 // Pipeline endpoints - Mock implementations
 app.post('/api/pipeline/start', (req, res) => {
   const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

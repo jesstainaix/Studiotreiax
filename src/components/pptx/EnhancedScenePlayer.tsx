@@ -7,6 +7,7 @@ import { ElementsPanel } from './ElementsPanel';
 import { HeyGenScene } from '../../lib/pptx/heygen-scene-manager';
 import { SceneLayer, SceneLayersData, CanvasMouseEvent, SelectionBox } from '../../types/SceneLayers';
 import { useSceneLayersManager } from '../../hooks/useSceneLayersManager';
+import { useResponsiveDesign, getScenePlayerConfig, getElementsPanelConfig } from './ResponsiveOptimizer';
 import { 
   Play, 
   Pause, 
@@ -48,13 +49,20 @@ export const EnhancedScenePlayer: React.FC<EnhancedScenePlayerProps> = ({
   onVolumeChange,
   className = ''
 }) => {
-  // UI State
+  // Responsive settings
+  const viewport = useResponsiveDesign();
+  const playerConfig = getScenePlayerConfig(viewport);
+  const elementsPanelConfig = getElementsPanelConfig(viewport);
+  
+  // UI State (with responsive defaults)
   const [volume, setVolume] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
   const [showFullscreen, setShowFullscreen] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'split' | 'avatar' | 'slide' | 'elements'>('split');
+  const [previewMode, setPreviewMode] = useState<'split' | 'avatar' | 'slide' | 'elements'>(
+    elementsPanelConfig.showPreview ? 'split' : 'slide'
+  );
   const [showGrid, setShowGrid] = useState(false);
-  const [canvasZoom, setCanvasZoom] = useState(1);
+  const [canvasZoom, setCanvasZoom] = useState(playerConfig.canvasZoom);
   const [toolMode, setToolMode] = useState<'select' | 'move' | 'text' | 'image'>('select');
   
   // Selection and interaction state
@@ -89,19 +97,51 @@ export const EnhancedScenePlayer: React.FC<EnhancedScenePlayerProps> = ({
     loadLayers();
   }, [scene.id, loadLayers]);
 
-  // Audio playback synchronization
+  // Enhanced audio playback synchronization with bidirectional sync
   useEffect(() => {
     if (audioRef.current && scene.audio?.url) {
-      audioRef.current.src = scene.audio.url;
-      audioRef.current.currentTime = currentTime;
+      const audio = audioRef.current;
+      
+      // Set up audio source and sync current time
+      audio.src = scene.audio.url;
+      audio.currentTime = currentTime;
+      
+      // Bidirectional sync: audio drives timeline updates
+      const handleTimeUpdate = () => {
+        onTimeUpdate?.(audio.currentTime);
+      };
+      
+      const handleEnded = () => {
+        onPause?.();
+        onTimeUpdate?.(0);
+      };
+      
+      const handleLoadedMetadata = () => {
+        // Ensure duration matches scene duration
+        if (Math.abs(audio.duration - scene.duration) > 0.1) {
+          console.warn(`Audio duration (${audio.duration}s) doesn't match scene duration (${scene.duration}s)`);
+        }
+      };
+      
+      // Add event listeners for audio synchronization
+      audio.addEventListener('timeupdate', handleTimeUpdate);
+      audio.addEventListener('ended', handleEnded);
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata);
       
       if (isPlaying) {
-        audioRef.current.play().catch(console.error);
+        audio.play().catch(console.error);
       } else {
-        audioRef.current.pause();
+        audio.pause();
       }
+      
+      // Cleanup listeners
+      return () => {
+        audio.removeEventListener('timeupdate', handleTimeUpdate);
+        audio.removeEventListener('ended', handleEnded);
+        audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
     }
-  }, [scene.audio?.url, currentTime, isPlaying]);
+  }, [scene.audio?.url, currentTime, isPlaying, onTimeUpdate, onPause, scene.duration]);
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);

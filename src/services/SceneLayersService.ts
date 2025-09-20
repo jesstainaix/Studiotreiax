@@ -7,7 +7,7 @@ export class SceneLayersService {
   private cache = new Map<string, SceneLayer[]>();
 
   private constructor() {
-    this.baseUrl = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:3001/api';
+    this.baseUrl = '/api'; // Use relative path for better dev/prod compatibility
   }
 
   static getInstance(): SceneLayersService {

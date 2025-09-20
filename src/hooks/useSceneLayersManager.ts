@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { SceneLayer, LayerUpdateAction, UndoRedoState, SceneLayersData } from '../types/SceneLayers';
+import { sceneLayersService } from '../services/SceneLayersService';
 import { toast } from 'sonner';
 
 interface UseSceneLayersManagerReturn {
@@ -77,7 +78,7 @@ export const useSceneLayersManager = (sceneId: string): UseSceneLayersManagerRet
     });
   }, []);
 
-  // Load layers from storage
+  // Load layers from storage using SceneLayersService
   const loadLayers = useCallback(async () => {
     if (!sceneId) return;
     
@@ -85,34 +86,8 @@ export const useSceneLayersManager = (sceneId: string): UseSceneLayersManagerRet
     setError(null);
     
     try {
-      // Try to load from localStorage first (fast)
-      const localData = localStorage.getItem(`scene_layers_${sceneId}`);
-      if (localData) {
-        const parsedLayers = JSON.parse(localData) as SceneLayer[];
-        setLayers(parsedLayers);
-      }
-      
-      // Then try to load from file system
-      const response = await fetch('/project/data/scene_layers.json');
-      if (response.ok) {
-        const sceneLayersData: SceneLayersData = await response.json();
-        const sceneData = sceneLayersData.scenes.find(s => s.scene_id === sceneId);
-        
-        if (sceneData) {
-          // Add IDs to layers if missing
-          const layersWithIds = sceneData.layers.map(layer => ({
-            ...layer,
-            id: layer.id || generateLayerId(),
-            createdAt: layer.createdAt || new Date().toISOString(),
-            updatedAt: layer.updatedAt || new Date().toISOString()
-          }));
-          
-          setLayers(layersWithIds);
-          
-          // Update localStorage
-          localStorage.setItem(`scene_layers_${sceneId}`, JSON.stringify(layersWithIds));
-        }
-      }
+      const loadedLayers = await sceneLayersService.loadSceneLayers(sceneId);
+      setLayers(loadedLayers);
     } catch (err) {
       console.error('Error loading layers:', err);
       setError('Falha ao carregar elementos da cena');
@@ -122,89 +97,14 @@ export const useSceneLayersManager = (sceneId: string): UseSceneLayersManagerRet
     }
   }, [sceneId]);
 
-  // Save layers to storage
+  // Save layers to storage using SceneLayersService
   const saveLayers = useCallback(async () => {
     if (!sceneId || !hasUnsavedChanges) return;
     
     try {
-      // Save to localStorage immediately (fast)
-      localStorage.setItem(`scene_layers_${sceneId}`, JSON.stringify(layers));
-      
-      // Debounced save to file system
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-      
-      saveTimeoutRef.current = window.setTimeout(async () => {
-        try {
-          // Load current scene layers data
-          const response = await fetch('/project/data/scene_layers.json');
-          let sceneLayersData: SceneLayersData;
-          
-          if (response.ok) {
-            sceneLayersData = await response.json();
-          } else {
-            // Create new structure if file doesn't exist
-            sceneLayersData = {
-              version: '1.0',
-              created_at: new Date().toISOString(),
-              project_id: 'heygen-default',
-              scenes: [],
-              global_settings: {
-                canvas_size: { width: 1920, height: 1080, aspect_ratio: '16:9' },
-                default_styles: {
-                  text: {
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '1rem',
-                    color: '#374151',
-                    textAlign: 'left',
-                    lineHeight: 1.4
-                  },
-                  animations: { default_duration: 1000, default_easing: 'ease-out' }
-                },
-                grid_settings: { snap_to_grid: true, grid_size: 0.05, show_grid: false }
-              }
-            };
-          }
-          
-          // Update or add scene data
-          const sceneIndex = sceneLayersData.scenes.findIndex(s => s.scene_id === sceneId);
-          const sceneData = {
-            slide_id: parseInt(sceneId.replace('scene-', '')) + 1,
-            scene_id: sceneId,
-            layers: layers.map(layer => ({
-              ...layer,
-              updatedAt: new Date().toISOString()
-            }))
-          };
-          
-          if (sceneIndex >= 0) {
-            sceneLayersData.scenes[sceneIndex] = sceneData;
-          } else {
-            sceneLayersData.scenes.push(sceneData);
-          }
-          
-          sceneLayersData.updated_at = new Date().toISOString();
-          
-          // Save to backend (if available)
-          const saveResponse = await fetch('/api/scene-layers/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(sceneLayersData)
-          });
-          
-          if (!saveResponse.ok) {
-            console.warn('Backend save failed, using localStorage only');
-          }
-          
-          setHasUnsavedChanges(false);
-          lastSaveTimeRef.current = Date.now();
-          
-        } catch (err) {
-          console.error('Error saving layers to backend:', err);
-        }
-      }, 2000); // 2 second debounce
-      
+      await sceneLayersService.saveSceneLayers(sceneId, layers);
+      setHasUnsavedChanges(false);
+      lastSaveTimeRef.current = Date.now();
     } catch (err) {
       console.error('Error saving layers:', err);
       setError('Falha ao salvar elementos');
@@ -212,27 +112,25 @@ export const useSceneLayersManager = (sceneId: string): UseSceneLayersManagerRet
     }
   }, [sceneId, layers, hasUnsavedChanges]);
 
-  // Add layer
+  // Add layer using SceneLayersService
   const addLayer = useCallback(async (layerData: Omit<SceneLayer, 'id'>) => {
-    const newLayer: SceneLayer = {
-      ...layerData,
-      id: generateLayerId(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    setLayers(prev => [...prev, newLayer]);
-    setHasUnsavedChanges(true);
-    
-    // Add to history
-    addToHistory({
-      type: 'add',
-      layer: newLayer,
-      sceneId,
-      timestamp: Date.now()
-    });
-    
-    toast.success(`Elemento "${newLayer.name}" adicionado`);
+    try {
+      const newLayer = await sceneLayersService.addLayerToScene(sceneId, layerData);
+      setLayers(prev => [...prev, newLayer]);
+      
+      // Add to history
+      addToHistory({
+        type: 'add',
+        layer: newLayer,
+        sceneId,
+        timestamp: Date.now()
+      });
+      
+      toast.success(`Elemento "${newLayer.name}" adicionado`);
+    } catch (err) {
+      console.error('Error adding layer:', err);
+      toast.error('Erro ao adicionar elemento');
+    }
   }, [sceneId, addToHistory]);
 
   // Update layer

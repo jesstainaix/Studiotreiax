@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Slider } from '../ui/slider';
 import { Badge } from '../ui/badge';
+import { useResponsiveDesign, getTimelineConfig } from './ResponsiveOptimizer';
 import { 
   Play, 
   Pause, 
@@ -75,6 +76,10 @@ export const EnhancedTimelineEditor: React.FC<EnhancedTimelineEditorProps> = ({
   selectedSceneId,
   className = ''
 }) => {
+  // Responsive settings
+  const viewport = useResponsiveDesign();
+  const timelineConfig = getTimelineConfig(viewport);
+  
   // Timeline state
   const timeline = useTimeline();
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
@@ -83,10 +88,10 @@ export const EnhancedTimelineEditor: React.FC<EnhancedTimelineEditorProps> = ({
   const [snappingEnabled, setSnappingEnabled] = useState(true);
   const [rippleEdit, setRippleEdit] = useState(false);
   
-  // UI state
-  const [showWaveforms, setShowWaveforms] = useState(true);
-  const [showMarkers, setShowMarkers] = useState(true);
-  const [trackHeight, setTrackHeight] = useState(80);
+  // UI state (with responsive defaults)
+  const [showWaveforms, setShowWaveforms] = useState(timelineConfig.showWaveforms);
+  const [showMarkers, setShowMarkers] = useState(timelineConfig.showMarkers);
+  const [trackHeight, setTrackHeight] = useState(timelineConfig.trackHeight);
   const [isMultiSelecting, setIsMultiSelecting] = useState(false);
   
   // Refs
