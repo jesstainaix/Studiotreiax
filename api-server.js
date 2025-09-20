@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,9 +17,15 @@ if (process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '
 }
 
 // Middleware
+app.use(compression()); // Enable gzip compression for all responses
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
+}
 
 // Import AI routes
 import aiRoutes from './api/routes/ai.js';
@@ -249,11 +256,23 @@ app.use((error, req, res, next) => {
   });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`AI Backend Server ready on port ${PORT}`);
-  console.log(`Health endpoint: http://localhost:${PORT}/api/health`);
-  console.log(`AI Models: http://localhost:${PORT}/api/ai/models`);
-  console.log(`AI Templates: http://localhost:${PORT}/api/ai/script/templates`);
+// Catch-all handler: send back React's index.html file in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.originalUrl.indexOf('/api/') === 0) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    res.sendFile(path.join(__dirname, 'dist/index.html'));
+  });
+}
+
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 AI Backend Server ready on port ${PORT}`);
+  console.log(`📍 Health endpoint: http://localhost:${PORT}/api/health`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📦 Static files: ${process.env.NODE_ENV === 'production' ? 'Serving from dist/' : 'Not serving (dev mode)'}`);
+  console.log(`🤖 AI Models: http://localhost:${PORT}/api/ai/models`);
+  console.log(`📄 AI Templates: http://localhost:${PORT}/api/ai/script/templates`);
 });
 
 // Graceful shutdown

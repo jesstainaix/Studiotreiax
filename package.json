@@ -11,7 +11,7 @@
     "dev:api": "node api-server.js",
     "dev:full": "concurrently \"npm:dev:frontend\" \"npm:dev:api\"",
     "start": "npm run dev",
-    "start:production": "npm run build && concurrently --kill-others \"npm:serve:backend\" \"npm:serve:frontend\"",
+    "start:production": "NODE_ENV=production node api-server.js",
     "serve:frontend": "vite preview --host 0.0.0.0 --port 5000 --strictPort",
     "serve:backend": "NODE_ENV=production node api-server.js",
     "start:preview": "vite build && vite preview --host 0.0.0.0 --port 5000 --strictPort",
