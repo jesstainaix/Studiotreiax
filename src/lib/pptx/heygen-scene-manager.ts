@@ -1,4 +1,5 @@
-import { PPTXContentExtractor, PPTXProject, PPTXSlide } from './content-extractor';
+import type { PPTXProject, PPTXSlide } from './types';
+import { PPTXContentExtractor } from './content-extractor';
 
 /**
  * HeyGen-style Scene Management System
@@ -149,7 +150,11 @@ export class HeyGenSceneManager {
 
       return heygenProject;
     } catch (error) {
-      console.error('Error converting PPTX to HeyGen project:', error);
+      // Proper error logging that avoids {} objects
+      const errorDetails = error instanceof Error 
+        ? { message: error.message, stack: error.stack }
+        : { message: String(error) };
+      console.error('Error converting PPTX to HeyGen project:', errorDetails);
       throw new Error(`Falha na conversão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   }

@@ -1,102 +1,15 @@
-import { analyzePPTXWithGPT4Vision, analyzeTextContent } from '../ai/vision-analysis'
-import type { AIAnalysisResult } from '../ai/vision-analysis'
-import { PPTXParserService } from '../../services/pptx-parser-service';
-import { EnhancedSlideExtractor } from './enhanced-slide-extractor';
-import { SlideDataValidator, ValidationResult, validateSlideExtraction, generateExtractionReport } from './slide-data-validator';
-import { AutoCorrectionService, validateAndAutoCorrect, AutoCorrectionConfig } from './auto-correction-service';
-import { ParallelProcessor, ProcessingTask, processSlidesBatch } from './parallel-processor';
-import { ProgressTracker, createPPTXExtractionSteps, ProgressCallback } from './progress-tracker';
-import { MultiLayerCache, initializeCache, cacheSlideData, getCachedSlideData, CacheStats } from './multi-layer-cache';
-import { ComplexElementsExtractor, extractComplexElements, type ComplexElement, type ExtractionResult as ComplexExtractionResult } from './complex-elements-extractor';
-
-export interface PPTXSlide {
-  id: string
-  title: string
-  content: string
-  imageUrl?: string
-  images?: Array<{
-    url: string
-    alt: string
-    position?: { x: number; y: number; width: number; height: number }
-    width?: number
-    height?: number
-  }>
-  notes?: string
-  layout: 'title' | 'content' | 'image' | 'mixed'
-  duration: number // in seconds
-  textContent?: string[]
-  bulletPoints?: string[]
-  shapes?: Array<{ type: string; content: string }>
-  slideNumber?: number
-  complexElements?: ComplexElement[]
-  complexElementsMetadata?: {
-    extractionTime: number
-    totalElements: number
-    elementTypes: Record<string, number>
-    errors: number
-    warnings: number
-  }
-}
-
-interface PPTXProject {
-  id: string
-  title: string
-  description: string
-  slides: PPTXSlide[]
-  totalDuration: number
-  category: string
-  complexity: 'basic' | 'intermediate' | 'advanced'
-  aiAnalysis: AIAnalysisResult
-  metadata: {
-    originalFileName: string
-    uploadDate: Date
-    fileSize: number
-    slideCount: number
-    validation?: {
-      isValid: boolean
-      errorsCount: number
-      warningsCount: number
-      extractedElements: {
-        titles: number
-        textContent: number
-        images: number
-        bulletPoints: number
-        shapes: number
-      }
-      missingData: string[]
-    }
-    autoCorrection?: {
-      applied: boolean
-      correctionsCount: number
-      corrections: string[]
-      confidence: number
-    }
-  }
-}
-
-interface ExtractedContent {
-  text: string
-  images: Array<{
-    url: string
-    alt: string
-    position?: { x: number; y: number; width: number; height: number }
-  }>
-  structure: {
-    title: string
-    sections: Array<{
-      heading: string
-      content: string[]
-      images?: Array<{
-        url: string
-        alt: string
-        position?: { x: number; y: number; width: number; height: number }
-      }>
-      textContent?: string[]
-      bulletPoints?: string[]
-      shapes?: Array<{ type: string; content: string }>
-    }>
-  }
-}
+import type { 
+  AIAnalysisResult, 
+  ComplexElement, 
+  ProgressCallback, 
+  PPTXSlide, 
+  PPTXProject, 
+  ExtractedContent,
+  ValidationResult,
+  AutoCorrectionConfig,
+  ProcessingTask,
+  CacheStats
+} from './types';
 
 /**
  * Enhanced PPTX content extractor with AI analysis
@@ -141,7 +54,6 @@ export class PPTXContentExtractor {
       }
       
       if (options.enableAI) {
-        // In production, this would call actual AI services
         aiAnalysis = {
           suggestions: [
             'Adicionar mais elementos visuais',
@@ -157,23 +69,30 @@ export class PPTXContentExtractor {
         }
       }
       
-      // Convert to slides
+      // Convert to slides that conform to PPTXSlide schema
       const slides = await this.convertToSlides(extractedContent, aiAnalysis)
       
-      // Generate cache key
-      const cacheKey = this.generateCacheKey(file.name + file.size + file.lastModified)
+      // Calculate total duration from slides
+      const totalDuration = slides.reduce((total, slide) => total + slide.duration, 0)
       
       const project: PPTXProject = {
         id: `project-${Date.now()}`,
-        name: file.name.replace('.pptx', ''),
+        name: file.name.replace(/\.(pptx|ppt)$/i, ''),
+        description: `Projeto de vídeo criado a partir de ${file.name}`,
         slides,
+        totalDuration,
+        category: 'training',
+        complexity: 'intermediate',
+        aiAnalysis,
         metadata: {
-          originalFile: file.name,
-          extractedAt: new Date().toISOString(),
+          originalFileName: file.name,
+          uploadDate: new Date(),
+          fileSize: file.size,
           slideCount: slides.length,
+          extractedAt: new Date().toISOString(),
           processingTime: Date.now() - startTime,
           aiEnabled: options.enableAI || false,
-          cacheKey
+          cacheKey: this.generateCacheKey(file.name + file.size + file.lastModified)
         },
         settings: {
           theme: 'default',
@@ -190,7 +109,11 @@ export class PPTXContentExtractor {
       return project
       
     } catch (error) {
-      console.error('Erro na extração PPTX:', error)
+      // Proper error logging that avoids {} objects
+      const errorDetails = error instanceof Error 
+        ? { message: error.message, stack: error.stack }
+        : { message: String(error) };
+      console.error('Erro na extração PPTX:', errorDetails);
       throw new Error(`Falha na extração: ${error instanceof Error ? error.message : 'Erro desconhecido'}`)
     }
   }
@@ -198,329 +121,179 @@ export class PPTXContentExtractor {
   /**
    * Generate cache key for extracted content
    */
-  private generateCacheKey(fileInfo: string): string {
+  private generateCacheKey(input: string): string {
     let hash = 0
-    for (let i = 0; i < fileInfo.length; i++) {
-      const char = fileInfo.charCodeAt(i)
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i)
       hash = ((hash << 5) - hash) + char
-      hash = hash & hash // Converte para 32bit integer
+      hash = hash & hash
     }
-    
-    return `pptx-extraction-${Math.abs(hash).toString(36)}`
+    return Math.abs(hash).toString(36)
   }
 
   /**
    * Extract raw content from PPTX file
    */
   private async extractRawContent(file: File): Promise<ExtractedContent> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const reader = new FileReader()
       
-      reader.onload = async (e) => {
-        try {
-          // In production, this would use libraries like:
-          // - pptx-parser for Node.js
-          // - Office.js for browser-based extraction
-          // - mammoth.js for document conversion
-          
-          // Simulate content extraction with enhanced mock data
-          const mockContent = this.generateMockContent(file.name)
-          
-          // Add processing delay to simulate real extraction
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          
-          resolve(mockContent)
-        } catch (error) {
-          reject(error)
-        }
+      reader.onload = () => {
+        const mockContent = this.generateMockContent(file.name)
+        resolve(mockContent)
       }
       
-      reader.onerror = () => reject(new Error('Falha na leitura do arquivo'))
       reader.readAsArrayBuffer(file)
     })
   }
 
   /**
-   * Generate enhanced mock content based on filename
+   * Generate mock content for demo purposes
    */
   private generateMockContent(fileName: string): ExtractedContent {
-    const fileNameLower = fileName.toLowerCase()
-    
-    // Detect content type from filename
-    let contentType = 'general'
-    if (fileNameLower.includes('nr-10') || fileNameLower.includes('eletric')) {
-      contentType = 'electrical'
-    } else if (fileNameLower.includes('nr-35') || fileNameLower.includes('altura')) {
-      contentType = 'height'
-    } else if (fileNameLower.includes('nr-06') || fileNameLower.includes('epi')) {
-      contentType = 'epi'
-    } else if (fileNameLower.includes('nr-18') || fileNameLower.includes('construc')) {
-      contentType = 'construction'
-    }
-    
-    const contentTemplates = {
-      electrical: {
-        title: 'Segurança em Instalações Elétricas - NR-10',
-        sections: [
-          {
-            heading: 'Introdução à NR-10',
-            content: [
-              'Objetivo da norma regulamentadora',
-              'Campo de aplicação',
-              'Responsabilidades do empregador e trabalhador'
-            ]
-          },
-          {
-            heading: 'Riscos Elétricos',
-            content: [
-              'Choque elétrico e seus efeitos',
-              'Arco elétrico e queimaduras',
-              'Campos eletromagnéticos',
-              'Incêndios e explosões'
-            ]
-          },
-          {
-            heading: 'Medidas de Proteção',
-            content: [
-              'Desenergização de circuitos',
-              'Aterramento e equipotencialização',
-              'Seccionamento automático',
-              'Dispositivos de proteção'
-            ]
-          },
-          {
-            heading: 'EPIs e EPCs',
-            content: [
-              'Capacetes dielétricos',
-              'Luvas isolantes',
-              'Calçados de segurança',
-              'Detectores de tensão'
-            ]
-          }
-        ]
-      },
-      height: {
-        title: 'Trabalho em Altura - NR-35',
-        sections: [
-          {
-            heading: 'Conceitos Fundamentais',
-            content: [
-              'Definição de trabalho em altura',
-              'Análise de risco',
-              'Permissão de trabalho',
-              'Supervisão e responsabilidades'
-            ]
-          },
-          {
-            heading: 'Sistemas de Proteção',
-            content: [
-              'Cinturão de segurança tipo paraquedista',
-              'Trava-quedas',
-              'Pontos de ancoragem',
-              'Linhas de vida'
-            ]
-          },
-          {
-            heading: 'Procedimentos Seguros',
-            content: [
-              'Inspeção de equipamentos',
-              'Técnicas de movimentação',
-              'Resgate em altura',
-              'Primeiros socorros'
-            ]
-          }
-        ]
-      },
-      epi: {
-        title: 'Equipamentos de Proteção Individual - NR-06',
-        sections: [
-          {
-            heading: 'Tipos de EPIs',
-            content: [
-              'Proteção da cabeça',
-              'Proteção dos olhos e face',
-              'Proteção respiratória',
-              'Proteção das mãos e braços',
-              'Proteção dos pés e pernas'
-            ]
-          },
-          {
-            heading: 'Seleção e Uso',
-            content: [
-              'Análise de riscos',
-              'Certificado de Aprovação (CA)',
-              'Treinamento para uso',
-              'Manutenção e conservação'
-            ]
-          }
-        ]
-      },
-      construction: {
-        title: 'Segurança na Construção Civil - NR-18',
-        sections: [
-          {
-            heading: 'Organização do Canteiro',
-            content: [
-              'Layout e sinalização',
-              'Áreas de vivência',
-              'Instalações elétricas provisórias',
-              'Proteção contra incêndio'
-            ]
-          },
-          {
-            heading: 'Equipamentos e Ferramentas',
-            content: [
-              'Andaimes e plataformas',
-              'Escadas e rampas',
-              'Máquinas e equipamentos',
-              'Ferramentas manuais'
-            ]
-          }
-        ]
-      },
-      general: {
-        title: 'Segurança do Trabalho - Conceitos Gerais',
-        sections: [
-          {
-            heading: 'Fundamentos da Segurança',
-            content: [
-              'Conceitos básicos de SST',
-              'Legislação trabalhista',
-              'Cultura de segurança',
-              'Prevenção de acidentes'
-            ]
-          },
-          {
-            heading: 'Identificação de Riscos',
-            content: [
-              'Tipos de riscos ocupacionais',
-              'Mapa de riscos',
-              'Análise preliminar de riscos',
-              'Medidas preventivas'
-            ]
-          }
-        ]
-      }
-    }
-    
-    const template = contentTemplates[contentType as keyof typeof contentTemplates] || contentTemplates.general
-    
     return {
-      text: template.sections.map(section => 
-        `${section.heading}\n${section.content.join('\n')}`
-      ).join('\n\n'),
-      images: this.generateMockImages(template.sections.length),
+      text: `Conteúdo extraído de ${fileName}`,
+      images: [
+        {
+          url: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400',
+          alt: 'Slide de apresentação',
+          position: { x: 50, y: 50, width: 300, height: 200 }
+        }
+      ],
       structure: {
-        title: template.title,
-        sections: template.sections
+        title: fileName.replace(/\.(pptx|ppt)$/i, ''),
+        sections: [
+          {
+            heading: 'Introdução',
+            content: ['Bem-vindos à apresentação', 'Objetivos do treinamento'],
+            textContent: ['Bem-vindos à apresentação', 'Objetivos do treinamento'],
+            bulletPoints: ['• Bem-vindos à apresentação', '• Objetivos do treinamento']
+          },
+          {
+            heading: 'Conteúdo Principal', 
+            content: ['Pontos importantes', 'Exemplos práticos', 'Casos de uso'],
+            textContent: ['Pontos importantes', 'Exemplos práticos', 'Casos de uso'],
+            bulletPoints: ['• Pontos importantes', '• Exemplos práticos', '• Casos de uso']
+          },
+          {
+            heading: 'Conclusões',
+            content: ['Resumo dos pontos principais', 'Próximos passos'],
+            textContent: ['Resumo dos pontos principais', 'Próximos passos'],
+            bulletPoints: ['• Resumo dos pontos principais', '• Próximos passos']
+          }
+        ]
       }
     }
   }
 
   /**
-   * Generate mock images with complete metadata for slides
+   * Calculate slide duration based on content
    */
-  private generateMockImages(count: number): Array<{
-    url: string
-    alt: string
-    position?: { x: number; y: number; width: number; height: number }
-  }> {
-    const images: Array<{
-      url: string
-      alt: string
-      position?: { x: number; y: number; width: number; height: number }
-    }> = []
+  private calculateSlideDuration(content: string): number {
+    const words = content.split(/\s+/).length;
+    const baseTimePerWord = 0.4; // seconds per word for Portuguese
+    const baseDuration = words * baseTimePerWord;
     
-    for (let i = 0; i < count; i++) {
-      // Generate different image types based on content
-      const imageTypes = ['diagram', 'equipment', 'procedure', 'warning']
-      const imageType = imageTypes[i % imageTypes.length]
-      
-      images.push({
-        url: `https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(`safety training ${imageType} illustration professional style`)}&image_size=landscape_16_9`,
-        alt: `Ilustração de ${imageType} para treinamento de segurança`,
-        position: {
-          x: 100 + (i * 50), // Simulate different positions
-          y: 100 + (i * 30),
-          width: 400,
-          height: 300
-        }
-      })
-    }
-    return images
+    // Minimum 3 seconds, maximum 60 seconds
+    return Math.max(3, Math.min(60, baseDuration));
   }
 
   /**
-   * Convert extracted content to structured slides with complete data mapping
+   * Convert extracted content to structured slides that conform to PPTXSlide schema
    */
   private async convertToSlides(content: ExtractedContent, aiAnalysis: AIAnalysisResult): Promise<PPTXSlide[]> {
     const slides: PPTXSlide[] = []
     
     try {
-      // Create title slide
+      // Add title slide
+      const titleContent = `${content.structure.title}\n\nApresentação com ${content.structure.sections.length} seções principais`;
       slides.push({
-        id: 'slide-0',
-        title: content.structure?.title || 'Apresentação de Segurança',
-        content: {
-          text: content.structure?.title || 'Treinamento de Segurança do Trabalho',
-          images: content.images.slice(0, 1),
-          layout: 'title'
-        },
-        notes: 'Slide de abertura da apresentação',
-        animations: [],
-        transitions: { type: 'fade', duration: 500 }
+        id: 'slide-title',
+        title: content.structure.title,
+        content: titleContent, // String as required by types.ts
+        layout: 'title',
+        duration: this.calculateSlideDuration(titleContent),
+        images: content.images.slice(0, 1),
+        notes: 'Slide de título da apresentação',
+        animations: [
+          { type: 'fadeIn', duration: 1000, delay: 0 },
+          { type: 'slideInLeft', duration: 800, delay: 500 }
+        ],
+        textContent: [content.structure.title],
+        bulletPoints: [],
+        shapes: [],
+        slideNumber: 1
       })
       
-      // Create content slides from sections
+      // Extract sections from content
       if (content.structure?.sections) {
         content.structure.sections.forEach((section, index) => {
+          const slideContent = section.content.join('\n');
+          
           slides.push({
-            id: `slide-${index + 1}`,
+            id: `slide-${index + 2}`,
             title: section.heading,
-            content: {
-              text: section.content.join('\n'),
-              images: content.images.slice(index, index + 1),
-              layout: 'content'
-            },
+            content: slideContent, // String as required by types.ts
+            images: content.images.slice(index, index + 1),
+            layout: 'content',
+            duration: this.calculateSlideDuration(slideContent),
             notes: `Slide sobre ${section.heading}`,
             animations: [
-              { type: 'fadeIn', target: 'title', delay: 0 },
-              { type: 'slideInLeft', target: 'content', delay: 300 }
+              { type: 'fadeIn', duration: 500, delay: 0 },
+              { type: 'slideInLeft', duration: 800, delay: 300 }
             ],
-            transitions: { type: 'slide', duration: 600 }
+            textContent: section.textContent || section.content,
+            bulletPoints: section.bulletPoints || [],
+            shapes: [],
+            slideNumber: index + 2
           })
         })
       }
       
       // Add summary slide
+      const summaryContent = 'Pontos principais abordados:\n' + 
+        (content.structure?.sections?.map(s => `• ${s.heading}`).join('\n') || '');
+      
       slides.push({
-        id: `slide-${slides.length}`,
+        id: `slide-summary`,
         title: 'Resumo e Conclusões',
-        content: {
-          text: 'Pontos principais abordados:\n' + 
-                (content.structure?.sections?.map(s => `• ${s.heading}`).join('\n') || ''),
-          images: content.images.slice(-1),
-          layout: 'summary'
-        },
+        content: summaryContent, // String as required by types.ts
+        images: content.images.slice(-1),
+        layout: 'content',
+        duration: this.calculateSlideDuration(summaryContent),
         notes: 'Slide de resumo da apresentação',
-        animations: [],
-        transitions: { type: 'fade', duration: 500 }
+        animations: [
+          { type: 'fade', duration: 500, delay: 0 }
+        ],
+        textContent: [summaryContent],
+        bulletPoints: content.structure?.sections?.map(s => `• ${s.heading}`) || [],
+        shapes: [],
+        slideNumber: slides.length + 1
       })
       
     } catch (error) {
-      console.error('Erro ao converter conteúdo em slides:', error)
+      // Proper error logging that avoids {} objects
+      const errorDetails = error instanceof Error 
+        ? { message: error.message, stack: error.stack }
+        : { message: String(error) };
+      console.error('Erro ao converter conteúdo em slides:', errorDetails);
+      
       // Return at least one slide in case of error
       slides.push({
         id: 'slide-error',
         title: 'Erro na Conversão',
-        content: {
-          text: 'Ocorreu um erro ao processar o conteúdo.',
-          images: [],
-          layout: 'error'
-        },
+        content: 'Ocorreu um erro ao processar o conteúdo.', // String as required by types.ts
+        layout: 'content',
+        duration: 3,
+        images: [],
         notes: 'Slide de erro',
-        animations: [],
-        transitions: { type: 'fade', duration: 500 }
+        animations: [
+          { type: 'fade', duration: 500, delay: 0 }
+        ],
+        textContent: ['Ocorreu um erro ao processar o conteúdo.'],
+        bulletPoints: [],
+        shapes: [],
+        slideNumber: 1
       })
     }
     
