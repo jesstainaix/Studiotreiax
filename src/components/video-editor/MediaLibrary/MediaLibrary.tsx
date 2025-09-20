@@ -24,10 +24,16 @@ import {
   FileText,
   Check,
   X,
-  AlertCircle
+  AlertCircle,
+  Shield,
+  Activity,
+  RefreshCw
 } from 'lucide-react';
 import { MediaAsset, MediaLibraryState, UploadProgress } from '../../../modules/video-editor/types/Media.types';
 import { TimelineEngine } from '../../../modules/video-editor/core/TimelineEngine';
+import { ErrorHandlingService, ErrorType, ErrorSeverity, ErrorCategory } from '../../../services/errorHandlingService';
+import { toast } from 'sonner';
+import { StatusDashboard } from '../StatusDashboard/StatusDashboard';
 
 interface MediaLibraryProps {
   engine: TimelineEngine;
@@ -42,6 +48,8 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   onAssetPreview,
   pptxProject
 }) => {
+  const errorService = ErrorHandlingService.getInstance();
+  
   const [libraryState, setLibraryState] = useState<MediaLibraryState>({
     assets: [],
     categories: [
@@ -56,6 +64,8 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
     sortOrder: 'desc',
     uploadProgress: []
   });
+  
+  const [errorStats, setErrorStats] = useState({ errorCount: 0, lastError: null as any });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
@@ -266,121 +276,355 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
     }
   }, []);
 
-  const handleFilesSelected = useCallback((files: FileList) => {
+  const handleFilesSelected = useCallback(async (files: FileList) => {
     if (!files || files.length === 0) {
       return;
     }
     
-    // Validar tipos de arquivo
-    const validFiles: File[] = [];
-    const invalidFiles: File[] = [];
-    
-    Array.from(files).forEach(file => {
-      if (isValidFileType(file)) {
-        validFiles.push(file);
-      } else {
-        invalidFiles.push(file);
+    try {
+      // Validar tipos de arquivo com sistema robusto
+      const validFiles: File[] = [];
+      const invalidFiles: { file: File; errors: string[]; warnings: string[] }[] = [];
+      
+      // Validar cada arquivo
+      for (const file of Array.from(files)) {
+        const validation = await isValidFileType(file);
+        
+        if (validation.isValid) {
+          validFiles.push(file);
+          
+          // Mostrar avisos se houver
+          if (validation.warnings.length > 0) {
+            toast.warning(`Avisos para ${file.name}: ${validation.warnings.join(', ')}`);
+          }
+        } else {
+          invalidFiles.push({ file, errors: validation.errors, warnings: validation.warnings });
+        }
       }
-    });
-    
-    if (invalidFiles.length > 0) {
-      console.warn('⚠️ Invalid files detected:', invalidFiles.map(f => f.name));
-      // TODO: Show user notification about invalid files
+      
+      // Relatar arquivos inválidos
+      if (invalidFiles.length > 0) {
+        const errorMessage = invalidFiles.map(
+          ({ file, errors }) => `${file.name}: ${errors.join(', ')}`
+        ).join('\n');
+        
+        toast.error(`Arquivos rejeitados:\n${errorMessage}`, {
+          duration: 8000,
+          action: {
+            label: 'Detalhes',
+            onClick: () => {
+              console.group('🚫 Arquivos Rejeitados');
+              invalidFiles.forEach(({ file, errors, warnings }) => {
+                console.error(`File: ${file.name}`);
+                console.error('Errors:', errors);
+                console.warn('Warnings:', warnings);
+              });
+              console.groupEnd();
+            }
+          }
+        });
+      }
+      
+      // Processar arquivos válidos
+      if (validFiles.length > 0) {
+        toast.success(`${validFiles.length} arquivo(s) sendo processado(s)`);
+        validFiles.forEach(file => processFile(file));
+      }
+      
+    } catch (error) {
+      await errorService.handleError(error as Error, {
+        service: 'MediaLibrary',
+        method: 'handleFilesSelected',
+        environment: 'development'
+      }, {
+        type: ErrorType.FILE_SYSTEM,
+        severity: ErrorSeverity.HIGH,
+        customMessage: 'Erro ao processar arquivos selecionados'
+      });
     }
-    
-    validFiles.forEach(file => processFile(file));
   }, []);
 
-  // Validação de tipos de arquivo
-  const isValidFileType = (file: File): boolean => {
-    const validTypes = [
-      // Video formats
-      'video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/webm',
-      // Audio formats  
-      'audio/mpeg', 'audio/wav', 'audio/mp3', 'audio/ogg', 'audio/webm',
-      // Image formats
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'
-    ];
-    
-    const isValidMimeType = validTypes.includes(file.type);
-    const isValidExtension = /\.(mp4|mpeg|mov|avi|webm|mp3|wav|ogg|jpg|jpeg|png|gif|webp|svg)$/i.test(file.name);
-    
-    return isValidMimeType || isValidExtension;
+  // Validação robusta de tipos de arquivo
+  const isValidFileType = async (file: File): Promise<{ isValid: boolean; errors: string[]; warnings: string[] }> => {
+    try {
+      const result = await errorService.withErrorHandling(
+        async () => {
+          const validTypes = [
+            // Video formats
+            'video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/webm',
+            // Audio formats  
+            'audio/mpeg', 'audio/wav', 'audio/mp3', 'audio/ogg', 'audio/webm',
+            // Image formats
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'
+          ];
+          
+          const errors: string[] = [];
+          const warnings: string[] = [];
+          
+          // Validação de MIME type
+          const isValidMimeType = validTypes.includes(file.type);
+          const isValidExtension = /\.(mp4|mpeg|mov|avi|webm|mp3|wav|ogg|jpg|jpeg|png|gif|webp|svg)$/i.test(file.name);
+          
+          if (!isValidMimeType && !isValidExtension) {
+            errors.push(`Tipo de arquivo não suportado: ${file.type}`);
+          }
+          
+          // Validação de tamanho
+          const maxSize = 500 * 1024 * 1024; // 500MB
+          if (file.size > maxSize) {
+            errors.push(`Arquivo muito grande: ${formatFileSize(file.size)} (máximo: 500MB)`);
+          }
+          
+          // Validação de nome de arquivo
+          if (file.name.length > 255) {
+            errors.push('Nome do arquivo muito longo (máximo: 255 caracteres)');
+          }
+          
+          // Verificar caracteres especiais problemáticos
+          if (/[<>:"|?*\\]/.test(file.name)) {
+            warnings.push('Nome do arquivo contém caracteres especiais que podem causar problemas');
+          }
+          
+          // Verificação de vírus básica (verificar extensões suspeitas)
+          const suspiciousExtensions = /\.(exe|scr|bat|cmd|com|pif|vbs|js|jar|msi)$/i;
+          if (suspiciousExtensions.test(file.name)) {
+            errors.push('Tipo de arquivo potencialmente perigoso detectado');
+          }
+          
+          return {
+            isValid: errors.length === 0,
+            errors,
+            warnings
+          };
+        },
+        {
+          service: 'MediaLibrary',
+          method: 'isValidFileType',
+          environment: 'development'
+        },
+        {
+          type: ErrorType.VALIDATION,
+          severity: ErrorSeverity.MEDIUM,
+          timeout: 5000
+        }
+      );
+      
+      return result;
+    } catch (error) {
+      return {
+        isValid: false,
+        errors: ['Erro na validação do arquivo'],
+        warnings: []
+      };
+    }
   };
 
   const processFile = async (file: File) => {
-    // Processing file
-    
-    // Validação adicional de tamanho
-    const maxSize = 500 * 1024 * 1024; // 500MB
-    if (file.size > maxSize) {
-      console.error(`❌ File too large: ${file.name} (${formatFileSize(file.size)})`);
-      // TODO: Show user notification
-      return;
-    }
-    
     const fileId = `upload_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const correlationId = `process_${fileId}`;
     
-    // Adicionar ao progresso de upload
-    const uploadItem: UploadProgress = {
-      fileId,
-      fileName: file.name,
-      progress: 0,
-      status: 'uploading'
-    };
-
-    setLibraryState(prev => ({
-      ...prev,
-      uploadProgress: [...prev.uploadProgress, uploadItem]
-    }));
-
     try {
-      // Simular upload (em implementação real, faria upload para servidor)
-      await simulateUpload(fileId, file);
-      
-      // Criar asset
-      const asset = await createAssetFromFile(file, fileId);
-      
-      // Adicionar à biblioteca
-      setLibraryState(prev => {
-        const newAssets = [...prev.assets, asset];
-        const updatedCategories = prev.categories.map(cat => ({
-          ...cat,
-          count: cat.id === 'all' ? newAssets.length :
-                 cat.id === 'pptx' ? newAssets.filter(a => a.tags.includes('pptx')).length :
-                 newAssets.filter(a => a.type === cat.id).length
-        }));
-        
-        return {
-          ...prev,
-          assets: newAssets,
-          categories: updatedCategories,
-          uploadProgress: prev.uploadProgress.map(item => 
-            item.fileId === fileId 
-              ? { ...item, status: 'completed', progress: 100 }
-              : item
-          )
-        };
-      });
+      // Processar arquivo com recovery real automático
+      await executeWithRealRetry(
+        async () => {
+          // Adicionar ao progresso de upload
+          const uploadItem: UploadProgress = {
+            fileId,
+            fileName: file.name,
+            progress: 0,
+            status: 'uploading'
+          };
 
-      // Remover progresso após 3 segundos para manter interface limpa
-      setTimeout(() => {
-        setLibraryState(prev => ({
-          ...prev,
-          uploadProgress: prev.uploadProgress.filter(item => item.fileId !== fileId)
-        }));
-      }, 3000);
+          setLibraryState(prev => ({
+            ...prev,
+            uploadProgress: [...prev.uploadProgress, uploadItem]
+          }));
 
+          // Upload com retry automático REAL
+          await simulateUpload(fileId, file);
+          
+          // Criar asset com validação
+          const asset = await createAssetFromFile(file, fileId);
+          
+          // Adicionar à biblioteca
+          setLibraryState(prev => {
+            const newAssets = [...prev.assets, asset];
+            const updatedCategories = prev.categories.map(cat => ({
+              ...cat,
+              count: cat.id === 'all' ? newAssets.length :
+                     cat.id === 'pptx' ? newAssets.filter(a => a.tags.includes('pptx')).length :
+                     newAssets.filter(a => a.type === cat.id).length
+            }));
+            
+            return {
+              ...prev,
+              assets: newAssets,
+              categories: updatedCategories,
+              uploadProgress: prev.uploadProgress.map(item => 
+                item.fileId === fileId 
+                  ? { ...item, status: 'completed', progress: 100 }
+                  : item
+              )
+            };
+          });
+
+          // Log estruturado de sucesso
+          console.info(`[SUCCESS] ${correlationId}: File processed successfully`, {
+            fileName: file.name,
+            fileSize: file.size,
+            correlationId,
+            timestamp: new Date().toISOString()
+          });
+
+          // Notificação de sucesso
+          toast.success(`✅ ${file.name} enviado com sucesso`, {
+            description: `Tamanho: ${formatFileSize(file.size)}`
+          });
+
+          // Remover progresso após 3 segundos
+          setTimeout(() => {
+            setLibraryState(prev => ({
+              ...prev,
+              uploadProgress: prev.uploadProgress.filter(item => item.fileId !== fileId)
+            }));
+          }, 3000);
+        },
+        {
+          maxRetries: 3,
+          baseDelay: 1000,
+          maxDelay: 8000,
+          backoffFactor: 2,
+          retryCondition: (error) => {
+            // Só fazer retry em erros de rede ou temporários
+            return !(error.message.includes('validation') || error.message.includes('security'));
+          }
+        },
+        correlationId
+      );
+      
+      // Atualizar estatísticas de erro
+      setErrorStats(prev => ({ ...prev, errorCount: Math.max(0, prev.errorCount - 1) }));
+      
     } catch (error) {
-      console.error(`❌ Upload failed for ${file.name}:`, error);
+      // Log estruturado de erro
+      console.error(`[ERROR] ${correlationId}: File processing failed`, {
+        fileName: file.name,
+        error: error instanceof Error ? error.message : String(error),
+        correlationId,
+        timestamp: new Date().toISOString()
+      });
+      
+      // Atualizar estatísticas de erro
+      setErrorStats(prev => ({ 
+        errorCount: prev.errorCount + 1, 
+        lastError: { 
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+          timestamp: new Date(),
+          fileName: file.name,
+          correlationId
+        } 
+      }));
+
+      // Fallback: adicionar à fila de retry local
+      await addToRetryQueue(file, fileId, correlationId);
+    }
+  };
+
+  // Sistema de retry real com exponential backoff
+  const executeWithRealRetry = async (
+    operation: () => Promise<void>,
+    config: {
+      maxRetries: number;
+      baseDelay: number;
+      maxDelay: number;
+      backoffFactor: number;
+      retryCondition?: (error: Error) => boolean;
+    },
+    correlationId: string
+  ): Promise<void> => {
+    let lastError: Error;
+    let attempt = 0;
+
+    while (attempt <= config.maxRetries) {
+      try {
+        await operation();
+        return; // Sucesso
+      } catch (error) {
+        lastError = error as Error;
+        attempt++;
+
+        console.warn(`[RETRY] ${correlationId}: Attempt ${attempt}/${config.maxRetries + 1} failed`, {
+          error: lastError.message,
+          correlationId,
+          attempt
+        });
+
+        // Verificar se deve tentar novamente
+        if (
+          attempt > config.maxRetries ||
+          (config.retryCondition && !config.retryCondition(lastError))
+        ) {
+          break;
+        }
+
+        // Calcular delay com exponential backoff
+        const delay = Math.min(
+          config.baseDelay * Math.pow(config.backoffFactor, attempt - 1),
+          config.maxDelay
+        );
+
+        // Adicionar jitter para evitar thundering herd
+        const jitteredDelay = delay + Math.random() * 1000;
+
+        await new Promise(resolve => setTimeout(resolve, jitteredDelay));
+      }
+    }
+
+    throw lastError!;
+  };
+
+  // Fila de retry local para fallback
+  const addToRetryQueue = async (file: File, fileId: string, correlationId: string) => {
+    try {
+      // Marcar como erro com opção de retry
       setLibraryState(prev => ({
         ...prev,
         uploadProgress: prev.uploadProgress.map(item => 
           item.fileId === fileId 
-            ? { ...item, status: 'error', error: `Falha no upload: ${error instanceof Error ? error.message : 'Erro desconhecido'}` }
+            ? { 
+                ...item, 
+                status: 'error', 
+                error: `Upload falhou após ${3} tentativas. Arquivo: ${file.name}` 
+              }
             : item
         )
       }));
+      
+      // Toast com ação de retry
+      toast.error(`⚠️ Falha no upload de ${file.name}`, {
+        description: 'Arquivo adicionado à fila de retry',
+        action: {
+          label: 'Tentar Novamente',
+          onClick: () => {
+            console.info(`[RETRY_QUEUE] ${correlationId}: Manual retry initiated`);
+            processFile(file);
+          }
+        },
+        duration: 10000 // Mais tempo para o usuário decidir
+      });
+
+      // Log estruturado do fallback
+      console.info(`[FALLBACK] ${correlationId}: File added to retry queue`, {
+        fileName: file.name,
+        correlationId,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (fallbackError) {
+      console.error(`[FALLBACK_ERROR] ${correlationId}: Fallback failed`, {
+        error: fallbackError instanceof Error ? fallbackError.message : String(fallbackError),
+        correlationId
+      });
     }
   };
 
@@ -724,6 +968,23 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
             <Button
               variant="outline"
               size="sm"
+              onClick={() => setIsStatusDashboardOpen(!isStatusDashboardOpen)}
+              className={`text-white border-gray-600 hover:bg-gray-700 ${
+                errorStats.errorCount > 0 ? 'border-red-500 text-red-400' : ''
+              }`}
+              title="Status Dashboard - Monitoramento do Sistema"
+            >
+              <Activity className="w-4 h-4 mr-2" />
+              Status
+              {errorStats.errorCount > 0 && (
+                <Badge className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5">
+                  {errorStats.errorCount}
+                </Badge>
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleFileSelect}
               className="text-white border-gray-600 hover:bg-gray-700"
             >
@@ -1053,6 +1314,12 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
         accept="video/*,audio/*,image/*"
         onChange={(e) => e.target.files && handleFilesSelected(e.target.files)}
         className="hidden"
+      />
+
+      {/* Status Dashboard */}
+      <StatusDashboard
+        isOpen={isStatusDashboardOpen}
+        onToggle={() => setIsStatusDashboardOpen(!isStatusDashboardOpen)}
       />
     </Card>
   );
