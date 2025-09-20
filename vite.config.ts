@@ -17,13 +17,13 @@ export default defineConfig(({ mode }) => ({
     })] : []),
     // Compression plugins only in production
     ...(mode === 'production' ? [
-      viteCompression.default({
+      viteCompression({
         algorithm: 'gzip',
         ext: '.gz',
         deleteOriginFile: false,
         threshold: 1024,
       }),
-      viteCompression.default({
+      viteCompression({
         algorithm: 'brotliCompress',
         ext: '.br',
         deleteOriginFile: false,
