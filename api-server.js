@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 import aiRoutes from './api/routes/ai.js';
 import ttsRoutes from './api/routes/tts.js';
 import authRoutes from './api/routes/auth.js';
+import pptxRoutes from './api/routes/pptx.js';
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -37,6 +38,9 @@ app.use('/api/tts', ttsRoutes);
 
 // Auth endpoints
 app.use('/api/auth', authRoutes);
+
+// PPTX endpoints - Phase 1 Implementation
+app.use('/api/pptx', pptxRoutes);
 
 // Pipeline endpoints - Mock implementations
 app.post('/api/pipeline/start', (req, res) => {

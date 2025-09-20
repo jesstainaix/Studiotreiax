@@ -1,0 +1,22 @@
+{
+  "deck_id": "test_deck_123",
+  "source_file": "test.pptx",
+  "slides": [
+    {
+      "id": 1,
+      "image": "slides/slide_1.png",
+      "title": "NR-10 Introdução",
+      "text": "• Riscos elétricos\n• Medidas preventivas\n• EPI obrigatório",
+      "notes": "ênfase em EPI",
+      "suggestedDurationSec": 8
+    },
+    {
+      "id": 2,
+      "image": "slides/slide_2.png",
+      "title": "Procedimentos de Segurança",
+      "text": "• Verificação de tensão\n• Bloqueio e etiquetagem\n• Equipamentos de proteção",
+      "notes": "demonstrar procedimentos",
+      "suggestedDurationSec": 12
+    }
+  ]
+}
