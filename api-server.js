@@ -10,6 +10,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Configure trust proxy for production environment
+if (process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));

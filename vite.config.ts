@@ -167,11 +167,20 @@ export default defineConfig(({ mode }) => ({
     }
   },
   
-  // Preview server configuration
+  // Preview server configuration for production
   preview: {
-    port: 4173,
-    host: true,
-    open: true,
+    port: 5000,
+    host: '0.0.0.0',
+    strictPort: true,
+    cors: true,
+    // Production proxy configuration
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
   
   // Optimization configuration melhorado
