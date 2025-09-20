@@ -13,6 +13,7 @@ import Settings from '../pages/Settings';
 import StudioMainInterface from './StudioMainInterface';
 import VideoEditorDashboard from './video-editor/VideoEditorDashboard';
 import VFXStudioPage from '../pages/VFXStudioPage';
+import Environment3DPage from '../pages/Environment3D';
 
 // Componente de loading
 const LoadingSpinner = () => (
@@ -66,6 +67,10 @@ const AppRouter: React.FC = () => {
         <Route 
           path="/vfx-studio" 
           element={<VFXStudioPage />} 
+        />
+        <Route 
+          path="/environment-3d" 
+          element={<Environment3DPage />} 
         />
         <Route 
           path="/pptx-studio" 

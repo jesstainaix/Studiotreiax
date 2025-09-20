@@ -126,6 +126,39 @@ const VegetationSystem: React.FC<{
   types: string[];
 }> = ({ terrain, size, density, types }) => {
   const instancesRef = useRef<THREE.InstancedMesh[]>([]);
+  
+  // Generate deterministic vegetation positions once
+  const vegetationData = React.useMemo(() => {
+    const data: Array<{x: number; z: number; y: number; rotation: number; scale: number; type: string}> = [];
+    let seed = 42;
+    const seededRandom = () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+    
+    types.forEach(type => {
+      const count = Math.floor(density * 100);
+      for (let i = 0; i < count; i++) {
+        const x = (seededRandom() - 0.5) * size;
+        const z = (seededRandom() - 0.5) * size;
+        
+        // Fix terrain height lookup
+        const resolution = Math.sqrt(terrain.length);
+        const gridX = Math.floor(((x + size/2) / size) * resolution);
+        const gridZ = Math.floor(((z + size/2) / size) * resolution);
+        const terrainIndex = Math.max(0, Math.min(terrain.length - 1, gridZ * resolution + gridX));
+        const y = terrain[terrainIndex] || 0;
+        
+        data.push({
+          x, y, z,
+          rotation: seededRandom() * Math.PI * 2,
+          scale: 0.5 + seededRandom() * 0.5,
+          type
+        });
+      }
+    });
+    return data;
+  }, [terrain, size, density, types]);
 
   useEffect(() => {
     // Limpar instâncias anteriores
@@ -135,36 +168,38 @@ const VegetationSystem: React.FC<{
     });
     instancesRef.current = [];
 
-    // Criar novas instâncias de vegetação
-    types.forEach(type => {
-      const count = Math.floor(density * 100);
+    // Group vegetation by type
+    const typeGroups = vegetationData.reduce((acc, item) => {
+      if (!acc[item.type]) acc[item.type] = [];
+      acc[item.type].push(item);
+      return acc;
+    }, {} as Record<string, typeof vegetationData>);
+    
+    // Create instances for each type
+    Object.entries(typeGroups).forEach(([type, items]) => {
+      if (items.length === 0) return;
+      
       const geometry = getVegetationGeometry(type);
       const material = new THREE.MeshStandardMaterial({
         color: type === 'tree' ? 0x2d5a2d : 0x4a7a4a,
         roughness: 0.8
       });
 
-      const instancedMesh = new THREE.InstancedMesh(geometry, material, count);
+      const instancedMesh = new THREE.InstancedMesh(geometry, material, items.length);
       const dummy = new THREE.Object3D();
 
-      for (let i = 0; i < count; i++) {
-        const x = (Math.random() - 0.5) * size;
-        const z = (Math.random() - 0.5) * size;
-        const terrainIndex = Math.floor((x + size/2) * (z + size/2));
-        const y = terrain[Math.abs(terrainIndex) % terrain.length];
-
-        dummy.position.set(x, y, z);
-        dummy.rotation.y = Math.random() * Math.PI * 2;
-        dummy.scale.setScalar(0.5 + Math.random() * 0.5);
+      items.forEach((item, i) => {
+        dummy.position.set(item.x, item.y, item.z);
+        dummy.rotation.y = item.rotation;
+        dummy.scale.setScalar(item.scale);
         dummy.updateMatrix();
-
         instancedMesh.setMatrixAt(i, dummy.matrix);
-      }
+      });
 
       instancedMesh.instanceMatrix.needsUpdate = true;
       instancesRef.current.push(instancedMesh);
     });
-  }, [terrain, size, density, types]);
+  }, [vegetationData]);
 
   const getVegetationGeometry = (type: string): THREE.BufferGeometry => {
     switch (type) {
@@ -402,8 +437,9 @@ export const TerrainEditor: React.FC = () => {
 
   const handleTerrainEdit = useCallback((x: number, z: number, brushSettings: BrushSettings) => {
     const newHeightMap = new Float32Array(heightMap);
-    const gridX = Math.floor((x / terrainSize) * resolution);
-    const gridZ = Math.floor((z / terrainSize) * resolution);
+    // Fix terrain coordinate mapping
+    const gridX = Math.floor(((x + terrainSize / 2) / terrainSize) * resolution);
+    const gridZ = Math.floor(((z + terrainSize / 2) / terrainSize) * resolution);
     const brushRadius = Math.floor(brushSettings.size / 2);
 
     for (let i = -brushRadius; i <= brushRadius; i++) {
@@ -412,7 +448,8 @@ export const TerrainEditor: React.FC = () => {
         const targetZ = gridZ + j;
 
         if (targetX >= 0 && targetX < resolution && targetZ >= 0 && targetZ < resolution) {
-          const index = targetX * resolution + targetZ;
+          // Fix index calculation for 2D grid
+          const index = targetZ * resolution + targetX;
           const distance = Math.sqrt(i * i + j * j);
 
           if (distance <= brushRadius) {
