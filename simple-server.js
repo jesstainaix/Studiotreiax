@@ -11,6 +11,11 @@ import fs from 'fs';
 // Import avatar management handlers
 import sceneConfigHandlers from './api/scene-config/index.js';
 import avatarGenerateHandlers from './api/avatars/generate.js';
+// Import render API handlers  
+import renderApi from './server/api/render.js';
+
+// Store for tracking render jobs and their event streams
+const renderJobStreams = new Map();
 
 // Load environment variables
 dotenv.config();
@@ -276,6 +281,77 @@ app.put('/api/scene-config', sceneConfigHandlers.handlePut);
 
 // Avatar Generation Routes
 app.post('/api/avatars/generate', avatarGenerateHandlers.handlePost);
+
+// Render API Routes
+app.use('/api/render', renderApi);
+
+// Server-Sent Events endpoint for render progress
+app.get('/api/render/:jobId/stream', (req, res) => {
+  const jobId = req.params.jobId;
+  
+  // Set headers for SSE
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Cache-Control'
+  });
+
+  // Send initial connection message
+  res.write(`data: ${JSON.stringify({ 
+    type: 'connected', 
+    jobId, 
+    timestamp: Date.now() 
+  })}\n\n`);
+
+  // Store the response object for this job
+  if (!renderJobStreams.has(jobId)) {
+    renderJobStreams.set(jobId, new Set());
+  }
+  renderJobStreams.get(jobId).add(res);
+
+  // Clean up when client disconnects
+  req.on('close', () => {
+    const streams = renderJobStreams.get(jobId);
+    if (streams) {
+      streams.delete(res);
+      if (streams.size === 0) {
+        renderJobStreams.delete(jobId);
+      }
+    }
+  });
+
+  // Keep connection alive
+  const keepAlive = setInterval(() => {
+    res.write(`data: ${JSON.stringify({ 
+      type: 'heartbeat', 
+      timestamp: Date.now() 
+    })}\n\n`);
+  }, 30000);
+
+  req.on('close', () => {
+    clearInterval(keepAlive);
+  });
+});
+
+// Helper function to broadcast progress to all connected clients
+function broadcastProgress(jobId, data) {
+  const streams = renderJobStreams.get(jobId);
+  if (streams) {
+    const message = `data: ${JSON.stringify(data)}\n\n`;
+    streams.forEach(res => {
+      try {
+        res.write(message);
+      } catch (error) {
+        streams.delete(res);
+      }
+    });
+  }
+}
+
+// Export the broadcast function for use in render API
+app.locals.broadcastProgress = broadcastProgress;
 
 // API info endpoint
 app.get('/api/info', (req, res) => {
