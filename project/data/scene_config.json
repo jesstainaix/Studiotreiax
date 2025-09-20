@@ -1,0 +1,50 @@
+{
+  "deck_id": "example_deck_uuid",
+  "created_at": "2025-09-20T12:00:00Z",
+  "updated_at": "2025-09-20T12:00:00Z",
+  "scenes": [
+    {
+      "slide_id": 1,
+      "avatarId": "avatar_corporativo_1",
+      "avatarPose": "neutral",
+      "avatarPlacement": {
+        "x": 0.72,
+        "y": 0.65,
+        "scale": 0.9
+      },
+      "avatarConfig": {
+        "voice": "br-female-adult-1",
+        "expression": "neutral",
+        "animation": "idle-neutral"
+      }
+    },
+    {
+      "slide_id": 2,
+      "avatarId": "avatar_custom_joao",
+      "avatarPose": "presenting",
+      "avatarPlacement": {
+        "x": 0.8,
+        "y": 0.6,
+        "scale": 1.0
+      },
+      "avatarConfig": {
+        "voice": "br-male-adult-1",
+        "expression": "confident",
+        "animation": "gesture-hello"
+      }
+    }
+  ],
+  "defaultSettings": {
+    "avatarPlacement": {
+      "x": 0.75,
+      "y": 0.65,
+      "scale": 0.9
+    },
+    "avatarPose": "neutral",
+    "avatarConfig": {
+      "voice": "br-female-adult-1",
+      "expression": "neutral",
+      "animation": "idle-neutral"
+    }
+  }
+}
