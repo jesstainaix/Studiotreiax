@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Sistema de Expressões - Advanced VFX Engine</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .test-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-panel h3 {
+            margin-top: 0;
+            color: #4fc3f7;
+            font-size: 1.4em;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        input, select, button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 14px;
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        button {
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 195, 247, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .canvas-container {
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 300px;
+        }
+        
+        .info-panel {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .expression-editor {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+        
+        .node-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .node-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #4fc3f7;
+        }
+        
+        .node-item h4 {
+            margin: 0 0 10px 0;
+            color: #4fc3f7;
+        }
+        
+        .node-properties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+        
+        .property {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .property-name {
+            opacity: 0.8;
+        }
+        
+        .property-value {
+            font-weight: bold;
+            color: #81c784;
+        }
+        
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-slider {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .timeline-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4fc3f7;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #4caf50;
+        }
+        
+        .status-error {
+            background: #f44336;
+        }
+        
+        .status-warning {
+            background: #ff9800;
+        }
+        
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .node-properties {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Sistema de Expressões JavaScript</h1>
+            <p>Teste avançado de automação de efeitos com expressões temporais</p>
+        </div>
+        
+        <div class="test-grid">
+            <!-- Painel de Controle Temporal -->
+            <div class="test-panel">
+                <h3>⏱️ Controle Temporal</h3>
+                
+                <div class="timeline-controls">
+                    <button id="playBtn">▶️ Play</button>
+                    <button id="pauseBtn">⏸️ Pause</button>
+                    <button id="stopBtn">⏹️ Stop</button>
+                    <input type="range" id="timeSlider" class="timeline-slider" min="0" max="10" step="0.1" value="0">
+                    <span id="timeDisplay">0.0s</span>
+                </div>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Duração (s)</label>
+                        <input type="number" id="duration" value="10" min="1" max="60">
+                    </div>
+                    <div class="control-group">
+                        <label>FPS</label>
+                        <input type="number" id="fps" value="30" min="1" max="60">
+                    </div>
+                    <div class="control-group">
+                        <label>Velocidade</label>
+                        <input type="number" id="playbackRate" value="1" min="0.1" max="5" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label>Loop</label>
+                        <input type="checkbox" id="loop" checked>
+                    </div>
+                </div>
+                
+                <button id="updateTimeline">Atualizar Timeline</button>
+            </div>
+            
+            <!-- Painel de Expressões -->
+            <div class="test-panel">
+                <h3>📝 Editor de Expressões</h3>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Nó</label>
+                        <select id="nodeSelect">
+                            <option value="">Selecione um nó...</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Propriedade</label>
+                        <input type="text" id="propertyName" placeholder="Ex: opacity, scale.x, rotation.z">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Expressão JavaScript</label>
+                    <textarea id="expressionEditor" class="expression-editor" placeholder="Ex: Math.sin(time * 2) * 0.5 + 0.5"></textarea>
+                </div>
+                
+                <div class="controls">
+                    <button id="setExpression">Definir Expressão</button>
+                    <button id="removeExpression">Remover Expressão</button>
+                    <button id="testExpression">Testar Expressão</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-grid">
+            <!-- Painel de Visualização -->
+            <div class="test-panel">
+                <h3>🎨 Visualização</h3>
+                
+                <div class="canvas-container">
+                    <canvas id="previewCanvas" width="600" height="300"></canvas>
+                </div>
+                
+                <div class="controls">
+                    <button id="createTestNodes">Criar Nós de Teste</button>
+                    <button id="clearNodes">Limpar Nós</button>
+                    <button id="processNodes">Processar Nós</button>
+                </div>
+            </div>
+            
+            <!-- Painel de Informações -->
+            <div class="test-panel">
+                <h3>📊 Informações do Sistema</h3>
+                
+                <div class="info-panel" id="systemInfo">
+                    <div>Carregando informações do sistema...</div>
+                </div>
+                
+                <div class="node-list" id="nodeList">
+                    <!-- Nós serão listados aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { NodeBasedCompositor } from '/src/services/NodeBasedCompositor.ts';
+        import { temporalContextManager } from '/src/services/TemporalContextManager.ts';
+        import { expressionEngine } from '/src/services/ExpressionEngine.ts';
+        
+        class ExpressionSystemTest {
+            constructor() {
+                this.canvas = document.getElementById('previewCanvas');
+                this.compositor = new NodeBasedCompositor(this.canvas);
+                this.temporalManager = temporalContextManager;
+                this.expressionEngine = expressionEngine;
+                
+                this.setupEventListeners();
+                this.updateSystemInfo();
+                this.updateNodeList();
+                
+                // Atualizar informações periodicamente
+                setInterval(() => {
+                    this.updateSystemInfo();
+                    this.updateNodeList();
+                }, 1000);
+            }
+            
+            setupEventListeners() {
+                // Controles de timeline
+                document.getElementById('playBtn').addEventListener('click', () => {
+                    this.temporalManager.play();
+                });
+                
+                document.getElementById('pauseBtn').addEventListener('click', () => {
+                    this.temporalManager.pause();
+                });
+                
+                document.getElementById('stopBtn').addEventListener('click', () => {
+                    this.temporalManager.stop();
+                });
+                
+                document.getElementById('timeSlider').addEventListener('input', (e) => {
+                    this.temporalManager.setCurrentTime(parseFloat(e.target.value));
+                });
+                
+                document.getElementById('updateTimeline').addEventListener('click', () => {
+                    this.updateTimelineConfig();
+                });
+                
+                // Controles de expressão
+                document.getElementById('setExpression').addEventListener('click', () => {
+                    this.setNodeExpression();
+                });
+                
+                document.getElementById('removeExpression').addEventListener('click', () => {
+                    this.removeNodeExpression();
+                });
+                
+                document.getElementById('testExpression').addEventListener('click', () => {
+                    this.testExpression();
+                });
+                
+                // Controles de nós
+                document.getElementById('createTestNodes').addEventListener('click', () => {
+                    this.createTestNodes();
+                });
+                
+                document.getElementById('clearNodes').addEventListener('click', () => {
+                    this.clearAllNodes();
+                });
+                
+                document.getElementById('processNodes').addEventListener('click', () => {
+                    this.processAllNodes();
+                });
+                
+                // Atualizar display de tempo
+                setInterval(() => {
+                    const currentTime = this.temporalManager.getCurrentTime();
+                    document.getElementById('timeDisplay').textContent = `${currentTime.toFixed(1)}s`;
+                    document.getElementById('timeSlider').value = currentTime;
+                }, 100);
+            }
+            
+            updateTimelineConfig() {
+                const duration = parseFloat(document.getElementById('duration').value);
+                const fps = parseInt(document.getElementById('fps').value);
+                const playbackRate = parseFloat(document.getElementById('playbackRate').value);
+                const loop = document.getElementById('loop').checked;
+                
+                this.temporalManager.setTimelineConfig({
+                    endTime: duration,
+                    fps: fps,
+                    playbackRate: playbackRate,
+                    loop: loop
+                });
+                
+                document.getElementById('timeSlider').max = duration;
+                
+                this.showStatus('Timeline atualizada com sucesso!', 'success');
+            }
+            
+            createTestNodes() {
+                // Criar nó de entrada
+                const inputNode = {
+                    id: 'input_1',
+                    type: 'input',
+                    name: 'Entrada de Vídeo',
+                    position: { x: 100, y: 100 },
+                    inputs: [],
+                    outputs: [{ id: 'out', name: 'Saída', type: 'image' }],
+                    processor: null,
+                    expressions: {},
+                    animatableProperties: {
+                        opacity: 1.0,
+                        brightness: 1.0
+                    }
+                };
+                
+                // Criar nó de efeito
+                const effectNode = {
+                    id: 'effect_1',
+                    type: 'effect',
+                    name: 'Efeito Animado',
+                    position: { x: 300, y: 100 },
+                    inputs: [{ id: 'in', name: 'Entrada', type: 'image' }],
+                    outputs: [{ id: 'out', name: 'Saída', type: 'image' }],
+                    processor: null,
+                    expressions: {
+                        'animatableProperties.opacity': 'Math.sin(time * 2) * 0.5 + 0.5',
+                        'animatableProperties.scale': 'Math.cos(time * 1.5) * 0.3 + 1.0',
+                        'animatableProperties.rotation': 'time * 45'
+                    },
+                    animatableProperties: {
+                        opacity: 1.0,
+                        scale: 1.0,
+                        rotation: 0.0
+                    }
+                };
+                
+                // Criar nó de saída
+                const outputNode = {
+                    id: 'output_1',
+                    type: 'output',
+                    name: 'Saída Final',
+                    position: { x: 500, y: 100 },
+                    inputs: [{ id: 'in', name: 'Entrada', type: 'image' }],
+                    outputs: [],
+                    processor: null,
+                    expressions: {},
+                    animatableProperties: {}
+                };
+                
+                // Adicionar nós ao compositor
+                this.compositor.addNode(inputNode);
+                this.compositor.addNode(effectNode);
+                this.compositor.addNode(outputNode);
+                
+                // Conectar nós
+                this.compositor.connect('input_1', 'out', 'effect_1', 'in');
+                this.compositor.connect('effect_1', 'out', 'output_1', 'in');
+                
+                this.updateNodeSelect();
+                this.showStatus('Nós de teste criados com sucesso!', 'success');
+            }
+            
+            clearAllNodes() {
+                const nodeIds = this.compositor.getNodes().map(node => node.id);
+                nodeIds.forEach(id => this.compositor.removeNode(id));
+                
+                this.updateNodeSelect();
+                this.showStatus('Todos os nós foram removidos.', 'warning');
+            }
+            
+            async processAllNodes() {
+                try {
+                    await this.compositor.processAll();
+                    this.showStatus('Processamento concluído com sucesso!', 'success');
+                } catch (error) {
+                    this.showStatus(`Erro no processamento: ${error.message}`, 'error');
+                }
+            }
+            
+            setNodeExpression() {
+                const nodeId = document.getElementById('nodeSelect').value;
+                const propertyName = document.getElementById('propertyName').value;
+                const expression = document.getElementById('expressionEditor').value;
+                
+                if (!nodeId || !propertyName || !expression) {
+                    this.showStatus('Preencha todos os campos para definir uma expressão.', 'warning');
+                    return;
+                }
+                
+                const success = this.compositor.setNodeExpression(nodeId, propertyName, expression);
+                
+                if (success) {
+                    this.showStatus(`Expressão definida para ${nodeId}.${propertyName}`, 'success');
+                } else {
+                    this.showStatus('Erro ao definir expressão.', 'error');
+                }
+            }
+            
+            removeNodeExpression() {
+                const nodeId = document.getElementById('nodeSelect').value;
+                const propertyName = document.getElementById('propertyName').value;
+                
+                if (!nodeId || !propertyName) {
+                    this.showStatus('Selecione um nó e propriedade para remover.', 'warning');
+                    return;
+                }
+                
+                const success = this.compositor.removeNodeExpression(nodeId, propertyName);
+                
+                if (success) {
+                    this.showStatus(`Expressão removida de ${nodeId}.${propertyName}`, 'success');
+                } else {
+                    this.showStatus('Erro ao remover expressão.', 'error');
+                }
+            }
+            
+            testExpression() {
+                const expression = document.getElementById('expressionEditor').value;
+                
+                if (!expression) {
+                    this.showStatus('Digite uma expressão para testar.', 'warning');
+                    return;
+                }
+                
+                try {
+                    const context = {
+                        time: this.temporalManager.getCurrentTime(),
+                        frame: this.temporalManager.getCurrentFrame(),
+                        fps: this.temporalManager.getTimelineConfig().fps
+                    };
+                    
+                    const result = this.expressionEngine.evaluate(expression, context);
+                    this.showStatus(`Resultado: ${JSON.stringify(result)}`, 'success');
+                } catch (error) {
+                    this.showStatus(`Erro na expressão: ${error.message}`, 'error');
+                }
+            }
+            
+            updateNodeSelect() {
+                const select = document.getElementById('nodeSelect');
+                const nodes = this.compositor.getNodes();
+                
+                select.innerHTML = '<option value="">Selecione um nó...</option>';
+                
+                nodes.forEach(node => {
+                    const option = document.createElement('option');
+                    option.value = node.id;
+                    option.textContent = `${node.name} (${node.id})`;
+                    select.appendChild(option);
+                });
+            }
+            
+            updateSystemInfo() {
+                const stats = this.compositor.getStats();
+                const timelineConfig = this.temporalManager.getTimelineConfig();
+                const isPlaying = this.temporalManager.isPlayingAnimation();
+                
+                const info = `
+                    <div><span class="status-indicator ${isPlaying ? 'status-success' : 'status-warning'}"></span>Status: ${isPlaying ? 'Reproduzindo' : 'Pausado'}</div>
+                    <div>Tempo Atual: ${this.temporalManager.getCurrentTime().toFixed(2)}s</div>
+                    <div>Frame Atual: ${this.temporalManager.getCurrentFrame()}</div>
+                    <div>FPS: ${timelineConfig.fps}</div>
+                    <div>Duração: ${timelineConfig.endTime}s</div>
+                    <div>Nós Totais: ${stats.nodeCount}</div>
+                    <div>Nós com Expressões: ${stats.expressionNodes}</div>
+                    <div>Conexões: ${stats.connectionCount}</div>
+                    <div>Cache: ${stats.cacheSize} itens</div>
+                    <div><span class="status-indicator ${stats.isProcessing ? 'status-warning' : 'status-success'}"></span>Processando: ${stats.isProcessing ? 'Sim' : 'Não'}</div>
+                `;
+                
+                document.getElementById('systemInfo').innerHTML = info;
+            }
+            
+            updateNodeList() {
+                const nodeList = document.getElementById('nodeList');
+                const nodes = this.compositor.getNodes();
+                
+                nodeList.innerHTML = '';
+                
+                nodes.forEach(node => {
+                    const nodeItem = document.createElement('div');
+                    nodeItem.className = 'node-item';
+                    
+                    const expressions = this.compositor.getNodeExpressions(node.id) || {};
+                    const animatableProps = this.compositor.getNodeAnimatableProperties(node.id) || {};
+                    
+                    const expressionCount = Object.keys(expressions).length;
+                    const hasExpressions = expressionCount > 0;
+                    
+                    nodeItem.innerHTML = `
+                        <h4><span class="status-indicator ${hasExpressions ? 'status-success' : 'status-warning'}"></span>${node.name}</h4>
+                        <div class="node-properties">
+                            <div class="property">
+                                <span class="property-name">ID:</span>
+                                <span class="property-value">${node.id}</span>
+                            </div>
+                            <div class="property">
+                                <span class="property-name">Tipo:</span>
+                                <span class="property-value">${node.type}</span>
+                            </div>
+                            <div class="property">
+                                <span class="property-name">Expressões:</span>
+                                <span class="property-value">${expressionCount}</span>
+                            </div>
+                            <div class="property">
+                                <span class="property-name">Propriedades:</span>
+                                <span class="property-value">${Object.keys(animatableProps).length}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    nodeList.appendChild(nodeItem);
+                });
+            }
+            
+            showStatus(message, type) {
+                // Criar elemento de status temporário
+                const statusEl = document.createElement('div');
+                statusEl.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: bold;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                switch (type) {
+                    case 'success':
+                        statusEl.style.background = '#4caf50';
+                        break;
+                    case 'error':
+                        statusEl.style.background = '#f44336';
+                        break;
+                    case 'warning':
+                        statusEl.style.background = '#ff9800';
+                        break;
+                    default:
+                        statusEl.style.background = '#2196f3';
+                }
+                
+                statusEl.textContent = message;
+                document.body.appendChild(statusEl);
+                
+                // Remover após 3 segundos
+                setTimeout(() => {
+                    statusEl.remove();
+                }, 3000);
+            }
+        }
+        
+        // Adicionar CSS para animação
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Inicializar teste quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            new ExpressionSystemTest();
+        });
+    </script>
+</body>
+</html>

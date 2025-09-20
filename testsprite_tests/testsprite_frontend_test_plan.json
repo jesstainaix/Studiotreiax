@@ -1,0 +1,564 @@
+[
+  {
+    "id": "TC001",
+    "title": "User Authentication Success",
+    "description": "Verify that a user can successfully register and login using Supabase Auth and obtain a valid JWT token.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the registration page."
+      },
+      {
+        "type": "action",
+        "description": "Input valid registration details and submit."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that registration succeeds and user is redirected to login."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to login page."
+      },
+      {
+        "type": "action",
+        "description": "Input registered username/email and correct password."
+      },
+      {
+        "type": "action",
+        "description": "Submit login form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login success and receipt of a valid JWT token."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User Authentication Failure with Invalid Credentials",
+    "description": "Verify that login fails with incorrect username or password and proper error messages are displayed.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to login page."
+      },
+      {
+        "type": "action",
+        "description": "Input incorrect username/email and/or password."
+      },
+      {
+        "type": "action",
+        "description": "Submit login form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login failure and display of appropriate error message."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Automated PowerPoint to Video Conversion Success",
+    "description": "Validate that uploading a valid PPTX file results in successful AI-powered conversion to video within the required time frame.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open project and navigate to PPTX upload section."
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid PowerPoint presentation (.pptx) file."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify file validation passes and upload is accepted."
+      },
+      {
+        "type": "action",
+        "description": "Trigger the automated AI-based PPTX to video conversion process."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure that conversion completes within 3 minutes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the output video plays correctly representing the PowerPoint slides with synchronized narration or animations."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Automated PowerPoint to Video Conversion Failure on Corrupt File",
+    "description": "Ensure that uploading a corrupt or unsupported PPTX file triggers proper error handling and user notification.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to PPTX upload interface."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to upload a corrupt or unsupported PPTX file."
+      },
+      {
+        "type": "assertion",
+        "description": "System rejects the file and displays an informative error message."
+      },
+      {
+        "type": "assertion",
+        "description": "No video conversion process is initiated."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Multi-provider Text-to-Speech Fallback Mechanism",
+    "description": "Confirm seamless fallback to alternate TTS providers when the primary provider fails or quality is under threshold.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Select ElevenLabs as primary TTS provider."
+      },
+      {
+        "type": "action",
+        "description": "Input text for narration and trigger TTS conversion."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate audio output quality score is above 8.5."
+      },
+      {
+        "type": "action",
+        "description": "Simulate ElevenLabs service failure or low quality output below threshold."
+      },
+      {
+        "type": "assertion",
+        "description": "System automatically falls back to Google Cloud TTS and produces acceptable audio output."
+      },
+      {
+        "type": "action",
+        "description": "Simulate fallback failure for Google Cloud TTS."
+      },
+      {
+        "type": "assertion",
+        "description": "System falls back to Azure Speech automatically to generate TTS output."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Advanced Video Editor - Real-time Rendering and Timeline Functionality",
+    "description": "Validate real-time rendering performance, effects application, transitions, and timeline synchronization between audio and visuals.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Create or load an existing video project."
+      },
+      {
+        "type": "action",
+        "description": "Add multiple video clips, images, and audio tracks to the timeline."
+      },
+      {
+        "type": "action",
+        "description": "Apply different video effects and transitions between clips."
+      },
+      {
+        "type": "action",
+        "description": "Integrate TTS audio narration."
+      },
+      {
+        "type": "action",
+        "description": "Use the real-time rendering feature to preview the video."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the rendering latency is under 50ms for audio and visual synchronization."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure all applied effects and transitions appear correctly in the preview."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "3D Avatar Integration and Lip-sync Animation",
+    "description": "Verify proper Ready Player Me avatar integration with facial animation and lip-sync to TTS audio.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Create or select a 3D avatar using Ready Player Me integration."
+      },
+      {
+        "type": "action",
+        "description": "Upload or generate TTS narration audio."
+      },
+      {
+        "type": "action",
+        "description": "Enable lip-sync and facial animation features."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify lip movements and facial animations are properly synchronized with the TTS audio."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm avatar renders correctly in video previews and exports."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Project Management CRUD Operations and Collaboration",
+    "description": "Validate full create, read, update, delete functionality for projects including versioning and multi-user collaboration.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Create a new project with required metadata."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify project is listed in project dashboard."
+      },
+      {
+        "type": "action",
+        "description": "Edit project details and save changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify updates are persisted and visible to collaborators."
+      },
+      {
+        "type": "action",
+        "description": "Add multiple collaborators with different permission roles."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm collaborators can access and edit as per their permissions."
+      },
+      {
+        "type": "action",
+        "description": "Delete a project."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify project is removed and collaborators lose access."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Compliance Templates Accuracy and Validation",
+    "description": "Verify the template library accurately identifies and enforces regulatory norms with validation correctness above 95%.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Select different compliance templates for regulatory standards."
+      },
+      {
+        "type": "action",
+        "description": "Apply templates to project assets requiring validation."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify system correctly identifies regulatory elements within 95% accuracy."
+      },
+      {
+        "type": "action",
+        "description": "Modify assets to introduce norm violations."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure system detects violations and generates appropriate alerts or blocks."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Performance Monitoring and Alerting",
+    "description": "Verify Web Vitals monitoring, automatic optimizations, and alert notifications are functioning correctly under load.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate user interaction and site loading under various network conditions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify First Contentful Paint (FCP) consistently remains under 2.5 seconds."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm API response times are below 300ms."
+      },
+      {
+        "type": "action",
+        "description": "Trigger performance degradation deliberately."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that system automatically optimizes resources."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate that smart notification center alerts users or admins appropriately."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Notification System Rules and Custom Templates",
+    "description": "Verify smart notification center delivers customizable notifications based on user preferences and system rules.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Set up notification preferences for different notification types."
+      },
+      {
+        "type": "action",
+        "description": "Trigger various system events such as collaborations, project updates, and alerts."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify notifications are delivered according to set preferences."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm notifications use customized templates and display correct content."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Mobile Responsiveness and Adaptive Navigation",
+    "description": "Ensure platform UI adapts flawlessly to different mobile devices with load times under 3 seconds.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the platform from multiple mobile devices and screen sizes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI elements resize, reposition, and behave correctly."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure semantic search and navigation adapt to mobile user experience."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm total page load time is under 3 seconds on average 4G network."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "API Backend Validation and Real-time WebSocket Support",
+    "description": "Verify robust backend API with input validation, middleware protections, and real-time websocket communication operates reliably.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send valid and invalid requests to REST API endpoints."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify input validation rejects invalid data and proper errors are returned."
+      },
+      {
+        "type": "action",
+        "description": "Establish websocket connections for collaborative features."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify real-time events propagate correctly and with low latency."
+      },
+      {
+        "type": "action",
+        "description": "Simulate rate-limiting by rapid API requests."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm appropriate rate limiting responses and that security logs capture events."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Offline-First and PWA Functionalities",
+    "description": "Validate offline-first capabilities and PWA service worker functionality with caching and offline asset access.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the app online, then go offline."
+      },
+      {
+        "type": "action",
+        "description": "Access previously loaded pages and resources."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify cached content is served correctly and app remains functional offline."
+      },
+      {
+        "type": "action",
+        "description": "Perform project actions offline available per design."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm data syncs properly once back online."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Project Versioning and Branch Management",
+    "description": "Verify Git-like versioning system supports branching, merging, and comparison with correctness and conflict resolution.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Create a new branch from an existing project."
+      },
+      {
+        "type": "action",
+        "description": "Make edits and commits on different branches."
+      },
+      {
+        "type": "action",
+        "description": "Perform branch merge operations."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify merge completes successfully with correct conflict detection and resolution."
+      },
+      {
+        "type": "action",
+        "description": "Compare changes between branches visually."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure differences are correctly highlighted and accurate."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Security - Input Validation, Rate Limiting and Logging",
+    "description": "Validate all user inputs are sanitized, rate limiting enforced, and detailed security logs are maintained for suspicious activity.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt SQL injection and XSS vectors on input fields."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify input validation blocks malicious payloads."
+      },
+      {
+        "type": "action",
+        "description": "Flood API endpoints with rapid requests to trigger rate limits."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm rate limiting activates and emits proper HTTP error (429)."
+      },
+      {
+        "type": "action",
+        "description": "Review security logs after attack simulations."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure all events are logged with sufficient detail."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Analytics and User Engagement Tracking",
+    "description": "Verify analytics module correctly tracks user actions, engagement metrics, and presents accurate dashboards.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform multiple user actions including project creation, video edits, and playback."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify these actions appear correctly in analytics tracking data."
+      },
+      {
+        "type": "action",
+        "description": "Open analytics dashboard overview."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm metrics such as user engagement, session duration, and video usage display accurately."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Error Handling on Multimedia Upload",
+    "description": "Test the robustness of media upload system handling invalid, large, or unsupported files gracefully.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to upload a file exceeding maximum allowed size."
+      },
+      {
+        "type": "assertion",
+        "description": "File upload is rejected with a descriptive error."
+      },
+      {
+        "type": "action",
+        "description": "Try uploading unsupported file formats."
+      },
+      {
+        "type": "assertion",
+        "description": "System denies upload and notifies user."
+      },
+      {
+        "type": "action",
+        "description": "Upload valid multimedia files and preview them."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate preview functionality renders content correctly."
+      }
+    ]
+  }
+]

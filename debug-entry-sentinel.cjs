@@ -1,0 +1,1 @@
+throw new Error('Do not require package root - This file shows which module is importing the entrypoint!');

@@ -1,0 +1,190 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "JavaScript", 
+    "React 18.2.0",
+    "Node.js",
+    "Express.js",
+    "Vite",
+    "Supabase",
+    "PostgreSQL",
+    "TailwindCSS",
+    "Three.js",
+    "WebGL",
+    "FFmpeg",
+    "Canvas API",
+    "WebRTC",
+    "Socket.io",
+    "JWT",
+    "OpenAI GPT-4",
+    "Anthropic Claude",
+    "ElevenLabs TTS",
+    "Google Cloud TTS",
+    "Azure Speech",
+    "TensorFlow.js",
+    "Fabric.js",
+    "GSAP",
+    "Framer Motion",
+    "Zustand",
+    "React Router",
+    "Radix UI",
+    "Lucide React",
+    "Jest",
+    "Playwright",
+    "Vitest",
+    "Docker",
+    "Vercel"
+  ],
+  "features": [
+    {
+      "name": "Sistema de Autenticação",
+      "description": "Sistema completo de autenticação com Supabase Auth, JWT tokens e gerenciamento de usuários",
+      "files": ["src/lib/supabase.ts", "api/routes/auth.ts", "src/pages/Login.tsx", "src/pages/auth"]
+    },
+    {
+      "name": "Pipeline PPTX para Vídeo",
+      "description": "Conversão automatizada de apresentações PowerPoint para vídeos com IA",
+      "files": ["src/components/pipeline/CompletePipelineInterface.tsx", "src/services/pipelineOrchestrationService.ts", "src/services/pipelineApiService.ts"]
+    },
+    {
+      "name": "Sistema TTS Multi-Provider",
+      "description": "Text-to-Speech com suporte a ElevenLabs, Google Cloud TTS, Azure Speech e fallback automático",
+      "files": ["src/hooks/useTTS.ts", "api/routes/tts.js", "src/components/tts", "tts-adapter.js"]
+    },
+    {
+      "name": "Integração de IA",
+      "description": "Análise inteligente de conteúdo com GPT-4 Vision e Anthropic Claude",
+      "files": ["src/lib/ai", "api/routes/ai.js", "src/components/ai/AITestingPanel.tsx", "src/data/ai-cache"]
+    },
+    {
+      "name": "Editor de Vídeo Avançado",
+      "description": "Editor profissional com timeline, efeitos, transições e renderização em tempo real",
+      "files": ["src/components/editor", "src/pages/editor.tsx", "src/lib/video", "video-renderer.js"]
+    },
+    {
+      "name": "Sistema de Avatares 3D",
+      "description": "Avatares 3D com Ready Player Me, animações faciais e sincronização labial",
+      "files": ["src/lib/fabric", "src/components/vfx", "src/lib/animation", "src/lib/physics"]
+    },
+    {
+      "name": "Gerenciamento de Projetos",
+      "description": "CRUD completo de projetos com versionamento, colaboração e organização",
+      "files": ["src/components/projects", "src/services/projectService.ts", "src/types/project.ts", "src/pages/projects"]
+    },
+    {
+      "name": "Sistema de Upload",
+      "description": "Upload robusto de arquivos com validação, preview e processamento",
+      "files": ["src/pages/Upload.tsx", "api/routes/upload.ts", "src/components/media"]
+    },
+    {
+      "name": "Templates e NR",
+      "description": "Biblioteca de templates para normas regulamentadoras e compliance",
+      "files": ["src/components/projects/ProjectTemplates.tsx", "src/lib/templates", "demo-content"]
+    },
+    {
+      "name": "Sistema de Performance",
+      "description": "Monitoramento Web Vitals, otimização automática e análise de performance",
+      "files": ["src/lib/performance", "src/lib/monitoring", "src/hooks/usePerformanceOptimization.ts"]
+    },
+    {
+      "name": "Sistema de Notificações",
+      "description": "Centro de notificações inteligentes com regras e templates personalizáveis",
+      "files": ["src/components/notifications/SmartNotificationCenter.tsx", "src/hooks/useSmartNotifications.ts", "src/utils/smartNotifications.ts"]
+    },
+    {
+      "name": "Analytics e Métricas",
+      "description": "Sistema completo de analytics com tracking de usuário e insights",
+      "files": ["src/components/analytics/UsageAnalyticsManager.tsx", "src/hooks/useUsageAnalytics.ts", "src/utils/usageAnalytics.ts"]
+    },
+    {
+      "name": "Versionamento de Projetos",
+      "description": "Sistema Git-like para versionamento com branches, merge e comparações",
+      "files": ["src/components/versioning", "src/hooks/useProjectVersioning.ts", "src/utils/projectVersioning.ts"]
+    },
+    {
+      "name": "Web Workers",
+      "description": "Processamento paralelo para renderização de vídeo e tarefas pesadas",
+      "files": ["src/components/webWorkers/WebWorkerManager.tsx", "src/hooks/useWebWorkers.ts", "src/workers", "public/workers"]
+    },
+    {
+      "name": "Navegação Inteligente",
+      "description": "Sistema de navegação adaptativo com busca semântica e recomendações",
+      "files": ["src/components/navigation/SmartNavigation.tsx", "src/hooks/useSmartNavigation.ts"]
+    },
+    {
+      "name": "Responsividade Móvel",
+      "description": "Sistema completo de responsividade com detecção de dispositivo e otimizações",
+      "files": ["src/hooks/useMobileResponsiveness.ts", "src/utils/mobileResponsiveness.ts"]
+    },
+    {
+      "name": "Sistema de Recomendações",
+      "description": "Engine de recomendações com ML para sugestão de conteúdo personalizado",
+      "files": ["src/hooks/useContentRecommendation.ts", "src/hooks/useIntelligentRecommendations.ts", "src/services/contentRecommendationService.ts"]
+    },
+    {
+      "name": "Dashboard Principal",
+      "description": "Hub central com visão geral de projetos, métricas e acesso rápido",
+      "files": ["src/pages/Home.tsx", "src/pages/dashboard", "src/components/ui"]
+    },
+    {
+      "name": "Sistema de Testes",
+      "description": "Suite completa de testes unitários, integração e E2E",
+      "files": ["src/__tests__", "src/test", "src/tests", "playwright.config.ts", "jest.config.cjs", "vitest.config.ts"]
+    },
+    {
+      "name": "API Backend",
+      "description": "API REST completa com middleware, validação e websockets",
+      "files": ["api", "api-server.js", "simple-server.js", "middleware.ts"]
+    },
+    {
+      "name": "Sistema de Cache",
+      "description": "Cache inteligente para otimização de performance e redução de custos de API",
+      "files": ["src/components/cache", "src/lib/utils.ts", "api/data/ai-cache"]
+    },
+    {
+      "name": "Processamento OCR",
+      "description": "Reconhecimento óptico de caracteres para extração de texto de imagens",
+      "files": ["src/lib/ocr", "tesseract.js integration"]
+    },
+    {
+      "name": "Sistema de Efeitos Visuais",
+      "description": "Efeitos visuais avançados com WebGL, shaders e animações",
+      "files": ["src/lib/effects", "src/lib/rendering", "src/components/vfx"]
+    },
+    {
+      "name": "Timeline e Sincronização",
+      "description": "Sistema de timeline para sincronização precisa de áudio e vídeo",
+      "files": ["src/lib/timeline", "src/lib/sync"]
+    },
+    {
+      "name": "Sistema de Layers",
+      "description": "Gerenciamento de camadas para composição de vídeo complexa",
+      "files": ["src/lib/layers", "src/components/editor"]
+    },
+    {
+      "name": "PWA e Service Workers",
+      "description": "Progressive Web App com funcionalidades offline",
+      "files": ["src/components/pwa", "public/manifest.json", "public/offline.html"]
+    },
+    {
+      "name": "Sistema de Tour Guiado",
+      "description": "Tours interativos para onboarding e descoberta de funcionalidades",
+      "files": ["src/components/tour", "src/hooks/useAdvancedUI.ts"]
+    },
+    {
+      "name": "Integração LMS",
+      "description": "Conectores para sistemas de gestão de aprendizagem",
+      "files": ["src/services/lms", "src/components/lms", "src/types/lms.ts"]
+    },
+    {
+      "name": "Sistema de Foco",
+      "description": "Gerenciamento de foco e acessibilidade para melhor UX",
+      "files": ["src/components/focus", "src/components/ux"]
+    },
+    {
+      "name": "Processamento PPTX",
+      "description": "Parser avançado para extração e análise de apresentações PowerPoint",
+      "files": ["src/lib/pptx", "src/components/pptx", "enhanced-pptx-parser.js"]
+    }
+  ]
+}

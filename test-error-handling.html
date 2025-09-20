@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Sistema de Error Handling Robusto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background: #f8f9fa;
+        }
+        
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .log-container {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 4px 0;
+        }
+        
+        .log-timestamp {
+            color: #6272a4;
+            margin-right: 10px;
+        }
+        
+        .log-level-info {
+            color: #8be9fd;
+        }
+        
+        .log-level-warn {
+            color: #f1fa8c;
+        }
+        
+        .log-level-error {
+            color: #ff5555;
+        }
+        
+        .log-level-success {
+            color: #50fa7b;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-healthy {
+            background: #28a745;
+        }
+        
+        .status-warning {
+            background: #ffc107;
+        }
+        
+        .status-error {
+            background: #dc3545;
+        }
+        
+        .file-input {
+            margin-bottom: 15px;
+        }
+        
+        .file-input input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .error-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .error-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .error-item:last-child {
+            border-bottom: none;
+        }
+        
+        .error-severity-low {
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .error-severity-medium {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .error-severity-high {
+            border-left: 4px solid #fd7e14;
+        }
+        
+        .error-severity-critical {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Sistema de Error Handling Robusto</h1>
+            <p>Teste e validação do sistema avançado de tratamento de erros</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Status do Sistema -->
+            <div class="test-section">
+                <h2>📊 Status do Sistema</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-errors">0</div>
+                        <div class="stat-label">Total de Erros</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="active-operations">0</div>
+                        <div class="stat-label">Operações Ativas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="success-rate">100%</div>
+                        <div class="stat-label">Taxa de Sucesso</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            <span class="status-indicator status-healthy"></span>
+                            <span id="system-health">Saudável</span>
+                        </div>
+                        <div class="stat-label">Saúde do Sistema</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testes do Error Handling Service -->
+            <div class="test-section">
+                <h2>🧪 Testes do Error Handling Service</h2>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="testBasicErrorHandling()">
+                        Teste Básico de Erro
+                    </button>
+                    <button class="btn btn-secondary" onclick="testRetryMechanism()">
+                        Teste de Retry
+                    </button>
+                    <button class="btn btn-warning" onclick="testTimeoutHandling()">
+                        Teste de Timeout
+                    </button>
+                    <button class="btn btn-danger" onclick="testCircuitBreaker()">
+                        Teste Circuit Breaker
+                    </button>
+                </div>
+                <div id="error-handling-log" class="log-container">
+                    <div class="log-entry">
+                        <span class="log-timestamp">[SISTEMA]</span>
+                        <span class="log-level-info">Sistema de Error Handling iniciado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testes do Pipeline API -->
+            <div class="test-section">
+                <h2>🔄 Testes do Pipeline API</h2>
+                <div class="file-input">
+                    <input type="file" id="test-file" accept=".pptx,.ppt" />
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="testPipelineStart()">
+                        Iniciar Pipeline
+                    </button>
+                    <button class="btn btn-secondary" onclick="testJobStatus()">
+                        Verificar Status
+                    </button>
+                    <button class="btn btn-warning" onclick="testJobCancel()">
+                        Cancelar Job
+                    </button>
+                    <button class="btn btn-success" onclick="testPipelineStats()">
+                        Estatísticas
+                    </button>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="pipeline-progress"></div>
+                    </div>
+                    <div class="progress-text" id="pipeline-status">Aguardando...</div>
+                </div>
+                <div id="pipeline-log" class="log-container">
+                    <div class="log-entry">
+                        <span class="log-timestamp">[PIPELINE]</span>
+                        <span class="log-level-info">Pipeline API pronto para testes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testes de Stress -->
+            <div class="test-section">
+                <h2>⚡ Testes de Stress e Performance</h2>
+                <div class="controls">
+                    <button class="btn btn-danger" onclick="runStressTest()">
+                        Teste de Stress (50 erros)
+                    </button>
+                    <button class="btn btn-warning" onclick="runConcurrencyTest()">
+                        Teste de Concorrência
+                    </button>
+                    <button class="btn btn-secondary" onclick="runMemoryTest()">
+                        Teste de Memória
+                    </button>
+                    <button class="btn btn-success" onclick="runFullTestSuite()">
+                        🚀 Executar Todos os Testes
+                    </button>
+                </div>
+                <div id="stress-log" class="log-container">
+                    <div class="log-entry">
+                        <span class="log-timestamp">[STRESS]</span>
+                        <span class="log-level-info">Testes de stress prontos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Erros Recentes -->
+            <div class="test-section">
+                <h2>📋 Erros Recentes</h2>
+                <div class="controls">
+                    <button class="btn btn-secondary" onclick="refreshErrorList()">
+                        Atualizar Lista
+                    </button>
+                    <button class="btn btn-warning" onclick="clearErrorHistory()">
+                        Limpar Histórico
+                    </button>
+                </div>
+                <div id="error-list" class="error-list">
+                    <div class="error-item">
+                        <span>Nenhum erro registrado ainda</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulação do sistema de error handling (já que não temos o módulo real no HTML)
+        class MockErrorHandlingService {
+            constructor() {
+                this.errors = [];
+                this.circuitBreakers = new Map();
+                this.stats = {
+                    totalErrors: 0,
+                    errorsByType: {},
+                    errorsBySeverity: {},
+                    successCount: 0,
+                    totalOperations: 0
+                };
+            }
+
+            async handleError(error, context, options = {}) {
+                const errorData = {
+                    id: Date.now() + Math.random(),
+                    message: error.message || error,
+                    type: options.type || 'system',
+                    severity: options.severity || 'medium',
+                    timestamp: new Date(),
+                    context: context
+                };
+
+                this.errors.unshift(errorData);
+                if (this.errors.length > 100) {
+                    this.errors = this.errors.slice(0, 100);
+                }
+
+                this.stats.totalErrors++;
+                this.stats.errorsByType[errorData.type] = (this.stats.errorsByType[errorData.type] || 0) + 1;
+                this.stats.errorsBySeverity[errorData.severity] = (this.stats.errorsBySeverity[errorData.severity] || 0) + 1;
+                this.stats.totalOperations++;
+
+                // Simular circuit breaker
+                const key = `${context.service}:${context.method}`;
+                if (errorData.severity === 'critical') {
+                    const breaker = this.circuitBreakers.get(key) || { failures: 0, isOpen: false };
+                    breaker.failures++;
+                    if (breaker.failures >= 3) {
+                        breaker.isOpen = true;
+                        this.circuitBreakers.set(key, breaker);
+                        throw new Error('Circuit breaker ativado - serviço temporariamente indisponível');
+                    }
+                    this.circuitBreakers.set(key, breaker);
+                }
+
+                return {
+                    success: false,
+                    userMessage: this.getUserMessage(errorData),
+                    technicalDetails: errorData
+                };
+            }
+
+            async withErrorHandling(operation, context, options = {}) {
+                let lastError;
+                const maxRetries = options.retries || 1;
+
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        const result = await this.executeWithTimeout(operation, options.timeout || 5000);
+                        this.stats.successCount++;
+                        this.stats.totalOperations++;
+                        return result;
+                    } catch (error) {
+                        lastError = error;
+                        if (attempt < maxRetries) {
+                            await this.delay(Math.pow(2, attempt) * 1000); // Backoff exponencial
+                        }
+                    }
+                }
+
+                await this.handleError(lastError, context, options);
+                throw lastError;
+            }
+
+            async executeWithTimeout(operation, timeout) {
+                return Promise.race([
+                    operation(),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Operation timeout')), timeout)
+                    )
+                ]);
+            }
+
+            getUserMessage(errorData) {
+                const messages = {
+                    'network': 'Problema de conexão detectado',
+                    'validation': 'Dados fornecidos são inválidos',
+                    'system': 'Erro interno do sistema',
+                    'pipeline': 'Erro no processamento'
+                };
+                return messages[errorData.type] || 'Erro desconhecido';
+            }
+
+            getErrorStatistics() {
+                return {
+                    totalErrors: this.stats.totalErrors,
+                    errorsByType: this.stats.errorsByType,
+                    errorsBySeverity: this.stats.errorsBySeverity,
+                    recentErrors: this.errors.slice(0, 10),
+                    successRate: this.stats.totalOperations > 0 ? 
+                        ((this.stats.successCount / this.stats.totalOperations) * 100).toFixed(1) : 100
+                };
+            }
+
+            clearErrorHistory() {
+                this.errors = [];
+                this.stats = {
+                    totalErrors: 0,
+                    errorsByType: {},
+                    errorsBySeverity: {},
+                    successCount: 0,
+                    totalOperations: 0
+                };
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Instância global do mock service
+        const errorService = new MockErrorHandlingService();
+        let activeOperations = 0;
+
+        // Funções de logging
+        function logToContainer(containerId, message, level = 'info') {
+            const container = document.getElementById(containerId);
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="log-level-${level}">${message}</span>
+            `;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Atualizar estatísticas na UI
+        function updateStats() {
+            const stats = errorService.getErrorStatistics();
+            document.getElementById('total-errors').textContent = stats.totalErrors;
+            document.getElementById('active-operations').textContent = activeOperations;
+            document.getElementById('success-rate').textContent = stats.successRate + '%';
+            
+            // Atualizar saúde do sistema
+            const healthElement = document.getElementById('system-health');
+            const healthIndicator = document.querySelector('.status-indicator');
+            
+            if (stats.totalErrors > 20) {
+                healthElement.textContent = 'Crítico';
+                healthIndicator.className = 'status-indicator status-error';
+            } else if (stats.totalErrors > 10) {
+                healthElement.textContent = 'Degradado';
+                healthIndicator.className = 'status-indicator status-warning';
+            } else {
+                healthElement.textContent = 'Saudável';
+                healthIndicator.className = 'status-indicator status-healthy';
+            }
+        }
+
+        // Testes do Error Handling Service
+        async function testBasicErrorHandling() {
+            logToContainer('error-handling-log', 'Iniciando teste básico de erro...', 'info');
+            
+            try {
+                await errorService.handleError(
+                    new Error('Erro de teste básico'),
+                    { service: 'TestService', method: 'basicTest', environment: 'test' },
+                    { type: 'validation', severity: 'medium' }
+                );
+            } catch (error) {
+                logToContainer('error-handling-log', `Erro tratado: ${error.message}`, 'warn');
+            }
+            
+            logToContainer('error-handling-log', 'Teste básico concluído', 'success');
+            updateStats();
+        }
+
+        async function testRetryMechanism() {
+            logToContainer('error-handling-log', 'Testando mecanismo de retry...', 'info');
+            activeOperations++;
+            updateStats();
+            
+            try {
+                let attempts = 0;
+                await errorService.withErrorHandling(
+                    async () => {
+                        attempts++;
+                        logToContainer('error-handling-log', `Tentativa ${attempts}`, 'info');
+                        if (attempts < 3) {
+                            throw new Error('Falha temporária');
+                        }
+                        return 'Sucesso';
+                    },
+                    { service: 'TestService', method: 'retryTest', environment: 'test' },
+                    { retries: 3, type: 'network' }
+                );
+                logToContainer('error-handling-log', 'Retry bem-sucedido após 3 tentativas', 'success');
+            } catch (error) {
+                logToContainer('error-handling-log', `Retry falhou: ${error.message}`, 'error');
+            }
+            
+            activeOperations--;
+            updateStats();
+        }
+
+        async function testTimeoutHandling() {
+            logToContainer('error-handling-log', 'Testando handling de timeout...', 'info');
+            activeOperations++;
+            updateStats();
+            
+            try {
+                await errorService.withErrorHandling(
+                    () => new Promise(resolve => setTimeout(resolve, 3000)),
+                    { service: 'TestService', method: 'timeoutTest', environment: 'test' },
+                    { timeout: 1000, type: 'performance' }
+                );
+            } catch (error) {
+                logToContainer('error-handling-log', `Timeout detectado e tratado: ${error.message}`, 'warn');
+            }
+            
+            activeOperations--;
+            updateStats();
+        }
+
+        async function testCircuitBreaker() {
+            logToContainer('error-handling-log', 'Testando circuit breaker...', 'info');
+            
+            // Gerar erros críticos para ativar circuit breaker
+            for (let i = 1; i <= 4; i++) {
+                try {
+                    await errorService.handleError(
+                        new Error(`Erro crítico ${i}`),
+                        { service: 'CircuitTest', method: 'criticalFailure', environment: 'test' },
+                        { type: 'system', severity: 'critical' }
+                    );
+                } catch (error) {
+                    if (error.message.includes('Circuit breaker')) {
+                        logToContainer('error-handling-log', `Circuit breaker ativado na tentativa ${i}`, 'warn');
+                        break;
+                    }
+                }
+            }
+            
+            updateStats();
+        }
+
+        // Testes do Pipeline
+        async function testPipelineStart() {
+            const fileInput = document.getElementById('test-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                logToContainer('pipeline-log', 'Selecione um arquivo primeiro', 'warn');
+                return;
+            }
+            
+            logToContainer('pipeline-log', `Iniciando pipeline com arquivo: ${file.name}`, 'info');
+            activeOperations++;
+            updateStats();
+            
+            // Simular progresso
+            let progress = 0;
+            const progressBar = document.getElementById('pipeline-progress');
+            const statusText = document.getElementById('pipeline-status');
+            
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                statusText.textContent = `Processando... ${Math.round(progress)}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    statusText.textContent = 'Pipeline concluído';
+                    logToContainer('pipeline-log', 'Pipeline executado com sucesso', 'success');
+                    activeOperations--;
+                    updateStats();
+                }
+            }, 500);
+            
+            // Simular possível erro
+            if (Math.random() > 0.7) {
+                setTimeout(async () => {
+                    clearInterval(progressInterval);
+                    await errorService.handleError(
+                        new Error('Falha na validação do arquivo'),
+                        { service: 'PipelineAPI', method: 'startPipeline', environment: 'test' },
+                        { type: 'validation', severity: 'high' }
+                    );
+                    logToContainer('pipeline-log', 'Pipeline falhou na validação', 'error');
+                    statusText.textContent = 'Erro no pipeline';
+                    progressBar.style.width = '0%';
+                    activeOperations--;
+                    updateStats();
+                }, 2000);
+            }
+        }
+
+        async function testJobStatus() {
+            logToContainer('pipeline-log', 'Verificando status do job...', 'info');
+            
+            try {
+                // Simular chamada de API
+                await errorService.withErrorHandling(
+                    async () => {
+                        if (Math.random() > 0.8) {
+                            throw new Error('Job não encontrado');
+                        }
+                        return { status: 'processing', progress: 75 };
+                    },
+                    { service: 'PipelineAPI', method: 'getJobStatus', environment: 'test' },
+                    { type: 'api', retries: 2 }
+                );
+                logToContainer('pipeline-log', 'Status obtido com sucesso', 'success');
+            } catch (error) {
+                logToContainer('pipeline-log', `Erro ao obter status: ${error.message}`, 'error');
+            }
+            
+            updateStats();
+        }
+
+        async function testJobCancel() {
+            logToContainer('pipeline-log', 'Cancelando job...', 'info');
+            
+            try {
+                await errorService.withErrorHandling(
+                    async () => {
+                        if (Math.random() > 0.9) {
+                            throw new Error('Job já foi finalizado');
+                        }
+                        return { cancelled: true };
+                    },
+                    { service: 'PipelineAPI', method: 'cancelJob', environment: 'test' },
+                    { type: 'api' }
+                );
+                logToContainer('pipeline-log', 'Job cancelado com sucesso', 'success');
+            } catch (error) {
+                logToContainer('pipeline-log', `Erro ao cancelar: ${error.message}`, 'error');
+            }
+            
+            updateStats();
+        }
+
+        async function testPipelineStats() {
+            logToContainer('pipeline-log', 'Obtendo estatísticas do pipeline...', 'info');
+            
+            const stats = errorService.getErrorStatistics();
+            logToContainer('pipeline-log', `Estatísticas: ${stats.totalErrors} erros, ${stats.successRate}% sucesso`, 'info');
+            updateStats();
+        }
+
+        // Testes de Stress
+        async function runStressTest() {
+            logToContainer('stress-log', 'Iniciando teste de stress com 50 erros...', 'info');
+            
+            const promises = [];
+            for (let i = 1; i <= 50; i++) {
+                promises.push(
+                    errorService.handleError(
+                        new Error(`Erro de stress ${i}`),
+                        { service: 'StressTest', method: 'massiveErrors', environment: 'test' },
+                        { 
+                            type: ['network', 'api', 'system'][i % 3],
+                            severity: ['low', 'medium', 'high'][i % 3]
+                        }
+                    ).catch(() => {}) // Ignorar erros
+                );
+            }
+            
+            await Promise.all(promises);
+            logToContainer('stress-log', 'Teste de stress concluído', 'success');
+            updateStats();
+        }
+
+        async function runConcurrencyTest() {
+            logToContainer('stress-log', 'Testando concorrência...', 'info');
+            activeOperations += 10;
+            updateStats();
+            
+            const promises = [];
+            for (let i = 1; i <= 10; i++) {
+                promises.push(
+                    errorService.withErrorHandling(
+                        async () => {
+                            await errorService.delay(Math.random() * 2000);
+                            if (Math.random() > 0.7) {
+                                throw new Error(`Falha concorrente ${i}`);
+                            }
+                            return `Sucesso ${i}`;
+                        },
+                        { service: 'ConcurrencyTest', method: 'parallel', environment: 'test' },
+                        { retries: 1, type: 'system' }
+                    ).catch(() => {})
+                );
+            }
+            
+            await Promise.all(promises);
+            activeOperations -= 10;
+            logToContainer('stress-log', 'Teste de concorrência concluído', 'success');
+            updateStats();
+        }
+
+        async function runMemoryTest() {
+            logToContainer('stress-log', 'Testando gestão de memória...', 'info');
+            
+            // Gerar muitos erros para testar limite de histórico
+            for (let i = 1; i <= 150; i++) {
+                await errorService.handleError(
+                    new Error(`Erro de memória ${i}`),
+                    { service: 'MemoryTest', method: 'massiveHistory', environment: 'test' },
+                    { type: 'performance', severity: 'low' }
+                ).catch(() => {});
+            }
+            
+            const stats = errorService.getErrorStatistics();
+            logToContainer('stress-log', `Histórico limitado a ${stats.recentErrors.length} erros recentes`, 'info');
+            updateStats();
+        }
+
+        async function runFullTestSuite() {
+            logToContainer('stress-log', '🚀 Executando suíte completa de testes...', 'info');
+            
+            const tests = [
+                { name: 'Basic Error Handling', fn: testBasicErrorHandling },
+                { name: 'Retry Mechanism', fn: testRetryMechanism },
+                { name: 'Timeout Handling', fn: testTimeoutHandling },
+                { name: 'Circuit Breaker', fn: testCircuitBreaker },
+                { name: 'Stress Test', fn: runStressTest },
+                { name: 'Concurrency Test', fn: runConcurrencyTest },
+                { name: 'Memory Test', fn: runMemoryTest }
+            ];
+            
+            for (const test of tests) {
+                logToContainer('stress-log', `Executando: ${test.name}`, 'info');
+                try {
+                    await test.fn();
+                    logToContainer('stress-log', `✅ ${test.name} concluído`, 'success');
+                } catch (error) {
+                    logToContainer('stress-log', `❌ ${test.name} falhou: ${error.message}`, 'error');
+                }
+                await errorService.delay(1000); // Pausa entre testes
+            }
+            
+            logToContainer('stress-log', '🎉 Suíte completa de testes concluída!', 'success');
+            updateStats();
+        }
+
+        // Gerenciamento de erros
+        function refreshErrorList() {
+            const stats = errorService.getErrorStatistics();
+            const errorList = document.getElementById('error-list');
+            
+            errorList.innerHTML = '';
+            
+            if (stats.recentErrors.length === 0) {
+                errorList.innerHTML = '<div class="error-item">Nenhum erro registrado</div>';
+                return;
+            }
+            
+            stats.recentErrors.forEach(error => {
+                const item = document.createElement('div');
+                item.className = `error-item error-severity-${error.severity}`;
+                item.innerHTML = `
+                    <div>
+                        <strong>${error.type.toUpperCase()}</strong> - ${error.message}
+                        <br>
+                        <small>${error.timestamp.toLocaleString()} | ${error.context.service}.${error.context.method}</small>
+                    </div>
+                `;
+                errorList.appendChild(item);
+            });
+        }
+
+        function clearErrorHistory() {
+            errorService.clearErrorHistory();
+            refreshErrorList();
+            updateStats();
+            
+            // Limpar logs
+            document.getElementById('error-handling-log').innerHTML = '<div class="log-entry"><span class="log-timestamp">[SISTEMA]</span><span class="log-level-info">Histórico limpo</span></div>';
+            document.getElementById('pipeline-log').innerHTML = '<div class="log-entry"><span class="log-timestamp">[PIPELINE]</span><span class="log-level-info">Histórico limpo</span></div>';
+            document.getElementById('stress-log').innerHTML = '<div class="log-entry"><span class="log-timestamp">[STRESS]</span><span class="log-level-info">Histórico limpo</span></div>';
+        }
+
+        // Atualizar estatísticas periodicamente
+        setInterval(updateStats, 2000);
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            refreshErrorList();
+        });
+    </script>
+</body>
+</html>

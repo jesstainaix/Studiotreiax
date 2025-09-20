@@ -1,0 +1,212 @@
+[
+  {
+    "id": "c54228d6-bb31-414f-8530-3470bc7d0d2f",
+    "name": "Roteiro NR-35 Básico",
+    "type": "script",
+    "category": "NR-35",
+    "description": "Template para criação de roteiros básicos sobre trabalho em altura",
+    "prompt": "Você é um especialista em segurança do trabalho especializado em NR-35.\nCrie um roteiro educativo sobre trabalho em altura com as seguintes características:\n\nTópico: {{topic}}\nDuração: {{duration}} segundos\nPúblico-alvo: {{audience}}\nTom: {{tone}}\n\nO roteiro deve:\n- Seguir as diretrizes da NR-35\n- Incluir exemplos práticos\n- Ter linguagem clara e objetiva\n- Incluir pontos de segurança essenciais\n- Ter estrutura: introdução, desenvolvimento, conclusão\n\nFormato de resposta JSON com title, scenes, keyPoints e callToAction.",
+    "variables": [
+      {
+        "name": "topic",
+        "type": "text",
+        "required": true,
+        "description": "Tópico específico da NR-35"
+      },
+      {
+        "name": "duration",
+        "type": "number",
+        "required": true,
+        "description": "Duração em segundos"
+      },
+      {
+        "name": "audience",
+        "type": "select",
+        "options": [
+          "trabalhadores",
+          "supervisores",
+          "técnicos"
+        ],
+        "required": true
+      },
+      {
+        "name": "tone",
+        "type": "select",
+        "options": [
+          "formal",
+          "didático",
+          "conversacional"
+        ],
+        "required": false
+      }
+    ],
+    "tags": [
+      "NR-35",
+      "segurança",
+      "altura",
+      "roteiro"
+    ],
+    "isActive": true,
+    "createdAt": "2025-09-12T22:22:57.023Z",
+    "updatedAt": "2025-09-12T22:22:57.023Z",
+    "usage": 0,
+    "rating": 0,
+    "reviews": []
+  },
+  {
+    "id": "c468a79b-5a41-4c6b-b04d-10653902720b",
+    "name": "Storyboard Profissional",
+    "type": "storyboard",
+    "category": "visual",
+    "description": "Template para criação de storyboards profissionais",
+    "prompt": "Você é um especialista em storyboard para vídeos educativos corporativos.\nCrie um storyboard detalhado baseado no seguinte roteiro:\n\nRoteiro: {{script}}\nEstilo visual: {{visualStyle}}\nPúblico-alvo: {{audience}}\nNúmero de frames: {{frameCount}}\n\nO storyboard deve:\n- Ter descrições visuais detalhadas\n- Incluir elementos gráficos específicos\n- Especificar transições entre frames\n- Considerar a identidade visual corporativa\n- Incluir timing preciso\n\nFormato de resposta JSON com frames, totalDuration, visualStyle e colorPalette.",
+    "variables": [
+      {
+        "name": "script",
+        "type": "textarea",
+        "required": true,
+        "description": "Roteiro base para o storyboard"
+      },
+      {
+        "name": "visualStyle",
+        "type": "select",
+        "options": [
+          "corporativo",
+          "moderno",
+          "minimalista",
+          "ilustrativo"
+        ],
+        "required": true
+      },
+      {
+        "name": "audience",
+        "type": "text",
+        "required": true,
+        "description": "Público-alvo específico"
+      },
+      {
+        "name": "frameCount",
+        "type": "number",
+        "required": false,
+        "description": "Número de frames desejado"
+      }
+    ],
+    "tags": [
+      "storyboard",
+      "visual",
+      "corporativo"
+    ],
+    "isActive": true,
+    "createdAt": "2025-09-12T22:22:57.023Z",
+    "updatedAt": "2025-09-12T22:22:57.023Z",
+    "usage": 0,
+    "rating": 0,
+    "reviews": []
+  },
+  {
+    "id": "2051b76f-a4e4-49ee-9d16-6a306e712728",
+    "name": "Legendas Acessíveis",
+    "type": "captions",
+    "category": "acessibilidade",
+    "description": "Template para criação de legendas com foco em acessibilidade",
+    "prompt": "Você é um especialista em acessibilidade e criação de legendas.\nCrie legendas acessíveis para o seguinte conteúdo:\n\nTexto do áudio: {{audioText}}\nIdioma: {{language}}\nDuração máxima por segmento: {{segmentDuration}} segundos\nCaracteres por linha: {{maxCharsPerLine}}\n\nAs legendas devem:\n- Seguir padrões de acessibilidade WCAG\n- Ter timing preciso\n- Incluir descrições de sons importantes\n- Usar formatação adequada\n- Ser facilmente legíveis\n\nFormato de resposta JSON com segments, totalDuration, language e accessibility.",
+    "variables": [
+      {
+        "name": "audioText",
+        "type": "textarea",
+        "required": true,
+        "description": "Transcrição do áudio"
+      },
+      {
+        "name": "language",
+        "type": "select",
+        "options": [
+          "pt-BR",
+          "en-US",
+          "es-ES"
+        ],
+        "required": true
+      },
+      {
+        "name": "segmentDuration",
+        "type": "number",
+        "required": false,
+        "description": "Duração máxima por segmento"
+      },
+      {
+        "name": "maxCharsPerLine",
+        "type": "number",
+        "required": false,
+        "description": "Caracteres máximos por linha"
+      }
+    ],
+    "tags": [
+      "legendas",
+      "acessibilidade",
+      "WCAG"
+    ],
+    "isActive": true,
+    "createdAt": "2025-09-12T22:22:57.023Z",
+    "updatedAt": "2025-09-12T22:22:57.023Z",
+    "usage": 0,
+    "rating": 0,
+    "reviews": []
+  },
+  {
+    "id": "f020dd47-18b2-4cc5-9757-1304c35d388e",
+    "name": "Análise de Qualidade NR",
+    "type": "analysis",
+    "category": "qualidade",
+    "description": "Template para análise de qualidade de conteúdo sobre normas regulamentadoras",
+    "prompt": "Você é um auditor especializado em conteúdo educativo sobre normas regulamentadoras.\nAnalise a qualidade do seguinte conteúdo:\n\nConteúdo: {{content}}\nNorma: {{nrType}}\nCritérios: {{criteria}}\nPontuação mínima: {{minScore}}\n\nAvalie:\n- Conformidade com a norma\n- Clareza e objetividade\n- Completude das informações\n- Engajamento do público\n- Precisão técnica\n\nFormato de resposta JSON com overallScore, criteria, strengths, weaknesses e recommendations.",
+    "variables": [
+      {
+        "name": "content",
+        "type": "textarea",
+        "required": true,
+        "description": "Conteúdo a ser analisado"
+      },
+      {
+        "name": "nrType",
+        "type": "select",
+        "options": [
+          "NR-35",
+          "NR-33",
+          "NR-10",
+          "NR-06",
+          "NR-12"
+        ],
+        "required": true
+      },
+      {
+        "name": "criteria",
+        "type": "multiselect",
+        "options": [
+          "clareza",
+          "completude",
+          "engajamento",
+          "conformidade"
+        ],
+        "required": true
+      },
+      {
+        "name": "minScore",
+        "type": "number",
+        "required": false,
+        "description": "Pontuação mínima esperada"
+      }
+    ],
+    "tags": [
+      "análise",
+      "qualidade",
+      "NR",
+      "auditoria"
+    ],
+    "isActive": true,
+    "createdAt": "2025-09-12T22:22:57.023Z",
+    "updatedAt": "2025-09-12T22:22:57.023Z",
+    "usage": 0,
+    "rating": 0,
+    "reviews": []
+  }
+]

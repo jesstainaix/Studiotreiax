@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced VFX Engine - Demonstração Completa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b69 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            height: calc(100vh - 80px);
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .sidebar {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+        }
+
+        .canvas-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #vfxCanvas {
+            border: 2px solid #4ecdc4;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+            max-width: 100%;
+            max-height: 70vh;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-group h3 {
+            color: #4ecdc4;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .control-item {
+            margin-bottom: 0.8rem;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+            color: #cccccc;
+        }
+
+        .control-item input, .control-item select, .control-item textarea {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .control-item input:focus, .control-item select:focus, .control-item textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 5px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.2rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+        }
+
+        .metrics {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .expression-editor {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #4ecdc4;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .node-graph {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            background: rgba(78, 205, 196, 0.2);
+            border: 2px solid #4ecdc4;
+            border-radius: 6px;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            cursor: move;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .node.active {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: #4ecdc4;
+            transform-origin: left center;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-indicator.running {
+            background: #4ecdc4;
+            animation: pulse 1s infinite;
+        }
+
+        .status-indicator.error {
+            background: #ff6b6b;
+        }
+
+        .status-indicator.success {
+            background: #51cf66;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .performance-chart {
+            height: 100px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background: #4ecdc4;
+            transition: height 0.1s ease;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 250px 1fr;
+                grid-template-rows: 1fr auto;
+            }
+            
+            .sidebar:last-child {
+                grid-column: 1 / -1;
+                max-height: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .sidebar {
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 Advanced VFX Engine - Demonstração Completa</h1>
+    </div>
+
+    <div class="main-container">
+        <!-- Sidebar Esquerda: Controles de Efeitos -->
+        <div class="sidebar">
+            <div class="control-group">
+                <h3>🎭 Tipo de Efeito</h3>
+                <div class="control-item">
+                    <button class="btn active" onclick="setEffectType('particles')">Partículas</button>
+                    <button class="btn" onclick="setEffectType('distortion')">Distorção</button>
+                    <button class="btn" onclick="setEffectType('lighting')">Iluminação</button>
+                    <button class="btn" onclick="setEffectType('fluid')">Fluidos</button>
+                </div>
+            </div>
+
+            <div class="control-group" id="particleControls">
+                <h3>✨ Sistema de Partículas</h3>
+                <div class="control-item">
+                    <label>Quantidade:</label>
+                    <input type="range" id="particleCount" min="10" max="500" value="100" oninput="updateParticles()">
+                    <span id="particleCountValue">100</span>
+                </div>
+                <div class="control-item">
+                    <label>Velocidade:</label>
+                    <input type="range" id="particleSpeed" min="0.1" max="5" step="0.1" value="1" oninput="updateParticles()">
+                </div>
+                <div class="control-item">
+                    <label>Tamanho:</label>
+                    <input type="range" id="particleSize" min="1" max="10" value="3" oninput="updateParticles()">
+                </div>
+                <div class="control-item">
+                    <label>Cor:</label>
+                    <input type="color" id="particleColor" value="#4ecdc4" oninput="updateParticles()">
+                </div>
+            </div>
+
+            <div class="control-group" id="distortionControls" style="display: none;">
+                <h3>🌊 Efeitos de Distorção</h3>
+                <div class="control-item">
+                    <label>Tipo:</label>
+                    <select id="distortionType" onchange="updateDistortion()">
+                        <option value="wave">Ondas</option>
+                        <option value="ripple">Ondulação</option>
+                        <option value="twist">Torção</option>
+                        <option value="bulge">Abaulamento</option>
+                        <option value="fisheye">Olho de Peixe</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Intensidade:</label>
+                    <input type="range" id="distortionIntensity" min="0" max="100" value="50" oninput="updateDistortion()">
+                </div>
+                <div class="control-item">
+                    <label>Frequência:</label>
+                    <input type="range" id="distortionFrequency" min="0.1" max="5" step="0.1" value="1" oninput="updateDistortion()">
+                </div>
+            </div>
+
+            <div class="control-group" id="lightingControls" style="display: none;">
+                <h3>💡 Sistema de Iluminação</h3>
+                <div class="control-item">
+                    <label>Tipo de Luz:</label>
+                    <select id="lightType" onchange="updateLighting()">
+                        <option value="directional">Direcional</option>
+                        <option value="point">Pontual</option>
+                        <option value="spot">Spot</option>
+                        <option value="ambient">Ambiente</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Intensidade:</label>
+                    <input type="range" id="lightIntensity" min="0" max="2" step="0.1" value="1" oninput="updateLighting()">
+                </div>
+                <div class="control-item">
+                    <label>Cor da Luz:</label>
+                    <input type="color" id="lightColor" value="#ffffff" oninput="updateLighting()">
+                </div>
+            </div>
+
+            <div class="control-group" id="fluidControls" style="display: none;">
+                <h3>🌊 Simulação de Fluidos</h3>
+                <div class="control-item">
+                    <label>Viscosidade:</label>
+                    <input type="range" id="fluidViscosity" min="0.1" max="2" step="0.1" value="0.5" oninput="updateFluid()">
+                </div>
+                <div class="control-item">
+                    <label>Densidade:</label>
+                    <input type="range" id="fluidDensity" min="0.1" max="2" step="0.1" value="1" oninput="updateFluid()">
+                </div>
+                <div class="control-item">
+                    <label>Turbulência:</label>
+                    <input type="range" id="fluidTurbulence" min="0" max="1" step="0.1" value="0.3" oninput="updateFluid()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Área Central: Canvas e Visualização -->
+        <div class="canvas-container">
+            <canvas id="vfxCanvas" width="800" height="600"></canvas>
+            
+            <div class="metrics">
+                <div><span class="status-indicator running"></span>FPS: <span id="fpsCounter">60</span></div>
+                <div>Partículas: <span id="particleCounter">0</span></div>
+                <div>Tempo de Render: <span id="renderTime">0</span>ms</div>
+                <div>Memória: <span id="memoryUsage">0</span>MB</div>
+            </div>
+
+            <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn" onclick="playAnimation()">▶️ Play</button>
+                <button class="btn" onclick="pauseAnimation()">⏸️ Pause</button>
+                <button class="btn" onclick="resetAnimation()">🔄 Reset</button>
+                <button class="btn" onclick="exportFrame()">📸 Exportar Frame</button>
+                <button class="btn" onclick="toggleFullscreen()">🔍 Fullscreen</button>
+            </div>
+        </div>
+
+        <!-- Sidebar Direita: Expressões e Nós -->
+        <div class="sidebar">
+            <div class="control-group">
+                <h3>🧮 Sistema de Expressões</h3>
+                <div class="control-item">
+                    <label>Expressão de Posição X:</label>
+                    <textarea class="expression-editor" id="expressionX" placeholder="sin(time * 2) * 100">sin(time * 2) * 100</textarea>
+                </div>
+                <div class="control-item">
+                    <label>Expressão de Posição Y:</label>
+                    <textarea class="expression-editor" id="expressionY" placeholder="cos(time * 2) * 100">cos(time * 2) * 100</textarea>
+                </div>
+                <div class="control-item">
+                    <label>Expressão de Rotação:</label>
+                    <textarea class="expression-editor" id="expressionRotation" placeholder="time * 45">time * 45</textarea>
+                </div>
+                <div class="control-item">
+                    <label>Expressão de Escala:</label>
+                    <textarea class="expression-editor" id="expressionScale" placeholder="1 + sin(time * 4) * 0.2">1 + sin(time * 4) * 0.2</textarea>
+                </div>
+                <button class="btn" onclick="updateExpressions()">🔄 Atualizar Expressões</button>
+            </div>
+
+            <div class="control-group">
+                <h3>🔗 Node-Based Compositor</h3>
+                <div class="node-graph" id="nodeGraph">
+                    <div class="node" id="inputNode" style="left: 10px; top: 10px;">Input</div>
+                    <div class="node" id="effectNode" style="left: 10px; top: 60px;">Effect</div>
+                    <div class="node" id="outputNode" style="left: 10px; top: 110px;">Output</div>
+                    <div class="connection" id="connection1"></div>
+                    <div class="connection" id="connection2"></div>
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <button class="btn" onclick="addNode()">➕ Adicionar Nó</button>
+                    <button class="btn" onclick="connectNodes()">🔗 Conectar</button>
+                    <button class="btn" onclick="processNodes()">⚡ Processar</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>📊 Performance</h3>
+                <div class="performance-chart" id="performanceChart"></div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem;">
+                    <div>CPU: <span id="cpuUsage">0</span>%</div>
+                    <div>GPU: <span id="gpuUsage">0</span>%</div>
+                    <div>Cache Hit: <span id="cacheHit">0</span>%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let canvas, ctx;
+        let animationId;
+        let isPlaying = true;
+        let startTime = Date.now();
+        let currentEffect = 'particles';
+        let particles = [];
+        let performanceData = [];
+        let nodeConnections = [];
+        
+        // Sistema de expressões simulado
+        const expressionEngine = {
+            evaluate: function(expression, context) {
+                try {
+                    // Substituir variáveis do contexto
+                    let code = expression;
+                    Object.keys(context).forEach(key => {
+                        const regex = new RegExp('\\b' + key + '\\b', 'g');
+                        code = code.replace(regex, context[key]);
+                    });
+                    
+                    // Funções matemáticas disponíveis
+                    const mathFunctions = {
+                        sin: Math.sin,
+                        cos: Math.cos,
+                        tan: Math.tan,
+                        abs: Math.abs,
+                        sqrt: Math.sqrt,
+                        pow: Math.pow,
+                        min: Math.min,
+                        max: Math.max,
+                        floor: Math.floor,
+                        ceil: Math.ceil,
+                        round: Math.round,
+                        random: Math.random,
+                        PI: Math.PI
+                    };
+                    
+                    // Criar função segura
+                    const func = new Function(...Object.keys(mathFunctions), `return ${code}`);
+                    return func(...Object.values(mathFunctions));
+                } catch (e) {
+                    console.warn('Erro na expressão:', expression, e);
+                    return 0;
+                }
+            }
+        };
+
+        // Inicialização
+        function init() {
+            canvas = document.getElementById('vfxCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Inicializar partículas
+            initParticles();
+            
+            // Inicializar nós
+            initNodes();
+            
+            // Inicializar gráfico de performance
+            initPerformanceChart();
+            
+            // Começar animação
+            animate();
+            
+            // Atualizar métricas
+            setInterval(updateMetrics, 100);
+        }
+
+        // Sistema de partículas
+        function initParticles() {
+            particles = [];
+            const count = parseInt(document.getElementById('particleCount').value);
+            
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    size: Math.random() * 5 + 2,
+                    life: 1,
+                    decay: Math.random() * 0.02 + 0.005
+                });
+            }
+        }
+
+        function updateParticles() {
+            const count = parseInt(document.getElementById('particleCount').value);
+            const speed = parseFloat(document.getElementById('particleSpeed').value);
+            const size = parseInt(document.getElementById('particleSize').value);
+            const color = document.getElementById('particleColor').value;
+            
+            document.getElementById('particleCountValue').textContent = count;
+            
+            // Ajustar número de partículas
+            while (particles.length < count) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 4 * speed,
+                    vy: (Math.random() - 0.5) * 4 * speed,
+                    size: Math.random() * size + 2,
+                    life: 1,
+                    decay: Math.random() * 0.02 + 0.005
+                });
+            }
+            
+            particles = particles.slice(0, count);
+        }
+
+        function renderParticles() {
+            const time = (Date.now() - startTime) / 1000;
+            const color = document.getElementById('particleColor').value;
+            
+            // Aplicar expressões se disponíveis
+            const context = { time, width: canvas.width, height: canvas.height };
+            
+            particles.forEach((particle, index) => {
+                // Atualizar posição
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                
+                // Aplicar expressões
+                try {
+                    const exprX = document.getElementById('expressionX').value;
+                    const exprY = document.getElementById('expressionY').value;
+                    const exprScale = document.getElementById('expressionScale').value;
+                    
+                    if (exprX) {
+                        const offsetX = expressionEngine.evaluate(exprX, { ...context, index });
+                        particle.x += offsetX * 0.01;
+                    }
+                    
+                    if (exprY) {
+                        const offsetY = expressionEngine.evaluate(exprY, { ...context, index });
+                        particle.y += offsetY * 0.01;
+                    }
+                    
+                    if (exprScale) {
+                        const scale = expressionEngine.evaluate(exprScale, { ...context, index });
+                        particle.currentSize = particle.size * scale;
+                    } else {
+                        particle.currentSize = particle.size;
+                    }
+                } catch (e) {
+                    particle.currentSize = particle.size;
+                }
+                
+                // Bordas
+                if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+                if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+                
+                // Renderizar
+                ctx.save();
+                ctx.globalAlpha = particle.life;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.currentSize || particle.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                
+                // Atualizar vida
+                particle.life -= particle.decay;
+                if (particle.life <= 0) {
+                    particle.life = 1;
+                    particle.x = Math.random() * canvas.width;
+                    particle.y = Math.random() * canvas.height;
+                }
+            });
+        }
+
+        // Outros efeitos (simulados)
+        function renderDistortion() {
+            const type = document.getElementById('distortionType').value;
+            const intensity = parseInt(document.getElementById('distortionIntensity').value);
+            const frequency = parseFloat(document.getElementById('distortionFrequency').value);
+            const time = (Date.now() - startTime) / 1000;
+            
+            // Criar padrão de distorção
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            // Aplicar efeito visual simples
+            ctx.fillStyle = `rgba(78, 205, 196, ${intensity / 1000})`;
+            
+            for (let i = 0; i < 10; i++) {
+                const x = Math.sin(time * frequency + i) * intensity + canvas.width / 2;
+                const y = Math.cos(time * frequency + i) * intensity + canvas.height / 2;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function renderLighting() {
+            const type = document.getElementById('lightType').value;
+            const intensity = parseFloat(document.getElementById('lightIntensity').value);
+            const color = document.getElementById('lightColor').value;
+            const time = (Date.now() - startTime) / 1000;
+            
+            // Simular iluminação
+            const gradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, 0,
+                canvas.width / 2, canvas.height / 2, 200 * intensity
+            );
+            
+            gradient.addColorStop(0, color + '80');
+            gradient.addColorStop(1, color + '00');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function renderFluid() {
+            const viscosity = parseFloat(document.getElementById('fluidViscosity').value);
+            const density = parseFloat(document.getElementById('fluidDensity').value);
+            const turbulence = parseFloat(document.getElementById('fluidTurbulence').value);
+            const time = (Date.now() - startTime) / 1000;
+            
+            // Simular fluido com ondas
+            ctx.strokeStyle = '#4ecdc4';
+            ctx.lineWidth = 2;
+            
+            for (let y = 0; y < canvas.height; y += 20) {
+                ctx.beginPath();
+                for (let x = 0; x < canvas.width; x += 5) {
+                    const wave = Math.sin(x * 0.01 + time * viscosity) * turbulence * 20;
+                    const wave2 = Math.cos(y * 0.01 + time * density) * turbulence * 20;
+                    
+                    if (x === 0) {
+                        ctx.moveTo(x, y + wave + wave2);
+                    } else {
+                        ctx.lineTo(x, y + wave + wave2);
+                    }
+                }
+                ctx.stroke();
+            }
+        }
+
+        // Controles de efeito
+        function setEffectType(type) {
+            currentEffect = type;
+            
+            // Atualizar botões
+            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Mostrar/ocultar controles
+            document.getElementById('particleControls').style.display = type === 'particles' ? 'block' : 'none';
+            document.getElementById('distortionControls').style.display = type === 'distortion' ? 'block' : 'none';
+            document.getElementById('lightingControls').style.display = type === 'lighting' ? 'block' : 'none';
+            document.getElementById('fluidControls').style.display = type === 'fluid' ? 'block' : 'none';
+        }
+
+        function updateDistortion() {
+            // Atualização em tempo real
+        }
+
+        function updateLighting() {
+            // Atualização em tempo real
+        }
+
+        function updateFluid() {
+            // Atualização em tempo real
+        }
+
+        function updateExpressions() {
+            // As expressões são aplicadas automaticamente no render
+            console.log('Expressões atualizadas');
+        }
+
+        // Sistema de nós (simulado)
+        function initNodes() {
+            // Posicionar nós
+            updateNodeConnections();
+        }
+
+        function updateNodeConnections() {
+            const inputNode = document.getElementById('inputNode');
+            const effectNode = document.getElementById('effectNode');
+            const outputNode = document.getElementById('outputNode');
+            
+            // Conectar input -> effect
+            const conn1 = document.getElementById('connection1');
+            const rect1 = inputNode.getBoundingClientRect();
+            const rect2 = effectNode.getBoundingClientRect();
+            
+            conn1.style.left = (rect1.right - rect1.left) + 'px';
+            conn1.style.top = (rect1.top + rect1.height / 2) + 'px';
+            conn1.style.width = Math.abs(rect2.left - rect1.right) + 'px';
+            
+            // Conectar effect -> output
+            const conn2 = document.getElementById('connection2');
+            const rect3 = outputNode.getBoundingClientRect();
+            
+            conn2.style.left = (rect2.right - rect2.left) + 'px';
+            conn2.style.top = (rect2.top + rect2.height / 2) + 'px';
+            conn2.style.width = Math.abs(rect3.left - rect2.right) + 'px';
+        }
+
+        function addNode() {
+            const nodeGraph = document.getElementById('nodeGraph');
+            const newNode = document.createElement('div');
+            newNode.className = 'node';
+            newNode.textContent = 'Node ' + (nodeGraph.children.length - 2);
+            newNode.style.left = Math.random() * 150 + 'px';
+            newNode.style.top = Math.random() * 150 + 'px';
+            nodeGraph.appendChild(newNode);
+        }
+
+        function connectNodes() {
+            console.log('Conectando nós...');
+        }
+
+        function processNodes() {
+            console.log('Processando pipeline de nós...');
+            
+            // Simular processamento
+            document.querySelectorAll('.node').forEach((node, index) => {
+                setTimeout(() => {
+                    node.classList.add('active');
+                    setTimeout(() => node.classList.remove('active'), 500);
+                }, index * 200);
+            });
+        }
+
+        // Gráfico de performance
+        function initPerformanceChart() {
+            const chart = document.getElementById('performanceChart');
+            
+            for (let i = 0; i < 100; i++) {
+                const line = document.createElement('div');
+                line.className = 'chart-line';
+                line.style.left = i * 2 + 'px';
+                line.style.height = '0px';
+                chart.appendChild(line);
+            }
+        }
+
+        function updatePerformanceChart() {
+            const lines = document.querySelectorAll('.chart-line');
+            const fps = parseInt(document.getElementById('fpsCounter').textContent);
+            const height = (fps / 60) * 100;
+            
+            // Mover dados para a esquerda
+            for (let i = 0; i < lines.length - 1; i++) {
+                lines[i].style.height = lines[i + 1].style.height;
+            }
+            
+            // Adicionar novo dado
+            lines[lines.length - 1].style.height = height + 'px';
+        }
+
+        // Métricas de performance
+        function updateMetrics() {
+            const fps = Math.floor(Math.random() * 10) + 55; // Simular FPS
+            const particles = document.getElementById('particleCount').value;
+            const renderTime = Math.floor(Math.random() * 5) + 1;
+            const memory = Math.floor(Math.random() * 50) + 20;
+            const cpu = Math.floor(Math.random() * 30) + 10;
+            const gpu = Math.floor(Math.random() * 40) + 20;
+            const cache = Math.floor(Math.random() * 20) + 80;
+            
+            document.getElementById('fpsCounter').textContent = fps;
+            document.getElementById('particleCounter').textContent = particles;
+            document.getElementById('renderTime').textContent = renderTime;
+            document.getElementById('memoryUsage').textContent = memory;
+            document.getElementById('cpuUsage').textContent = cpu;
+            document.getElementById('gpuUsage').textContent = gpu;
+            document.getElementById('cacheHit').textContent = cache;
+            
+            updatePerformanceChart();
+        }
+
+        // Controles de animação
+        function playAnimation() {
+            if (!isPlaying) {
+                isPlaying = true;
+                animate();
+            }
+        }
+
+        function pauseAnimation() {
+            isPlaying = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        }
+
+        function resetAnimation() {
+            startTime = Date.now();
+            initParticles();
+        }
+
+        function exportFrame() {
+            const link = document.createElement('a');
+            link.download = 'vfx-frame-' + Date.now() + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                canvas.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Loop principal de animação
+        function animate() {
+            if (!isPlaying) return;
+            
+            // Limpar canvas
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Renderizar efeito atual
+            switch (currentEffect) {
+                case 'particles':
+                    renderParticles();
+                    break;
+                case 'distortion':
+                    renderDistortion();
+                    break;
+                case 'lighting':
+                    renderLighting();
+                    break;
+                case 'fluid':
+                    renderFluid();
+                    break;
+            }
+            
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Inicializar quando a página carregar
+        window.addEventListener('load', init);
+        
+        // Responsividade
+        window.addEventListener('resize', () => {
+            // Ajustar canvas se necessário
+            updateNodeConnections();
+        });
+    </script>
+</body>
+</html>

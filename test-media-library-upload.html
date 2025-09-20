@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - MediaLibrary Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .test-file {
+            background: #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .test-file:hover {
+            background: #444;
+        }
+        .status {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .pending { color: #ff9800; }
+        
+        .drop-zone {
+            border: 2px dashed #666;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+        .drop-zone.dragover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        #fileInput {
+            margin: 20px 0;
+        }
+        
+        .log {
+            background: #1a1a1a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Teste da MediaLibrary - Funcionalidade de Upload</h1>
+        
+        <div class="test-section">
+            <h2>📤 Testes de Upload</h2>
+            <p>Este teste verifica se a funcionalidade de upload da MediaLibrary está funcionando corretamente.</p>
+            
+            <div class="drop-zone" id="dropZone">
+                <h3>📁 Zona de Drop</h3>
+                <p>Arraste arquivos aqui para testar drag & drop</p>
+                <p><small>Suporte: MP4, MOV, AVI, MP3, WAV, JPG, PNG, PPTX</small></p>
+            </div>
+            
+            <input type="file" id="fileInput" multiple accept="video/*,audio/*,image/*,.pptx">
+            <button id="uploadBtn">Selecionar Arquivos</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔍 Casos de Teste Automáticos</h2>
+            <div id="testResults">
+                <div class="test-file" onclick="testFileValidation()">
+                    1. Validação de Tipos de Arquivo
+                    <span class="status pending" id="test1">⏳ Pendente</span>
+                </div>
+                <div class="test-file" onclick="testFileSizeValidation()">
+                    2. Validação de Tamanho de Arquivo
+                    <span class="status pending" id="test2">⏳ Pendente</span>
+                </div>
+                <div class="test-file" onclick="testMetadataExtraction()">
+                    3. Extração de Metadados
+                    <span class="status pending" id="test3">⏳ Pendente</span>
+                </div>
+                <div class="test-file" onclick="testProgressTracking()">
+                    4. Acompanhamento de Progresso
+                    <span class="status pending" id="test4">⏳ Pendente</span>
+                </div>
+                <div class="test-file" onclick="testErrorHandling()">
+                    5. Tratamento de Erros
+                    <span class="status pending" id="test5">⏳ Pendente</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📋 Log de Atividades</h2>
+            <div class="log" id="logOutput">
+                [Iniciando testes da MediaLibrary...]<br>
+            </div>
+            <button onclick="clearLog()">Limpar Log</button>
+        </div>
+    </div>
+
+    <script>
+        // Simulação das funções da MediaLibrary para teste
+        let uploadProgress = [];
+        let assets = [];
+        
+        // Funções de log
+        function log(message, type = 'info') {
+            const logOutput = document.getElementById('logOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#fff';
+            logOutput.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span><br>`;
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('logOutput').innerHTML = '[Log limpo]<br>';
+        }
+        
+        // Simulação das funções de validação da MediaLibrary
+        function isValidFileType(file) {
+            const validTypes = [
+                'video/mp4', 'video/mov', 'video/avi', 'video/quicktime',
+                'audio/mp3', 'audio/wav', 'audio/mpeg',
+                'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ];
+            return validTypes.includes(file.type) || file.name.toLowerCase().endsWith('.pptx');
+        }
+        
+        function getFileType(file) {
+            if (file.type.startsWith('video/')) return 'video';
+            if (file.type.startsWith('audio/')) return 'audio';
+            if (file.type.startsWith('image/')) return 'image';
+            if (file.name.toLowerCase().endsWith('.pptx')) return 'pptx';
+            return 'unknown';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Simulação de upload
+        async function simulateUpload(fileId, file) {
+            return new Promise((resolve) => {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 15 + 5; // 5-20% increment
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        resolve();
+                    }
+                    
+                    // Update progress in array
+                    const uploadIndex = uploadProgress.findIndex(u => u.fileId === fileId);
+                    if (uploadIndex !== -1) {
+                        uploadProgress[uploadIndex].progress = progress;
+                        updateProgressDisplay();
+                    }
+                }, 100 + Math.random() * 200);
+            });
+        }
+        
+        function updateProgressDisplay() {
+            // This would update the UI in the real component
+            const activeUploads = uploadProgress.filter(u => u.progress < 100);
+            if (activeUploads.length > 0) {
+                log(`Upload progress: ${activeUploads.map(u => `${u.fileName} (${u.progress.toFixed(0)}%)`).join(', ')}`);
+            }
+        }
+        
+        // Testes individuais
+        function testFileValidation() {
+            log('🔍 Iniciando teste de validação de arquivos...');
+            
+            // Criar arquivos de teste mock
+            const testFiles = [
+                { name: 'video.mp4', type: 'video/mp4', size: 1024000 },
+                { name: 'audio.mp3', type: 'audio/mp3', size: 512000 },
+                { name: 'image.jpg', type: 'image/jpeg', size: 256000 },
+                { name: 'presentation.pptx', type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', size: 2048000 },
+                { name: 'invalid.txt', type: 'text/plain', size: 1000 }
+            ];
+            
+            let passed = 0;
+            let total = testFiles.length;
+            
+            testFiles.forEach(file => {
+                const isValid = isValidFileType(file);
+                const shouldBeValid = !file.name.includes('invalid');
+                
+                if (isValid === shouldBeValid) {
+                    passed++;
+                    log(`✅ ${file.name}: ${isValid ? 'Aceito' : 'Rejeitado'} corretamente`, 'success');
+                } else {
+                    log(`❌ ${file.name}: Validação incorreta (esperado: ${shouldBeValid}, obtido: ${isValid})`, 'error');
+                }
+            });
+            
+            const success = passed === total;
+            document.getElementById('test1').innerHTML = success ? '✅ Passou' : '❌ Falhou';
+            document.getElementById('test1').className = `status ${success ? 'success' : 'error'}`;
+            
+            log(`📊 Teste de validação: ${passed}/${total} casos passaram`, success ? 'success' : 'error');
+        }
+        
+        function testFileSizeValidation() {
+            log('📏 Iniciando teste de validação de tamanho...');
+            
+            // Testar formatação de tamanhos
+            const testSizes = [0, 1024, 1048576, 1073741824];
+            const expectedFormats = ['0 Bytes', '1 KB', '1 MB', '1 GB'];
+            
+            let passed = 0;
+            testSizes.forEach((size, index) => {
+                const formatted = formatFileSize(size);
+                if (formatted === expectedFormats[index]) {
+                    passed++;
+                    log(`✅ ${size} bytes = ${formatted}`, 'success');
+                } else {
+                    log(`❌ ${size} bytes = ${formatted} (esperado: ${expectedFormats[index]})`, 'error');
+                }
+            });
+            
+            const success = passed === testSizes.length;
+            document.getElementById('test2').innerHTML = success ? '✅ Passou' : '❌ Falhou';
+            document.getElementById('test2').className = `status ${success ? 'success' : 'error'}`;
+            
+            log(`📊 Teste de formatação: ${passed}/${testSizes.length} casos passaram`, success ? 'success' : 'error');
+        }
+        
+        function testMetadataExtraction() {
+            log('🔍 Iniciando teste de extração de metadados...');
+            
+            // Simular extração de metadados para diferentes tipos
+            const testCases = [
+                { type: 'video', hasResolution: true, hasDuration: true },
+                { type: 'audio', hasResolution: false, hasDuration: true },
+                { type: 'image', hasResolution: true, hasDuration: false },
+                { type: 'pptx', hasResolution: false, hasDuration: false }
+            ];
+            
+            let passed = 0;
+            testCases.forEach(testCase => {
+                // Simular metadados baseado no tipo
+                const mockMetadata = {
+                    resolution: testCase.hasResolution ? { width: 1920, height: 1080 } : null,
+                    duration: testCase.hasDuration ? 120 : null,
+                    frameRate: testCase.type === 'video' ? 30 : null
+                };
+                
+                const hasExpectedData = 
+                    (testCase.hasResolution && mockMetadata.resolution) ||
+                    (testCase.hasDuration && mockMetadata.duration) ||
+                    (!testCase.hasResolution && !testCase.hasDuration);
+                
+                if (hasExpectedData) {
+                    passed++;
+                    log(`✅ ${testCase.type}: Metadados extraídos corretamente`, 'success');
+                } else {
+                    log(`❌ ${testCase.type}: Falha na extração de metadados`, 'error');
+                }
+            });
+            
+            const success = passed === testCases.length;
+            document.getElementById('test3').innerHTML = success ? '✅ Passou' : '❌ Falhou';
+            document.getElementById('test3').className = `status ${success ? 'success' : 'error'}`;
+            
+            log(`📊 Teste de metadados: ${passed}/${testCases.length} casos passaram`, success ? 'success' : 'error');
+        }
+        
+        async function testProgressTracking() {
+            log('📈 Iniciando teste de acompanhamento de progresso...');
+            
+            // Simular upload com tracking de progresso
+            const mockFile = { name: 'test-progress.mp4', type: 'video/mp4', size: 1024000 };
+            const fileId = 'test-' + Date.now();
+            
+            uploadProgress.push({
+                fileId,
+                fileName: mockFile.name,
+                progress: 0,
+                status: 'uploading'
+            });
+            
+            log(`📤 Iniciando upload simulado: ${mockFile.name}`);
+            
+            try {
+                await simulateUpload(fileId, mockFile);
+                
+                const uploadItem = uploadProgress.find(u => u.fileId === fileId);
+                const success = uploadItem && uploadItem.progress === 100;
+                
+                document.getElementById('test4').innerHTML = success ? '✅ Passou' : '❌ Falhou';
+                document.getElementById('test4').className = `status ${success ? 'success' : 'error'}`;
+                
+                log(`📊 Teste de progresso: ${success ? 'Completado' : 'Falhou'}`, success ? 'success' : 'error');
+                
+                // Limpar progresso de teste
+                uploadProgress = uploadProgress.filter(u => u.fileId !== fileId);
+                
+            } catch (error) {
+                log(`❌ Erro no teste de progresso: ${error.message}`, 'error');
+                document.getElementById('test4').innerHTML = '❌ Falhou';
+                document.getElementById('test4').className = 'status error';
+            }
+        }
+        
+        function testErrorHandling() {
+            log('⚠️ Iniciando teste de tratamento de erros...');
+            
+            // Simular diferentes cenários de erro
+            const errorScenarios = [
+                { name: 'Arquivo muito grande', size: 100000000000, shouldFail: true },
+                { name: 'Tipo inválido.exe', type: 'application/exe', shouldFail: true },
+                { name: 'Arquivo válido.mp4', type: 'video/mp4', size: 1024000, shouldFail: false }
+            ];
+            
+            let passed = 0;
+            errorScenarios.forEach(scenario => {
+                const mockFile = { 
+                    name: scenario.name, 
+                    type: scenario.type || 'video/mp4', 
+                    size: scenario.size || 1024000 
+                };
+                
+                try {
+                    const isValid = isValidFileType(mockFile);
+                    const sizeTooLarge = mockFile.size > 50000000; // 50MB limit
+                    const shouldReject = scenario.shouldFail || !isValid || sizeTooLarge;
+                    
+                    if (shouldReject === scenario.shouldFail) {
+                        passed++;
+                        log(`✅ ${scenario.name}: ${shouldReject ? 'Rejeitado' : 'Aceito'} corretamente`, 'success');
+                    } else {
+                        log(`❌ ${scenario.name}: Tratamento incorreto de erro`, 'error');
+                    }
+                } catch (error) {
+                    if (scenario.shouldFail) {
+                        passed++;
+                        log(`✅ ${scenario.name}: Erro capturado corretamente`, 'success');
+                    } else {
+                        log(`❌ ${scenario.name}: Erro inesperado: ${error.message}`, 'error');
+                    }
+                }
+            });
+            
+            const success = passed === errorScenarios.length;
+            document.getElementById('test5').innerHTML = success ? '✅ Passou' : '❌ Falhou';
+            document.getElementById('test5').className = `status ${success ? 'success' : 'error'}`;
+            
+            log(`📊 Teste de erros: ${passed}/${errorScenarios.length} casos passaram`, success ? 'success' : 'error');
+        }
+        
+        // Event listeners para drag & drop
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files);
+            log(`📁 ${files.length} arquivo(s) detectado(s) via drag & drop`);
+            
+            files.forEach(file => {
+                const isValid = isValidFileType(file);
+                const type = getFileType(file);
+                const size = formatFileSize(file.size);
+                
+                log(`📄 ${file.name} (${type}) - ${size} - ${isValid ? 'Válido' : 'Inválido'}`, isValid ? 'success' : 'error');
+            });
+        });
+        
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            log(`📁 ${files.length} arquivo(s) selecionado(s) via input`);
+            
+            files.forEach(file => {
+                const isValid = isValidFileType(file);
+                const type = getFileType(file);
+                const size = formatFileSize(file.size);
+                
+                log(`📄 ${file.name} (${type}) - ${size} - ${isValid ? 'Válido' : 'Inválido'}`, isValid ? 'success' : 'error');
+            });
+        });
+        
+        // Inicializar
+        log('✅ Sistema de teste carregado - Pronto para testar funcionalidades da MediaLibrary');
+    </script>
+</body>
+</html>

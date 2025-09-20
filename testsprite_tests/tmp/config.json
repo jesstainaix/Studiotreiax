@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5000",
+  "executionArgs": {
+    "projectName": "Studiotreiax_1",
+    "projectPath": "c:\\xampp\\htdocs\\Studiotreiax_1",
+    "testIds": [],
+    "additionalInstruction": "Execute todos os testes do plano gerado para o projeto Studiotreiax, incluindo testes de autenticação, funcionalidades principais, integração de IA, sistema TTS, editor de vídeo e performance.",
+    "envs": {
+      "API_KEY": "sk-user-Ez4Us4SXOMZtw3CLBCm46ki0TLRmDM2-kDwtX_KMUWGVt_UnIYQXFFwKYiekRddPDv8-T2j9Xw3_2s-92dDy5Eqa9ylg3puxakFU8POcH9cJG9BrqURIRitt9rSb0EhARr0"
+    }
+  },
+  "proxy": "http://c4f1b832-77bb-4c20-b306-5c25221eac82:qOCtMqGzIMIJj4ICBmURJdu54C8EcH8P@tun.testsprite.com:8080"
+}

@@ -1,0 +1,287 @@
+{
+  "name": "performance-optimization-system",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sistema avançado de otimização de performance para aplicações React",
+  "main": "src/index.tsx",
+  "scripts": {
+    "dev": "concurrently \"npm:dev:frontend\" \"npm:dev:backend\"",
+    "dev:frontend": "vite --host 0.0.0.0 --port 5174 --strictPort",
+    "dev:backend": "node simple-server.js",
+    "dev:api": "node api-server.js",
+    "dev:full": "concurrently \"npm:dev:frontend\" \"npm:dev:api\"",
+    "start": "npm run dev",
+    "start:preview": "vite build && vite preview --host 0.0.0.0 --port 5000 --strictPort",
+    "build": "vite build",
+    "build:analyze": "vite build --mode production",
+    "preview": "vite preview",
+    "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "type-check": "tsc --noEmit",
+    "check": "npm run type-check && npm run lint && npm run format:check",
+    "clean": "rimraf dist coverage .parcel-cache",
+    "clean:all": "npm run clean && rimraf node_modules package-lock.json",
+    "test": "jest --config=jest.config.cjs",
+    "test:watch": "jest --config=jest.config.cjs --watch",
+    "test:coverage": "jest --coverage --collectCoverageFrom='src/**/*.{ts,tsx}'",
+    "test:unit": "jest --testMatch='**/__tests__/**/*.test.{ts,tsx}'",
+    "test:integration": "jest --testMatch='**/__tests__/**/*.integration.test.{ts,tsx}'",
+    "test:components": "jest --testMatch='**/__tests__/**/*.test.tsx'",
+    "test:hooks": "jest --testMatch='**/hooks/__tests__/**/*.test.{ts,tsx}'",
+    "test:core": "jest --testMatch='**/core/__tests__/**/*.test.{ts,tsx}'",
+    "test:utils": "jest --testMatch='**/utils/__tests__/**/*.test.{ts,tsx}'",
+    "test:pptx": "jest --config=jest.config.pptx.cjs",
+    "test:pptx:watch": "jest --config=jest.config.pptx.cjs --watch",
+    "test:pptx:coverage": "jest --config=jest.config.pptx.cjs --coverage",
+    "test:pptx:performance": "jest --config=jest.config.pptx.ts --testNamePattern=\"Performance|Stress\" src/services/pptx-system.test.ts",
+    "test:pptx:integration": "jest --config=jest.config.pptx.ts --testNamePattern=\"Integration\" src/services/pptx-system.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:automation": "npm run test:pptx && npm run test:coverage",
+    "analyze": "npm run build && npx vite-bundle-analyzer dist",
+    "analyze:deps": "npx depcheck",
+    "performance:test": "lighthouse http://localhost:5000 --output=json --output-path=./performance-report.json",
+    "performance:report": "lighthouse http://localhost:5000 --view",
+    "prepare": "husky install",
+    "pre-commit": "lint-staged",
+    "commit": "cz",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:patch": "standard-version --release-as patch",
+    "release:major": "standard-version --release-as major"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.63.0",
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
+    "@pixiv/three-vrm": "^3.4.2",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slider": "^1.3.6",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@supabase/supabase-js": "^2.57.4",
+    "@tensorflow/tfjs": "^4.15.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.15.0",
+    "@types/fabric": "^5.3.10",
+    "@types/lodash": "^4.17.20",
+    "@types/react-beautiful-dnd": "^13.1.8",
+    "@types/three": "^0.180.0",
+    "@xmldom/xmldom": "^0.8.11",
+    "bcrypt": "^6.0.0",
+    "canvas": "^3.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.0.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "date-fns": "^2.30.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.2.1",
+    "fabric": "^6.7.1",
+    "fast-xml-parser": "^5.2.5",
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "form-data": "^4.0.4",
+    "framer-motion": "^12.23.12",
+    "gsap": "^3.13.0",
+    "helmet": "^8.1.0",
+    "hls.js": "^1.4.14",
+    "html2canvas": "^1.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.2",
+    "jszip": "^3.10.1",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.294.0",
+    "multer": "^2.0.2",
+    "node-cache": "^5.1.2",
+    "node-stream-zip": "^1.15.0",
+    "nodemailer": "^7.0.6",
+    "openai": "^5.20.2",
+    "react": "18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^6.8.0",
+    "react-window": "^2.1.1",
+    "react-window-infinite-loader": "^2.0.0",
+    "recharts": "^2.8.0",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "sharp": "^0.34.4",
+    "socket.io-client": "^4.7.4",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^2.0.0",
+    "tesseract.js": "^6.0.1",
+    "three": "^0.180.0",
+    "three-stdlib": "^2.36.0",
+    "uuid": "^13.0.0",
+    "web-vitals": "^3.5.2",
+    "workbox-window": "^7.0.0",
+    "xml2js": "^0.6.2",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/plugin-transform-class-properties": "^7.24.0",
+    "@babel/plugin-transform-object-rest-spread": "^7.24.0",
+    "@babel/plugin-transform-private-methods": "^7.24.0",
+    "@babel/plugin-transform-runtime": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
+    "@babel/runtime": "^7.24.0",
+    "@eslint/js": "^9.35.0",
+    "@playwright/test": "^1.55.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/react-window": "^1.8.8",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^9.2.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.4.0",
+    "happy-dom": "^18.0.1",
+    "husky": "^9.1.7",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
+    "jest-watch-typeahead": "^2.2.2",
+    "jsdom": "^23.2.0",
+    "lighthouse": "^12.8.2",
+    "playwright": "^1.55.0",
+    "postcss": "^8.4.32",
+    "rimraf": "^5.0.5",
+    "tailwindcss": "^3.3.6",
+    "ts-jest": "^29.4.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2",
+    "typescript-eslint": "^8.44.0",
+    "vite": "^5.4.20",
+    "vite-bundle-analyzer": "^0.7.0",
+    "vite-plugin-compression": "^0.5.1",
+    "vitest": "^3.2.4",
+    "workbox-cli": "^2.1.3"
+  },
+  "keywords": [
+    "react",
+    "performance",
+    "optimization",
+    "web-vitals",
+    "lazy-loading",
+    "code-splitting",
+    "bundle-analysis",
+    "cache",
+    "service-worker",
+    "a-b-testing",
+    "typescript",
+    "vite",
+    "tailwindcss"
+  ],
+  "author": "Performance Optimization Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/performance-optimization-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/performance-optimization-system/issues"
+  },
+  "homepage": "https://github.com/your-org/performance-optimization-system#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "performance": {
+    "budgets": {
+      "bundle": {
+        "maxSize": "1MB",
+        "warningSize": "800KB"
+      },
+      "assets": {
+        "maxSize": "500KB",
+        "warningSize": "300KB"
+      }
+    },
+    "vitals": {
+      "lcp": {
+        "good": 2500,
+        "needsImprovement": 4000
+      },
+      "fid": {
+        "good": 100,
+        "needsImprovement": 300
+      },
+      "cls": {
+        "good": 0.1,
+        "needsImprovement": 0.25
+      }
+    }
+  },
+  "workbox": {
+    "globDirectory": "dist/",
+    "globPatterns": [
+      "**/*.{html,js,css,png,jpg,jpeg,svg,woff,woff2}"
+    ],
+    "swDest": "dist/sw.js",
+    "runtimeCaching": [
+      {
+        "urlPattern": "/api/.*",
+        "handler": "NetworkFirst",
+        "options": {
+          "cacheName": "api-cache",
+          "expiration": {
+            "maxEntries": 50,
+            "maxAgeSeconds": 300
+          }
+        }
+      },
+      {
+        "urlPattern": "**/*.{png,jpg,jpeg,svg,gif,webp}",
+        "handler": "CacheFirst",
+        "options": {
+          "cacheName": "images-cache",
+          "expiration": {
+            "maxEntries": 200,
+            "maxAgeSeconds": 604800
+          }
+        }
+      }
+    ]
+  }
+}

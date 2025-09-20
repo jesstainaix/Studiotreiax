@@ -1,0 +1,34 @@
+# Apresentação de Demonstração - StudioTreiax
+## Pipeline PPTX → Vídeo
+
+### Slide 1: Título
+**StudioTreiax - Transformando Apresentações em Vídeos**
+Demonstração das funcionalidades do pipeline PPTX → Vídeo
+
+### Slide 2: Recursos Principais
+- Conversão automática de PPTX para vídeo
+- Integração com IA para narração
+- Análise de conformidade NR
+- Monitoramento em tempo real
+- Interface responsiva e moderna
+
+### Slide 3: Tecnologias
+- React + TypeScript
+- Node.js + Express
+- Framer Motion para animações
+- Pipeline de IA avançado
+- Monitoramento de performance
+
+### Slide 4: Processo
+1. Upload do arquivo PPTX
+2. Extração de conteúdo
+3. Análise de IA
+4. Geração de áudio TTS
+5. Criação do vídeo final
+
+### Slide 5: Vantagens
+- Automatização completa
+- Qualidade profissional
+- Conformidade NR
+- Escalabilidade
+- Interface intuitiva

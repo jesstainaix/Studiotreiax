@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎤 Teste Rápido TTS - Diagnosticar Problema de Áudio</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .test-card {
+            background: #f7fafc;
+            border-left: 5px solid #4299e1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .test-card h3 {
+            margin-top: 0;
+            color: #2d3748;
+            font-size: 1.3em;
+        }
+        .button {
+            background: linear-gradient(45deg, #4299e1, #3182ce);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 153, 225, 0.6);
+        }
+        .button:active {
+            transform: translateY(0);
+        }
+        .button.stop {
+            background: linear-gradient(45deg, #e53e3e, #c53030);
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
+        }
+        .button.stop:hover {
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.6);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .status.success { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .status.error { background: #fed7d7; color: #742a2a; border: 1px solid #fc8181; }
+        .status.info { background: #bee3f8; color: #2a4365; border: 1px solid #90cdf4; }
+        .status.warning { background: #fefcbf; color: #744210; border: 1px solid #f6e05e; }
+        
+        .volume-control {
+            margin: 20px 0;
+            padding: 20px;
+            background: #edf2f7;
+            border-radius: 10px;
+        }
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #cbd5e0;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 10px 0;
+        }
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4299e1;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .text-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        .text-input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        .voice-select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            background: white;
+        }
+        .diagnostic-info {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .emoji { font-size: 1.2em; margin-right: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Diagnóstico TTS - Resolver Problema de Áudio</h1>
+        
+        <div class="diagnostic-info">
+            <h3>🔍 Verificações Automáticas do Sistema:</h3>
+            <div id="systemChecks">Carregando verificações...</div>
+        </div>
+
+        <div class="test-card">
+            <h3>🗣️ Teste 1: Speech Synthesis Básico</h3>
+            <p>Este teste usa a API nativa do navegador para síntese de voz:</p>
+            
+            <textarea class="text-input" id="testText" placeholder="Digite o texto que você quer ouvir...">Olá! Este é um teste do sistema de síntese de voz. Se você conseguir me ouvir, o TTS está funcionando corretamente.</textarea>
+            
+            <div class="volume-control">
+                <label for="volumeSlider"><span class="emoji">🔊</span>Volume: <span id="volumeDisplay">100</span>%</label>
+                <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="100">
+            </div>
+            
+            <label for="voiceSelect"><span class="emoji">🎭</span>Selecione uma voz:</label>
+            <select class="voice-select" id="voiceSelect">
+                <option>Carregando vozes...</option>
+            </select>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="button" onclick="speakText()">
+                    <span class="emoji">🎵</span>Falar Texto
+                </button>
+                <button class="button stop" onclick="stopSpeaking()">
+                    <span class="emoji">⏹️</span>Parar
+                </button>
+            </div>
+            
+            <div id="speechStatus" class="status info">Pronto para testar</div>
+        </div>
+
+        <div class="test-card">
+            <h3>🔧 Teste 2: Configurações Avançadas</h3>
+            <p>Teste com diferentes configurações para encontrar a que funciona:</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                <div>
+                    <label><span class="emoji">⚡</span>Velocidade: <span id="rateDisplay">1.0</span>x</label>
+                    <input type="range" class="slider" id="rateSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+                </div>
+                <div>
+                    <label><span class="emoji">🎵</span>Tom: <span id="pitchDisplay">1.0</span></label>
+                    <input type="range" class="slider" id="pitchSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="button" onclick="testWithSettings()">
+                    <span class="emoji">⚙️</span>Testar com Configurações
+                </button>
+            </div>
+            
+            <div id="advancedStatus" class="status info">Aguardando teste</div>
+        </div>
+
+        <div class="test-card">
+            <h3>🎯 Teste 3: Diferentes Vozes</h3>
+            <p>Testa automaticamente todas as vozes disponíveis:</p>
+            
+            <div style="text-align: center;">
+                <button class="button" onclick="testAllVoices()">
+                    <span class="emoji">🔄</span>Testar Todas as Vozes
+                </button>
+            </div>
+            
+            <div id="voiceTestStatus" class="status info">Clique para testar todas as vozes</div>
+        </div>
+
+        <div class="test-card">
+            <h3>🩺 Diagnóstico de Problemas</h3>
+            <div id="diagnostics" class="status info">
+                <h4>Possíveis Soluções:</h4>
+                <ul>
+                    <li><strong>Volume do Sistema:</strong> Verifique se o volume do Windows está ligado</li>
+                    <li><strong>Volume do Navegador:</strong> Certifique-se que o navegador não está mutado</li>
+                    <li><strong>Permissões:</strong> O navegador pode estar bloqueando áudio automático</li>
+                    <li><strong>Drivers de Áudio:</strong> Verifique se os drivers de som estão funcionando</li>
+                    <li><strong>Navegador:</strong> Tente em outro navegador (Chrome, Firefox, Edge)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let voices = [];
+        let currentUtterance = null;
+
+        // Função para atualizar displays dos sliders
+        function updateDisplays() {
+            document.getElementById('volumeDisplay').textContent = document.getElementById('volumeSlider').value;
+            document.getElementById('rateDisplay').textContent = document.getElementById('rateSlider').value;
+            document.getElementById('pitchDisplay').textContent = document.getElementById('pitchSlider').value;
+        }
+
+        // Event listeners para sliders
+        document.getElementById('volumeSlider').oninput = updateDisplays;
+        document.getElementById('rateSlider').oninput = updateDisplays;
+        document.getElementById('pitchSlider').oninput = updateDisplays;
+
+        // Verificações automáticas do sistema
+        function performSystemChecks() {
+            const checks = [];
+            
+            // Verificar Speech Synthesis
+            if ('speechSynthesis' in window) {
+                checks.push('✅ Speech Synthesis API disponível');
+            } else {
+                checks.push('❌ Speech Synthesis API não disponível');
+            }
+            
+            // Verificar AudioContext
+            if ('AudioContext' in window || 'webkitAudioContext' in window) {
+                checks.push('✅ Web Audio API disponível');
+            } else {
+                checks.push('❌ Web Audio API não disponível');
+            }
+            
+            // Verificar se está em HTTPS ou localhost
+            if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                checks.push('✅ Protocolo seguro (áudio permitido)');
+            } else {
+                checks.push('⚠️ Protocolo não seguro (pode bloquear áudio)');
+            }
+            
+            // Verificar user interaction
+            checks.push('ℹ️ Clique nos botões para permitir reprodução de áudio');
+            
+            document.getElementById('systemChecks').innerHTML = checks.join('<br>');
+        }
+
+        // Carregar vozes disponíveis
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+            
+            if (voices.length === 0) {
+                voiceSelect.innerHTML = '<option>Aguardando vozes...</option>';
+                return;
+            }
+            
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang}) - ${voice.gender || 'N/A'}`;
+                voiceSelect.appendChild(option);
+            });
+            
+            console.log(`🔊 ${voices.length} vozes carregadas:`, voices.map(v => v.name));
+        }
+
+        // Função principal para falar texto
+        function speakText() {
+            const text = document.getElementById('testText').value;
+            const voiceIndex = document.getElementById('voiceSelect').value;
+            const volume = document.getElementById('volumeSlider').value / 100;
+            
+            if (!text.trim()) {
+                updateStatus('speechStatus', 'Por favor, digite um texto para teste', 'error');
+                return;
+            }
+            
+            stopSpeaking(); // Para qualquer fala anterior
+            
+            updateStatus('speechStatus', 'Preparando síntese...', 'info');
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            // Configurar voz
+            if (voices.length > 0 && voiceIndex >= 0) {
+                currentUtterance.voice = voices[voiceIndex];
+            }
+            
+            // Configurar parâmetros
+            currentUtterance.volume = volume;
+            currentUtterance.rate = 1.0;
+            currentUtterance.pitch = 1.0;
+            
+            // Event listeners
+            currentUtterance.onstart = function() {
+                updateStatus('speechStatus', '🗣️ Falando... (Se não ouvir, verifique volume do sistema)', 'success');
+            };
+            
+            currentUtterance.onend = function() {
+                updateStatus('speechStatus', '✅ Síntese concluída - Você conseguiu ouvir?', 'success');
+            };
+            
+            currentUtterance.onerror = function(event) {
+                updateStatus('speechStatus', `❌ Erro: ${event.error}`, 'error');
+            };
+            
+            // Falar
+            try {
+                speechSynthesis.speak(currentUtterance);
+                console.log('🎤 TTS iniciado:', { text: text.substring(0, 50), voice: currentUtterance.voice?.name, volume });
+            } catch (error) {
+                updateStatus('speechStatus', `❌ Erro ao iniciar TTS: ${error.message}`, 'error');
+            }
+        }
+
+        // Parar síntese
+        function stopSpeaking() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+                updateStatus('speechStatus', 'Síntese interrompida', 'info');
+            }
+        }
+
+        // Teste com configurações avançadas
+        function testWithSettings() {
+            const text = "Teste com configurações personalizadas de velocidade e tom.";
+            const volume = document.getElementById('volumeSlider').value / 100;
+            const rate = parseFloat(document.getElementById('rateSlider').value);
+            const pitch = parseFloat(document.getElementById('pitchSlider').value);
+            
+            stopSpeaking();
+            
+            updateStatus('advancedStatus', 'Testando com configurações personalizadas...', 'info');
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.volume = volume;
+            utterance.rate = rate;
+            utterance.pitch = pitch;
+            
+            utterance.onstart = () => updateStatus('advancedStatus', `🎵 Testando: Volume=${Math.round(volume*100)}%, Velocidade=${rate}x, Tom=${pitch}`, 'success');
+            utterance.onend = () => updateStatus('advancedStatus', '✅ Teste avançado concluído', 'success');
+            utterance.onerror = (e) => updateStatus('advancedStatus', `❌ Erro no teste avançado: ${e.error}`, 'error');
+            
+            speechSynthesis.speak(utterance);
+        }
+
+        // Testar todas as vozes
+        async function testAllVoices() {
+            if (voices.length === 0) {
+                updateStatus('voiceTestStatus', '❌ Nenhuma voz disponível', 'error');
+                return;
+            }
+            
+            updateStatus('voiceTestStatus', 'Iniciando teste de todas as vozes...', 'info');
+            
+            for (let i = 0; i < voices.length; i++) {
+                const voice = voices[i];
+                updateStatus('voiceTestStatus', `🎭 Testando voz ${i+1}/${voices.length}: ${voice.name}`, 'info');
+                
+                const utterance = new SpeechSynthesisUtterance(`Olá, eu sou a voz ${voice.name}`);
+                utterance.voice = voice;
+                utterance.volume = 0.8;
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                
+                speechSynthesis.speak(utterance);
+                
+                // Aguardar entre testes
+                await new Promise(resolve => {
+                    utterance.onend = resolve;
+                    utterance.onerror = resolve;
+                    setTimeout(resolve, 3000); // Timeout de segurança
+                });
+                
+                await new Promise(resolve => setTimeout(resolve, 500)); // Pausa entre vozes
+            }
+            
+            updateStatus('voiceTestStatus', '✅ Teste de todas as vozes concluído', 'success');
+        }
+
+        // Função para atualizar status
+        function updateStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+
+        // Inicialização
+        window.addEventListener('load', function() {
+            performSystemChecks();
+            
+            // Carregar vozes
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+            setTimeout(loadVoices, 100);
+            setTimeout(loadVoices, 1000);
+            
+            updateDisplays();
+            
+            console.log('🎤 Página de diagnóstico TTS carregada - pronta para testes');
+        });
+    </script>
+</body>
+</html>

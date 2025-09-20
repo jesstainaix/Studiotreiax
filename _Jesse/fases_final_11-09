@@ -1,0 +1,307 @@
+Documento Mestre de Verificação por Fases — Estúdio IA de Vídeos
+Objetivo
+
+Documento único, em fases, para guiar a análise completa do repositório (https://github.com/aline-jesse/estudio-ia-videos.git). Cada fase contém objetivos, critérios de aceitação, tarefas, comandos para testes locais, um prompt claro para a LLM analisar e um campo de status que a LLM (ou você) marcará como "Concluído" após validação.
+
+Instruções de uso
+Leia cada fase e execute (ou peça para a LLM executar) a análise usando o "Prompt para LLM" fornecido.
+Cole a saída/resultado da análise na seção "Resultado da Análise (preencher pela LLM)".
+Se os critérios de aceitação estiverem atendidos, marque "Status: Concluído" (a LLM pode fazer isso quando confirmar).
+Se houver pendências, liste-as em "Ações pendentes" e repita a análise após correções.
+Sumário
+Fase 0 — Preparação do ambiente
+Fase 1 — Build, Run & Dependências
+Fase 2 — Documentação e Consistência dos .md
+Fase 3 — Pipeline PPTX → Vídeo
+Fase 4 — Módulo Talking Photo / Lip Sync
+Fase 5 — Avatares 3D e Ambientes 3D
+Fase 6 — TTS (ElevenLabs, Azure, Google, Fallback)
+Fase 7 — Armazenamento & Jobs (S3, cache local, workers)
+Fase 8 — Testes automatizados (unit, integra, e2e)
+Fase 9 — CI/CD, linting, typecheck e segurança
+Fase 10 — Deploy, observabilidade e monitoramento
+Fase 11 — QA final, checklist de release e documentação final
+Fase 0 — Preparação do ambiente
+Objetivo
+
+Garantir que o repositório seja clonado, dependências instaladas e variáveis essenciais configuradas para rodar localmente.
+
+Critérios de aceitação
+Repositório clonado com sucesso.
+Dependências instaladas na pasta app sem erros.
+.env.example copiado para .env e preenchido (valores de teste onde necessário).
+Comando de dev (ex.: yarn dev) inicia a aplicação sem crash imediato.
+Tarefas
+git clone https://github.com/aline-jesse/estudio-ia-videos.git
+cd estudio-ia-videos/app
+yarn install (ou npm install)
+cp .env.example .env && preencher chaves de teste
+yarn dev (ou yarn start / yarn build conforme aplicável)
+Comandos úteis (ajuste conforme package.json)
+yarn install
+yarn dev
+yarn build
+yarn test
+
+Prompt para LLM
+
+Analise se o repositório clona, instala dependências e roda localmente. Verifique se há instruções no README para instalação e variáveis de ambiente. Liste erros encontrados durante instalação/boot e proponha correções.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 1 — Build, Run & Dependências
+Objetivo
+
+Verificar scripts de build, compatibilidade de Node.js/versões, e dependências (vulnerabilidades óbvias).
+
+Critérios de aceitação
+yarn build completa com sucesso.
+Versão Node e yarn compatíveis com o projeto (ver engine no package.json).
+Dependências principais (Next.js 14, TypeScript, Three.js, FFmpeg) presentes.
+Ausência de warnings críticos durante build.
+Tarefas
+Executar yarn build
+Checar package.json scripts
+Rodar node -v e yarn -v para validar versões
+Prompt para LLM
+
+Valide os scripts de build e explique se o projeto compila corretamente. Liste dependências críticas, incompatibilidades e vulnerabilidades conhecidas (baseado em package.json). Forneça comando(s) exatos para corrigir problemas comuns (ex.: versão Node).
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 2 — Documentação e Consistência dos .md
+Objetivo
+
+Consolidar a documentação (arquivos .md presentes) e validar consistência, links e passos de uso.
+
+Critérios de aceitação
+Todos os .md importantes estão listados e têm propósito claro.
+Links internos/externos funcionam.
+Passos para rodar o projeto e para obter credenciais estão claros.
+README contém instruções básicas de instalação, execução e testes.
+Tarefas
+Verificar cada .md na raiz e na pasta docs.
+Rodar check de links (ex.: markdown-link-check).
+Validar presença de README com seções mínimas.
+Prompt para LLM
+
+Faça uma revisão dos arquivos .md no repositório. Para cada arquivo, gere um resumo de 1–3 linhas, liste links quebrados (se houver) e indique conteúdos duplicados ou inconsistentes. Sugira uma estrutura consolidada para toda a documentação (TOC).
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 3 — Pipeline PPTX → Vídeo
+Objetivo
+
+Verificar o parser de PPTX, extração de conteúdo, timeline, sincronização de áudio e geração final de MP4.
+
+Critérios de aceitação
+Pipeline aceita um PPTX de exemplo e gera MP4(s).
+Áudio TTS é gerado e sincronizado com a timeline.
+Duração e número de slides correspondem à expectativa.
+Erros do FFmpeg ou do pipeline são tratados e logados.
+Tarefas
+Localizar código do parser PPTX.
+Rodar um teste com um PPTX de 3–5 slides (artificial).
+Verificar saída de logs e arquivos finais no diretório de saída.
+Prompt para LLM
+
+Analise o código responsável por converter PPTX em vídeo: identifique pontos críticos (parser, extração de imagens, geração de timeline, uso de FFmpeg). Verifique se há tratamentos de erro, retries e logs. Sugira testes automatizados e crie um plano de verificação (com comandos) para validar o pipeline.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 4 — Módulo Talking Photo / Lip Sync
+Objetivo
+
+Avaliar a implementação do Talking Photo: upload de imagens, animação facial, sincronização labial e exportação.
+
+Critérios de aceitação
+Upload de foto funciona e é processado.
+Pipeline de lip sync gera movimento facial coerente.
+Arquivo final contém vídeo com áudio sincronizado.
+Há fallback/erros tratados (ex.: fotos inválidas).
+Tarefas
+Testar upload de foto via UI ou endpoint.
+Examinar algoritmos de sincronização (ex.: mapeamento phoneme → viseme).
+Validar export final.
+Prompt para LLM
+
+Revise o módulo Talking Photo. Explique como a sincronização labial é construída (se houver código) e aponte riscos, melhorias e casos de falha. Sugira testes automatizados e métricas para validar sincronização.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 5 — Avatares 3D e Ambientes 3D
+Objetivo
+
+Verificar avatares pré-configurados, animações, assets 3D e cenários (Three.js / React Three Fiber).
+
+Critérios de aceitação
+Avatares carregam sem erros.
+Animações/expressões são reproduzidas.
+Cenários apresentam iluminação/physics conforme descrito.
+Performance aceitável no navegador (sem travamentos imediatos).
+Tarefas
+Rodar as páginas /3d-environments e /talking-photo (se existirem).
+Checar uso de assets (pesos/formatos) e lazy-loading.
+Rever shaders e performance hotspots.
+Prompt para LLM
+
+Analise os módulos relacionados a Three.js e avatares. Aponte problemas de desempenho, bundling, cargas de assets e possíveis melhorias (lazy loading, compressão, LOD). Indique testes manuais e métricas a coletar (FPS, memória).
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 6 — TTS multi-provider
+Objetivo
+
+Validar integrações com ElevenLabs, Azure, Google Cloud e fallback. Verificar tratamento de limites, retries e política de fallback.
+
+Critérios de aceitação
+Cada provider tem integração detectável no código.
+Há fallback automático quando provider falha.
+Requests a providers são feitos com tratamento de erros e logs.
+Credenciais são lidas via env e não hard-coded.
+Tarefas
+Localizar módulos de TTS e testar com mocks.
+Revisar estratégia de retry e circuit breaker.
+Testar geração de áudio com provedor de teste ou mock.
+Prompt para LLM
+
+Inspecione os adaptadores de TTS. Liste rotas de fallback, políticas de retry e como as chaves são gerenciadas. Sugira melhorias de confiabilidade e um conjunto mínimo de testes (unit + integração) para TTS.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 7 — Armazenamento, Jobs e Workers
+Objetivo
+
+Checar integração com S3 (ou fallback), filas de jobs (se houver), workers e processamento assíncrono.
+
+Critérios de aceitação
+Upload/download para S3 funciona.
+Jobs de conversão são enfileirados e processados.
+Timeouts e retries documentados.
+Logs e erros são reportados.
+Tarefas
+Localizar adaptadores de storage.
+Testar upload/download (com credenciais de teste).
+Inspecionar implementação de workers (cron, queues).
+Prompt para LLM
+
+Verifique os adaptadores de storage e o fluxo de jobs (enqueue → worker → output). Aponte riscos (perda de job, falta de retry), e sugira métricas/alerts essenciais.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 8 — Testes automatizados
+Objetivo
+
+Avaliar cobertura de testes, presença de unit, integration e e2e tests.
+
+Critérios de aceitação
+Há testes unitários cobrindo lógica crítica.
+Há testes de endpoints (integration).
+Existem e2e que cobrem fluxos principais (upload PPTX → vídeo).
+Pipeline CI executa testes.
+Tarefas
+Rodar yarn test
+Localizar pastas tests, __tests__ ou configurações Playwright/Cypress
+Revisar cobertura (se gerada)
+Prompt para LLM
+
+Analise a suíte de testes: quais módulos não estão cobertos? Quais testes faltam (priorize parser PPTX, TTS, pipeline de vídeo)? Gere 5 exemplos de testes Jest/Playwright para começar.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 9 — CI/CD, linting, typecheck e segurança
+Objetivo
+
+Confirmar presença de workflows de CI, lint, typecheck, e checagens de segurança.
+
+Critérios de aceitação
+Existe workflow (ex.: .github/workflows) para CI.
+Lint e TypeScript rodando em CI.
+Dependabot/Snyk configurados (ou orientação de uso).
+Build bloqueia merge em caso de erro.
+Tarefas
+Inspecionar .github/workflows
+Rever scripts lint/test/typecheck
+Sugerir workflow básico se ausente
+Prompt para LLM
+
+Verifique a configuração de CI/CD e recomende um pipeline GitHub Actions com etapas: install, lint, typecheck, unit tests, build, e2e (opcional). Forneça um YAML exemplo mínimo.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 10 — Deploy, observabilidade e monitoramento
+Objetivo
+
+Avaliar estratégia de deploy (Vercel/Docker), logging, Sentry e métricas.
+
+Critérios de aceitação
+Passos de deploy documentados.
+Instrumentação mínima para erros (Sentry) e métricas (ex.: Prometheus/Grafana ou logs estruturados).
+Health checks para workers.
+Tarefas
+Revisar README/infra com passos de deploy.
+Localizar integrações de logging/monitoring.
+Sugerir métricas chave (tempo de job, percentil 95/99).
+Prompt para LLM
+
+Inspecione a documentação e o código relacionado ao deploy e observability. Indique gaps e proponha um plano mínimo de monitoramento e alerting.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+Fase 11 — QA final, checklist de release e documentação final
+Objetivo
+
+Consolidar todas as verificações, gerar a documentação final e checklist para release.
+
+Critérios de aceitação
+Checklist de release preenchido.
+Documentação centralizada (README + TOC).
+Todos os itens críticos resolvidos ou listados com owner e prazo.
+Tarefas
+Gerar checklist de release (e.g., smoke tests, backups, rollback steps).
+Consolidar docs em um único TOC.
+Validar permissões e secrets.
+Prompt para LLM
+
+Baseado nas análises anteriores, gere um checklist de release passo-a-passo e um changelog resumido das mudanças pendentes. Indique critérios para deploy em produção e rollback.
+
+Resultado da Análise (preencher pela LLM)
+Ações pendentes
+
+Status: [ ] Em progresso [ ] Concluído
+
+
+

@@ -1,0 +1,4 @@
+ffconcat version 1.0
+file '/home/runner/workspace/temp_files/frames_final_video_job-1-1758168275075_1758168280110/slide_000.png'
+duration 1.2
+file '/home/runner/workspace/temp_files/frames_final_video_job-1-1758168275075_1758168280110/slide_000.png'

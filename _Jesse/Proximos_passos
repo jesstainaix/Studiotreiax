@@ -1,0 +1,44 @@
+## 🎯 Próximos Passos Prioritários
+### 📋 Status Atual
+- ✅ Sprint 17 VFX Engine: Implementado com sucesso
+- 🟡 Sprint 16: Em andamento (30% concluído)
+- 🔴 Bloqueio Crítico: ElevenLabs API (conta premium necessária)
+### 🚀 Próximos Passos Imediatos 1. Finalizar Sprint 16 (Prioridade ALTA)
+- Prazo: 07 Abril 2025
+- Pendências:
+  - 🔴 Implementar ElevenLabs TTS (bloqueado)
+  - 🟡 Otimizar Asset Library (80% concluído)
+  - 🔴 Testes de Integração Completa
+  - 🟡 Documentação Técnica (40% concluído) 2. Resolver Bloqueio ElevenLabs (URGENTE)
+- Ação: Aquisição de conta premium ElevenLabs
+- Impacto: Bloqueia conclusão da Fase 1 PPTX
+- Alternativa: Implementar fallback com Google Cloud TTS 3. Iniciar Sprint 18 VFX Engine (Próximo)
+- Período: 21 Abril - 05 Maio 2025
+- Foco Principal:
+  - GSAP Animations Library
+  - Three.js Particle Effects
+  - Green Screen Integration
+  - Template Motion Graphics
+### 📊 Roadmap dos Próximos 3 Meses
+Abril 2025:
+
+- 🟡 Finalizar Sprint 16 (Fase 1 PPTX)
+- ✅ Sprint 17 VFX Engine (concluído)
+- 🔴 Sprint 18 VFX Advanced
+Maio 2025:
+
+- 🔴 Sprint 19 VFX Integration
+- 🔴 Sprint 20 Cloud Rendering Setup
+Junho 2025:
+
+- 🔴 Sprint 21-22 AWS Render Farm
+### ⚠️ Ações Requeridas
+1. 1.
+   Resolver bloqueio ElevenLabs (crítico)
+2. 2.
+   Contratar especialista VFX (Sprint 18-19)
+3. 3.
+   Planejar infraestrutura AWS (Sprint 20)
+4. 4.
+   Finalizar testes Sprint 16 (imediato)
+O sistema está pronto para continuar com o desenvolvimento. A prioridade é resolver o bloqueio do ElevenLabs e finalizar o Sprint 16 antes de avançar para os próximos sprints VFX.

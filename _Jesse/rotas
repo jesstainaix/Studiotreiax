@@ -1,0 +1,432 @@
+
+
+
+          
+Vou buscar todas as rotas definidas no projeto para listar ao usuário.
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: todas as rotas definidas no projeto, incluindo rotas de páginas, API routes, e configurações de roteamento
+          
+Vou buscar especificamente pelos arquivos de rota do Next.js para obter uma lista completa e organizada.
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: route\.(ts|js)$
+          
+Agora vou buscar também pelas páginas do Next.js para ter uma visão completa das rotas.
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: page\.(tsx|ts|jsx|js)$
+          
+# Lista Completa de Rotas do Projeto
+
+Aqui está a lista organizada de todas as rotas disponíveis no projeto:
+
+## 📄 Páginas Principais (Frontend)
+
+### Páginas Base
+- `/` - Página inicial
+- `/dashboard` - Dashboard principal
+- `/editor` - Editor básico
+- `/editor-timeline-pro` - Editor avançado com timeline
+- `/editor-workflow` - Editor com workflow
+
+### Estúdios e Ferramentas
+- `/video-studio` - Estúdio de vídeo
+- `/pptx-studio` - Estúdio PowerPoint
+- `/pptx-studio-enhanced` - Estúdio PowerPoint avançado
+- `/pptx-editor` - Editor PowerPoint
+- `/pptx-editor-real` - Editor PowerPoint real-time
+- `/pptx-upload` - Upload PowerPoint
+- `/pptx-upload-real` - Upload PowerPoint real-time
+- `/pptx-animaker-clone` - Clone do Animaker
+- `/render-studio` - Estúdio de renderização
+- `/render-studio-advanced` - Estúdio de renderização avançado
+- `/render-system` - Sistema de renderização
+- `/vfx-studio-pro` - Estúdio VFX profissional
+
+### IA e Avatares
+- `/ai` - IA básica
+- `/ai-advanced` - IA avançada
+- `/ai-assistant` - Assistente IA
+- `/ai-generative` - IA generativa
+- `/ai-templates` - Templates IA
+- `/ai-templates-smart` - Templates IA inteligentes
+- `/avatares-3d` - Avatares 3D
+- `/avatar-studio-hyperreal` - Estúdio avatar hiper-realista
+- `/avatar-studio-vidnoz` - Estúdio avatar Vidnoz
+- `/orchestrator-avatar` - Orquestrador de avatares
+- `/generate-avatar-images` - Gerador de imagens de avatar
+- `/talking-photo` - Foto falante
+- `/talking-photo-pro` - Foto falante profissional
+- `/talking-photo-vidnoz` - Foto falante Vidnoz
+
+### Ambientes e Efeitos
+- `/3d-environments` - Ambientes 3D
+- `/3d-environments-advanced` - Ambientes 3D avançados
+- `/video-effects` - Efeitos de vídeo
+- `/video-effects-advanced` - Efeitos de vídeo avançados
+
+### Análise e Monitoramento
+- `/video-analytics` - Analytics de vídeo
+- `/render-analytics` - Analytics de renderização
+- `/behavioral-analytics` - Analytics comportamental
+- `/performance-dashboard` - Dashboard de performance
+- `/performance/monitor` - Monitor de performance
+- `/observability` - Observabilidade
+
+### Administração
+- `/admin/configuracoes` - Configurações admin
+- `/admin/metrics` - Métricas admin
+- `/admin/pptx-metrics` - Métricas PowerPoint
+- `/admin/production-dashboard` - Dashboard produção
+- `/admin/production-monitor` - Monitor produção
+- `/admin/render-metrics` - Métricas renderização
+
+### Enterprise e Colaboração
+- `/enterprise` - Enterprise
+- `/enterprise-sso` - SSO Enterprise
+- `/enterprise/analytics` - Analytics Enterprise
+- `/collaboration` - Colaboração
+- `/collaboration-v2` - Colaboração v2
+- `/collaboration/[projectId]` - Colaboração por projeto
+
+### Segurança e Cloud
+- `/security-dashboard` - Dashboard segurança
+- `/security/dashboard` - Dashboard segurança v2
+- `/security/zero-trust` - Zero Trust
+- `/cloud-control` - Controle cloud
+- `/cloud-native` - Cloud nativo
+
+### Mobile e PWA
+- `/mobile-control` - Controle mobile
+- `/mobile-native` - Mobile nativo
+- `/mobile-studio` - Estúdio mobile
+
+### Outras Funcionalidades
+- `/templates` - Templates
+- `/templates-nr-especificos` - Templates NR específicos
+- `/nr-revolucionario` - NR revolucionário
+- `/voice-cloning` - Clonagem de voz
+- `/automation` - Automação
+- `/intelligent-automation` - Automação inteligente
+- `/integrations` - Integrações
+- `/gamification` - Gamificação
+- `/blockchain-certificates` - Certificados blockchain
+- `/whitelabel` - White label
+- `/optimization` - Otimização
+- `/ml-ops` - ML Ops
+- `/api-evolution` - Evolução API
+- `/testing/dashboard` - Dashboard testes
+- `/tts-test` - Teste TTS
+- `/studio-prd` - Estúdio PRD
+- `/estudio-real` - Estúdio real
+
+## 🔌 API Routes (Backend)
+
+### Autenticação
+- `POST /api/auth/[...nextauth]` - NextAuth
+- `GET /api/auth/session` - Sessão
+- `POST /api/login` - Login
+- `POST /api/signup` - Cadastro
+
+### Sistema
+- `GET /api/ping` - Health check
+- `GET /api/health` - Status sistema
+- `GET /api/admin/system` - Info sistema
+- `GET /api/admin/backup` - Backup
+- `GET /api/admin/config/get` - Obter config
+- `POST /api/admin/config/save` - Salvar config
+- `GET /api/admin/config/export` - Exportar config
+- `POST /api/admin/config/test` - Testar config
+- `GET /api/admin/tests` - Testes admin
+
+### IA e Geração de Conteúdo
+- `POST /api/ai/generate-content` - Gerar conteúdo
+- `POST /api/ai/generate-script` - Gerar script
+- `POST /api/ai/optimize-content` - Otimizar conteúdo
+- `POST /api/ai-generative/analyze` - Análise IA
+- `POST /api/ai-generative/generate` - Gerar IA
+- `POST /api/ai-generative/optimize` - Otimizar IA
+- `POST /api/ai-generative/variations` - Variações IA
+
+### Templates IA
+- `GET /api/ai-templates/list` - Listar templates
+- `POST /api/ai-templates/generate` - Gerar template
+- `POST /api/ai-templates/[templateId]/optimize` - Otimizar template
+- `POST /api/v2/ai-templates/generate` - Gerar template v2
+- `GET /api/v2/ai-templates/smart` - Templates inteligentes
+- `POST /api/v2/ai-templates/[templateId]/adapt` - Adaptar template
+
+### Avatares
+- `GET /api/avatars/generate` - Gerar avatar
+- `POST /api/avatars/3d` - Avatar 3D
+- `GET /api/avatars/hyperreal/gallery` - Galeria hiper-real
+- `POST /api/avatars/hyperreal/generate` - Gerar hiper-real
+- `GET /api/avatars/hyperreal/status/[jobId]` - Status job
+- `POST /api/avatars/orchestrator` - Orquestrador
+- `POST /api/avatars/orchestrator-pro` - Orquestrador pro
+- `POST /api/avatars/orchestrator/approve` - Aprovar
+- `POST /api/avatars/vidnoz/analyze` - Análise Vidnoz
+- `POST /api/avatars/vidnoz/render` - Render Vidnoz
+
+### Versões API Avatares
+- `POST /api/v1/avatar/render` - Render v1
+- `GET /api/v1/avatars` - Listar v1
+- `POST /api/v1/avatars/3d/hyperreal` - 3D hiper-real v1
+- `POST /api/v1/avatars/3d/lipsync` - Lipsync 3D v1
+- `POST /api/v1/avatars/3d/render-pipeline` - Pipeline render v1
+- `GET /api/v1/avatars/[id]` - Avatar por ID v1
+- `GET /api/v4/avatars/gallery` - Galeria v4
+- `POST /api/v4/avatars/lip-sync` - Lipsync v4
+- `GET /api/v4/avatars/models` - Modelos v4
+- `POST /api/v4/avatars/ready-player-me` - Ready Player Me v4
+- `POST /api/v4/avatars/speak` - Falar v4
+- `POST /api/v4/avatars/tts-generate` - TTS gerar v4
+- `POST /api/v4/avatars/upload` - Upload v4
+
+### TTS (Text-to-Speech)
+- `GET /api/tts/audio/[filename]` - Áudio TTS
+- `GET /api/tts/brazilian-voices` - Vozes brasileiras
+- `POST /api/tts/enhanced-generate` - Gerar aprimorado
+- `POST /api/tts/google` - Google TTS
+- `POST /api/tts/google-cloud` - Google Cloud TTS
+- `POST /api/tts/synthesize` - Sintetizar
+- `POST /api/v1/tts/generate` - Gerar v1
+- `POST /api/v1/tts/google-real` - Google real v1
+- `GET /api/v1/tts/voices` - Vozes v1
+
+### PowerPoint/PPTX
+- `GET /api/pptx/assets` - Assets PPTX
+- `POST /api/pptx/editor/timeline` - Timeline editor
+- `POST /api/pptx/enhanced-convert` - Conversão aprimorada
+- `GET /api/pptx/metrics` - Métricas PPTX
+- `POST /api/pptx/parse-enhanced` - Parse aprimorado
+- `POST /api/pptx/preview-scene` - Preview cena
+- `POST /api/pptx/project/create` - Criar projeto
+- `GET /api/pptx/templates` - Templates PPTX
+- `POST /api/pptx/upload` - Upload PPTX
+- `POST /api/v1/pptx/process` - Processar v1
+- `POST /api/v1/pptx/process-engine` - Engine processo v1
+- `POST /api/v1/pptx/upload` - Upload v1
+- `POST /api/v1/pptx/upload-production` - Upload produção v1
+- `POST /api/v1/pptx/upload-real` - Upload real v1
+
+### Renderização
+- `GET /api/render-status/[jobId]` - Status render
+- `GET /api/render/queue-stats` - Stats fila
+- `GET /api/render/status/[jobId]` - Status job
+- `POST /api/render/submit-job` - Submeter job
+- `GET /api/render/worker-status` - Status worker
+- `POST /api/v1/render/advanced` - Render avançado v1
+- `POST /api/v1/render/batch` - Render lote v1
+- `GET /api/v1/render/download/[id]` - Download v1
+- `POST /api/v1/render/finalize` - Finalizar v1
+- `GET /api/v1/render/live-status` - Status ao vivo v1
+- `POST /api/v1/render/optimize` - Otimizar v1
+- `POST /api/v1/render/start` - Iniciar v1
+- `GET /api/v1/render/status/[id]` - Status ID v1
+- `POST /api/v1/render/test` - Teste v1
+- `POST /api/v1/render/video-real` - Vídeo real v1
+
+### Vídeos
+- `GET /api/videos/cache/[filename]` - Cache vídeo
+- `GET /api/videos/download/[jobId]` - Download vídeo
+- `GET /api/videos/fallback/[filename]` - Fallback vídeo
+- `POST /api/videos/generate` - Gerar vídeo
+- `POST /api/videos/generate-ai` - Gerar vídeo IA
+- `GET /api/videos/preview` - Preview vídeo
+- `POST /api/videos/render` - Render vídeo
+- `GET /api/videos/talking-head/[avatarId]/[filename]` - Talking head
+- `GET /api/videos/thumbnails/[avatarId]/[filename]` - Thumbnails
+
+### Talking Photo
+- `POST /api/talking-photo/generate-production` - Gerar produção
+- `POST /api/talking-photo/generate-production-real` - Gerar produção real
+- `POST /api/talking-photo/generate-real` - Gerar real
+- `GET /api/talking-photo/status/[jobId]` - Status job
+
+### Analytics
+- `POST /api/analytics/batch` - Analytics lote
+- `POST /api/analytics/events` - Eventos
+- `GET /api/analytics/talking-photo` - Analytics talking photo
+- `GET /api/video-analytics/[videoId]` - Analytics vídeo
+- `GET /api/video-analytics/[videoId]/realtime` - Analytics tempo real
+- `GET /api/video-analytics/list` - Listar analytics
+
+### Upload e Storage
+- `POST /api/upload/custom-avatar` - Upload avatar customizado
+- `POST /api/upload/pptx` - Upload PPTX
+- `POST /api/v1/upload` - Upload v1
+- `POST /api/cloud-storage/upload` - Upload cloud
+- `GET /api/s3/serve/[...path]` - Servir S3
+
+### Ambientes 3D
+- `GET /api/3d-environments/list` - Listar ambientes
+- `POST /api/3d-environments/render` - Render ambiente
+- `GET /api/3d-environments/scenes` - Cenas
+- `POST /api/v4/environments-3d/advanced` - Ambientes avançados v4
+- `POST /api/v4/environments-3d/render` - Render v4
+
+### Voice Cloning
+- `POST /api/voice-cloning/generate` - Gerar clonagem
+- `GET /api/voice-cloning/profiles` - Perfis
+- `GET /api/voice-cloning/samples` - Amostras
+- `POST /api/v4/voice-cloning/generate` - Gerar v4
+- `GET /api/v4/voice-cloning/profiles` - Perfis v4
+
+### Enterprise
+- `GET /api/enterprise/analytics/advanced` - Analytics avançado
+- `POST /api/enterprise/certification/issue` - Emitir certificado
+- `POST /api/enterprise/collaboration/session` - Sessão colaboração
+- `POST /api/enterprise/export/multi-format` - Export multi-formato
+- `GET /api/enterprise/immersive/environments` - Ambientes imersivos
+- `POST /api/enterprise/lms/export` - Export LMS
+- `POST /api/enterprise/voice-cloning/create` - Criar voice cloning
+- `GET /api/enterprise-sso/audit/stats` - Stats auditoria SSO
+- `GET /api/enterprise-sso/providers` - Provedores SSO
+- `POST /api/enterprise-sso/test/[providerId]` - Teste provedor SSO
+
+### Automação
+- `POST /api/automation/execute` - Executar automação
+- `GET /api/automation/executions` - Execuções
+- `POST /api/automation/executions/[executionId]/cancel` - Cancelar execução
+- `GET /api/automation/stats` - Stats automação
+- `GET /api/automation/workflows` - Workflows
+
+### Integrações
+- `POST /api/integrations/[integrationId]/sync` - Sync integração
+- `POST /api/integrations/configure` - Configurar
+- `GET /api/integrations/list` - Listar
+- `GET /api/integrations/publications` - Publicações
+- `POST /api/integrations/publish` - Publicar
+- `GET /api/integrations/stats` - Stats
+
+### Métricas e Performance
+- `GET /api/metrics` - Métricas
+- `GET /api/performance/metrics` - Métricas performance
+- `GET /api/monitoring/metrics` - Métricas monitoramento
+
+### Otimização
+- `POST /api/optimization/cache-clear` - Limpar cache
+- `GET /api/optimization/cache-stats` - Stats cache
+- `POST /api/optimization/optimize-cache` - Otimizar cache
+- `POST /api/optimization/preload-common` - Preload comum
+- `GET /api/mobile/optimization` - Otimização mobile
+
+### Templates e Mascotes
+- `GET /api/templates/nr` - Templates NR
+- `POST /api/mascots/create` - Criar mascote
+- `POST /api/assets/generate` - Gerar assets
+
+### Projetos e Jobs
+- `GET /api/v1/projects` - Projetos v1
+- `GET /api/v1/projects/[id]` - Projeto por ID v1
+- `POST /api/v1/jobs/create` - Criar job v1
+- `GET /api/v1/jobs/status/[id]` - Status job v1
+- `GET /api/v1/queue/stats` - Stats fila v1
+- `POST /api/queue/manage` - Gerenciar fila
+
+### LMS e Export
+- `POST /api/lms/export` - Export LMS
+
+### Narração
+- `POST /api/narration/auto-generate` - Auto gerar narração
+- `POST /api/narration/generate-batch` - Gerar lote narração
+- `POST /api/slides/narration-sync` - Sync narração slides
+- `POST /api/synchronization/timeline` - Sync timeline
+
+### Vozes Avançadas
+- `GET /api/voices/advanced` - Vozes avançadas
+
+### PRD Features
+- `GET /api/prd/features` - Features PRD
+
+### APIs v2 - Cloud Native
+- `GET /api/v2/cloud-native/cluster/status` - Status cluster
+- `GET /api/v2/cloud-native/deployments` - Deployments
+- `GET /api/v2/cloud-native/logs` - Logs
+- `GET /api/v2/cloud-native/metrics` - Métricas
+- `GET /api/v2/cloud-native/services` - Serviços
+
+### APIs v2 - Colaboração
+- `GET /api/v2/collaboration/rooms` - Salas colaboração
+- `GET /api/v2/collaboration/websocket` - WebSocket
+
+### APIs v2 - Enterprise Analytics
+- `GET /api/v2/enterprise/analytics` - Analytics enterprise
+- `GET /api/v2/enterprise/analytics/real-time` - Analytics tempo real
+- `GET /api/v2/enterprise/analytics/reports` - Relatórios
+
+### APIs v2 - Mobile
+- `GET /api/v2/mobile/pwa/status` - Status PWA
+- `GET /api/v2/mobile/sync/tasks` - Tasks sync
+- `GET /api/v4/mobile/offline/sync` - Sync offline v4
+- `GET /api/v4/mobile/pwa/status` - Status PWA v4
+
+### APIs v2 - Performance
+- `GET /api/v2/performance/alerts` - Alertas performance
+- `GET /api/v2/performance/metrics` - Métricas performance
+
+### APIs v2 - Segurança
+- `GET /api/v2/security/zero-trust` - Zero trust
+- `GET /api/v2/security/zero-trust/dashboard` - Dashboard zero trust
+- `POST /api/v2/security/zero-trust/scan` - Scan zero trust
+
+### APIs v2 - Testing
+- `GET /api/v2/testing/dashboard` - Dashboard testes
+- `POST /api/v2/testing/run-all` - Executar todos testes
+- `POST /api/v2/testing/run/[suiteId]` - Executar suite
+
+### APIs v2 - Video Effects
+- `POST /api/v2/video-effects/advanced` - Efeitos avançados
+- `POST /api/v2/video-effects/export` - Export efeitos
+- `GET /api/v2/video-effects/list` - Listar efeitos
+
+### APIs v2 - ML e IA
+- `GET /api/v2/ml/models` - Modelos ML
+- `POST /api/v2/ai/multimodal` - IA multimodal
+
+### APIs v2 - API Evolution
+- `GET /api/v2/api-evolution/endpoints` - Endpoints evolução
+- `POST /api/v2/api-evolution/load-test` - Teste carga
+- `GET /api/v2/api-evolution/metrics` - Métricas evolução
+
+### APIs v3
+- `POST /api/v3/ai/generate` - Gerar IA v3
+- `GET /api/v3/analytics/behavioral` - Analytics comportamental v3
+- `GET /api/v3/automation/workflows` - Workflows v3
+- `GET /api/v3/collaboration/rooms` - Salas colaboração v3
+- `GET /api/v3/gamification/leaderboard` - Leaderboard v3
+
+### APIs v4 - IA Avançada
+- `POST /api/v4/ai-advanced/generate` - Gerar IA avançada
+- `GET /api/v4/ai-advanced/models` - Modelos IA avançada
+
+### APIs v4 - Blockchain
+- `GET /api/v4/blockchain/certificates` - Certificados blockchain
+- `POST /api/v4/blockchain/verify` - Verificar blockchain
+
+### APIs v4 - NR Compliance
+- `POST /api/v4/nr-compliance/full-scan` - Scan completo NR
+- `GET /api/v4/nr-compliance/monitor` - Monitor NR
+- `GET /api/v4/nr-revolucionario/analytics` - Analytics NR revolucionário
+- `POST /api/v4/nr-revolucionario/generate` - Gerar NR revolucionário
+- `POST /api/v4/nr-template-studio/generate` - Gerar template studio NR
+
+Este projeto possui **mais de 200 rotas** organizadas em múltiplas versões de API (v1, v2, v3, v4) e páginas frontend, cobrindo funcionalidades desde IA e avatares até análise de performance e compliance com normas regulamentadoras.
+        
+          
+
+        

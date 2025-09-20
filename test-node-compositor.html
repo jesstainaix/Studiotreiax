@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste NodeBasedCompositor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .log {
+            background: #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        canvas {
+            border: 1px solid #555;
+            margin: 10px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste do NodeBasedCompositor</h1>
+        
+        <div class="test-section">
+            <h2>Canvas de Teste</h2>
+            <canvas id="testCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="test-section">
+            <h2>Controles de Teste</h2>
+            <button onclick="runBasicTest()">🔧 Teste Básico</button>
+            <button onclick="runProcessingTest()">⚙️ Teste de Processamento</button>
+            <button onclick="clearLog()">🧹 Limpar Log</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>Log de Resultados</h2>
+            <div id="testLog" class="log">Clique nos botões acima para executar os testes...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Importar as classes necessárias
+        import { NodeBasedCompositor, NodeFactory } from './dist/services/NodeBasedCompositor.js';
+        
+        let testLog = document.getElementById('testLog');
+        
+        function log(message) {
+            console.log(message);
+            testLog.textContent += message + '\n';
+            testLog.scrollTop = testLog.scrollHeight;
+        }
+        
+        function clearLog() {
+            testLog.textContent = 'Log limpo...\n';
+        }
+        
+        // Teste básico do NodeBasedCompositor
+        function runBasicTest() {
+            log('🧪 Iniciando teste básico do NodeBasedCompositor...');
+            
+            try {
+                // Criar compositor com canvas
+                const canvas = document.getElementById('testCanvas');
+                const compositor = new NodeBasedCompositor(canvas);
+                log('✅ Compositor criado com sucesso');
+                
+                // Criar nós usando métodos disponíveis
+                const inputNode = NodeFactory.createInputNode();
+                inputNode.id = 'input1';
+                inputNode.position = { x: 100, y: 100 };
+                
+                const filterNode = NodeFactory.createFilterNode();
+                filterNode.id = 'filter1';
+                filterNode.position = { x: 300, y: 100 };
+                
+                const outputNode = NodeFactory.createOutputNode();
+                outputNode.id = 'output1';
+                outputNode.position = { x: 500, y: 100 };
+                
+                // Adicionar nós ao compositor
+                compositor.addNode(inputNode);
+                compositor.addNode(filterNode);
+                compositor.addNode(outputNode);
+                log('✅ Nós adicionados: ' + [inputNode.type, filterNode.type, outputNode.type].join(', '));
+                
+                // Criar conexões usando a interface correta
+                const connection1 = {
+                    id: 'conn1',
+                    sourceNodeId: 'input1',
+                    sourceSocket: 'output',
+                    targetNodeId: 'filter1',
+                    targetSocket: 'input',
+                    dataType: 'image'
+                };
+                
+                const connection2 = {
+                    id: 'conn2',
+                    sourceNodeId: 'filter1',
+                    sourceSocket: 'output',
+                    targetNodeId: 'output1',
+                    targetSocket: 'input',
+                    dataType: 'image'
+                };
+                
+                // Adicionar conexões
+                compositor.addConnection(connection1);
+                compositor.addConnection(connection2);
+                log('✅ Conexões adicionadas');
+                
+                // Validar grafo
+                const validation = compositor.validateGraph();
+                log('🔍 Validação do grafo: ' + (validation.valid ? '✅ Válido' : '❌ Inválido'));
+                if (!validation.valid) {
+                    log('⚠️ Erros: ' + validation.errors.join(', '));
+                }
+                
+                // Testar processamento do grafo
+                try {
+                    const result = compositor.process();
+                    log('🔄 Processamento executado com sucesso');
+                } catch (error) {
+                    log('⚠️ Erro no processamento: ' + error.message);
+                }
+                
+                // Testar informações do grafo
+                const allNodes = compositor.getAllNodes();
+                const allConnections = compositor.getAllConnections();
+                log('📤 Informações do grafo: ' + allNodes.length + ' nós, ' + allConnections.length + ' conexões');
+                
+                log('✅ Teste básico concluído com sucesso!');
+                
+            } catch (error) {
+                log('❌ Erro no teste básico: ' + error.message);
+                console.error(error);
+            }
+        }
+        
+        // Teste de processamento de nós
+        function runProcessingTest() {
+            log('🧪 Iniciando teste de processamento...');
+            
+            try {
+                const canvas = document.getElementById('testCanvas');
+                const compositor = new NodeBasedCompositor(canvas);
+                
+                // Criar nós usando métodos disponíveis
+                const inputNode = NodeFactory.createInputNode();
+                inputNode.id = 'input1';
+                inputNode.position = { x: 50, y: 200 };
+                
+                const blendNode = NodeFactory.createBlendNode();
+                blendNode.id = 'blend1';
+                blendNode.position = { x: 250, y: 200 };
+                
+                const outputNode = NodeFactory.createOutputNode();
+                outputNode.id = 'output1';
+                outputNode.position = { x: 450, y: 200 };
+                
+                // Adicionar nós
+                compositor.addNode(inputNode);
+                compositor.addNode(blendNode);
+                compositor.addNode(outputNode);
+                
+                log('📊 Pipeline criado: ' + [inputNode.type, blendNode.type, outputNode.type].join(' → '));
+                
+                // Criar conexões usando a interface correta
+                const connection1 = {
+                    id: 'conn1',
+                    sourceNodeId: 'input1',
+                    sourceSocket: 'output',
+                    targetNodeId: 'blend1',
+                    targetSocket: 'input1',
+                    dataType: 'image'
+                };
+                
+                const connection2 = {
+                    id: 'conn2',
+                    sourceNodeId: 'blend1',
+                    sourceSocket: 'output',
+                    targetNodeId: 'output1',
+                    targetSocket: 'input',
+                    dataType: 'image'
+                };
+                
+                // Adicionar conexões
+                compositor.addConnection(connection1);
+                compositor.addConnection(connection2);
+                
+                // Validar e processar
+                const validation = compositor.validateGraph();
+                log('🔍 Validação: ' + (validation.valid ? '✅ Válido' : '❌ Inválido'));
+                
+                if (validation.valid) {
+                    try {
+                        const result = compositor.process();
+                        log('⚙️ Processamento do pipeline executado');
+                    } catch (error) {
+                        log('⚠️ Erro no processamento: ' + error.message);
+                    }
+                }
+                
+                log('✅ Teste de processamento concluído!');
+                
+            } catch (error) {
+                log('❌ Erro no teste de processamento: ' + error.message);
+                console.error(error);
+            }
+        }
+        
+        // Tornar as funções globais para os botões
+        window.runBasicTest = runBasicTest;
+        window.runProcessingTest = runProcessingTest;
+        window.clearLog = clearLog;
+        
+        log('🚀 Sistema de testes carregado. Clique nos botões para executar os testes.');
+        
+    </script>
+</body>
+</html>

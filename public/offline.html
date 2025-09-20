@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Studio Treiax</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .offline-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #f8fafc;
+        }
+        
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+        
+        .retry-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .retry-button:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .home-button {
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .home-button:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .features {
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            color: #3b82f6;
+        }
+        
+        .feature-text {
+            color: #e2e8f0;
+        }
+        
+        .status {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .offline-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+            
+            .retry-button, .home-button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            📡
+        </div>
+        
+        <h1>Você está offline</h1>
+        
+        <p>
+            Não foi possível conectar-se à internet. Verifique sua conexão e tente novamente.
+            Algumas funcionalidades podem estar disponíveis offline.
+        </p>
+        
+        <div>
+            <button class="retry-button" onclick="window.location.reload()">
+                🔄 Tentar Novamente
+            </button>
+            <a href="/" class="home-button">
+                🏠 Ir para Início
+            </a>
+        </div>
+        
+        <div class="features">
+            <h3 style="margin-bottom: 20px; color: #f8fafc;">Funcionalidades Offline Disponíveis:</h3>
+            
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <div class="feature-text">
+                    <strong>Dados em Cache</strong><br>
+                    Visualize dados previamente carregados
+                </div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📝</div>
+                <div class="feature-text">
+                    <strong>Trabalho Local</strong><br>
+                    Continue editando e os dados serão sincronizados quando voltar online
+                </div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <div class="feature-text">
+                    <strong>Sincronização Automática</strong><br>
+                    Suas alterações serão enviadas automaticamente quando a conexão for restaurada
+                </div>
+            </div>
+        </div>
+        
+        <div class="status">
+            <span class="status-indicator"></span>
+            <strong>Status:</strong> Sem conexão com a internet
+        </div>
+    </div>
+    
+    <script>
+        // Check for connection periodically
+        function checkConnection() {
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        }
+        
+        // Listen for online event
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+        
+        // Check connection every 5 seconds
+        setInterval(checkConnection, 5000);
+        
+        // Update status indicator
+        function updateStatus() {
+            const statusElement = document.querySelector('.status');
+            const indicator = document.querySelector('.status-indicator');
+            
+            if (navigator.onLine) {
+                statusElement.style.borderLeftColor = '#10b981';
+                statusElement.style.background = 'rgba(16, 185, 129, 0.1)';
+                indicator.style.background = '#10b981';
+                statusElement.innerHTML = '<span class="status-indicator"></span><strong>Status:</strong> Conectado - Recarregando...';
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                statusElement.style.borderLeftColor = '#ef4444';
+                statusElement.style.background = 'rgba(239, 68, 68, 0.1)';
+                indicator.style.background = '#ef4444';
+                statusElement.innerHTML = '<span class="status-indicator"></span><strong>Status:</strong> Sem conexão com a internet';
+            }
+        }
+        
+        // Initial status check
+        updateStatus();
+        
+        // Update status every 2 seconds
+        setInterval(updateStatus, 2000);
+    </script>
+</body>
+</html>

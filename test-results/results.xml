@@ -1,0 +1,1801 @@
+<testsuites id="" name="" tests="49" failures="49" skipped="0" errors="0" time="91.821722">
+<testsuite name="app.spec.ts" timestamp="2025-09-18T12:19:47.427Z" hostname="chromium" tests="7" failures="7" skipped="0" time="36.576" errors="0">
+<testcase name="Application E2E Tests › should load the homepage successfully" classname="app.spec.ts" time="5.079">
+<failure message="app.spec.ts:9:3 should load the homepage successfully" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:9:3 › Application E2E Tests › should load the homepage successfully ─────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should navigate between pages" classname="app.spec.ts" time="5.05">
+<failure message="app.spec.ts:31:3 should navigate between pages" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:31:3 › Application E2E Tests › should navigate between pages ────────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should be responsive on mobile devices" classname="app.spec.ts" time="4.974">
+<failure message="app.spec.ts:49:3 should be responsive on mobile devices" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:49:3 › Application E2E Tests › should be responsive on mobile devices ───
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle form interactions" classname="app.spec.ts" time="6.53">
+<failure message="app.spec.ts:64:3 should handle form interactions" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:64:3 › Application E2E Tests › should handle form interactions ──────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should load and display dynamic content" classname="app.spec.ts" time="4.781">
+<failure message="app.spec.ts:93:3 should load and display dynamic content" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:93:3 › Application E2E Tests › should load and display dynamic content ──
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle accessibility requirements" classname="app.spec.ts" time="5.019">
+<failure message="app.spec.ts:110:3 should handle accessibility requirements" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:110:3 › Application E2E Tests › should handle accessibility requirements 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should perform well" classname="app.spec.ts" time="5.143">
+<failure message="app.spec.ts:138:3 should perform well" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:138:3 › Application E2E Tests › should perform well ─────────────────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="app.spec.ts" timestamp="2025-09-18T12:19:47.427Z" hostname="firefox" tests="7" failures="7" skipped="0" time="40.734" errors="0">
+<testcase name="Application E2E Tests › should load the homepage successfully" classname="app.spec.ts" time="7.307">
+<failure message="app.spec.ts:9:3 should load the homepage successfully" type="FAILURE">
+<![CDATA[  [firefox] › app.spec.ts:9:3 › Application E2E Tests › should load the homepage successfully ──────
+
+    Error: page.goto: NS_ERROR_CONNECTION_REFUSED
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-firefox\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should navigate between pages" classname="app.spec.ts" time="0.019">
+<failure message="app.spec.ts:31:3 should navigate between pages" type="FAILURE">
+<![CDATA[  [firefox] › app.spec.ts:31:3 › Application E2E Tests › should navigate between pages ─────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> C:\Users\Servidor\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe -no-remote -headless -profile C:\Users\Servidor\AppData\Local\Temp\playwright_firefoxdev_profile-ohTTgM -juggler-pipe -silent
+    <launched> pid=23108
+    [pid=23108][err] *** You are running in headless mode.
+    [pid=23108] <process did exit: exitCode=3221225477, signal=null>
+    [pid=23108] starting temporary directories cleanup
+    Call log:
+      - <launching> C:\Users\Servidor\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe -no-remote -headless -profile C:\Users\Servidor\AppData\Local\Temp\playwright_firefoxdev_profile-ohTTgM -juggler-pipe -silent
+      - <launched> pid=23108
+      - [pid=23108][err] *** You are running in headless mode.
+      - [pid=23108] <process did exit: exitCode=3221225477, signal=null>
+      - [pid=23108] starting temporary directories cleanup
+      - [pid=23108] <gracefully close start>
+      - [pid=23108] finished temporary directories cleanup
+      - [pid=23108] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="Application E2E Tests › should be responsive on mobile devices" classname="app.spec.ts" time="6.974">
+<failure message="app.spec.ts:49:3 should be responsive on mobile devices" type="FAILURE">
+<![CDATA[  [firefox] › app.spec.ts:49:3 › Application E2E Tests › should be responsive on mobile devices ────
+
+    Error: page.goto: NS_ERROR_CONNECTION_REFUSED
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-firefox\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle form interactions" classname="app.spec.ts" time="7.635">
+<failure message="app.spec.ts:64:3 should handle form interactions" type="FAILURE">
+<![CDATA[  [firefox] › app.spec.ts:64:3 › Application E2E Tests › should handle form interactions ───────────
+
+    Error: page.goto: NS_ERROR_CONNECTION_REFUSED
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-firefox\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should load and display dynamic content" classname="app.spec.ts" time="5.888">
+<failure message="app.spec.ts:93:3 should load and display dynamic content" type="FAILURE">
+<![CDATA[  [firefox] › app.spec.ts:93:3 › Application E2E Tests › should load and display dynamic content ───
+
+    Error: page.goto: NS_ERROR_CONNECTION_REFUSED
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-firefox\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle accessibility requirements" classname="app.spec.ts" time="7.139">
+<failure message="app.spec.ts:110:3 should handle accessibility requirements" type="FAILURE">
+<![CDATA[  [firefox] › app.spec.ts:110:3 › Application E2E Tests › should handle accessibility requirements ─
+
+    Error: page.goto: NS_ERROR_CONNECTION_REFUSED
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-firefox\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should perform well" classname="app.spec.ts" time="5.772">
+<failure message="app.spec.ts:138:3 should perform well" type="FAILURE">
+<![CDATA[  [firefox] › app.spec.ts:138:3 › Application E2E Tests › should perform well ──────────────────────
+
+    Error: page.goto: NS_ERROR_CONNECTION_REFUSED
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-firefox\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="app.spec.ts" timestamp="2025-09-18T12:19:47.427Z" hostname="webkit" tests="7" failures="7" skipped="0" time="45.67" errors="0">
+<testcase name="Application E2E Tests › should load the homepage successfully" classname="app.spec.ts" time="6.655">
+<failure message="app.spec.ts:9:3 should load the homepage successfully" type="FAILURE">
+<![CDATA[  [webkit] › app.spec.ts:9:3 › Application E2E Tests › should load the homepage successfully ───────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should navigate between pages" classname="app.spec.ts" time="6.495">
+<failure message="app.spec.ts:31:3 should navigate between pages" type="FAILURE">
+<![CDATA[  [webkit] › app.spec.ts:31:3 › Application E2E Tests › should navigate between pages ──────────────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should be responsive on mobile devices" classname="app.spec.ts" time="6.907">
+<failure message="app.spec.ts:49:3 should be responsive on mobile devices" type="FAILURE">
+<![CDATA[  [webkit] › app.spec.ts:49:3 › Application E2E Tests › should be responsive on mobile devices ─────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle form interactions" classname="app.spec.ts" time="6.628">
+<failure message="app.spec.ts:64:3 should handle form interactions" type="FAILURE">
+<![CDATA[  [webkit] › app.spec.ts:64:3 › Application E2E Tests › should handle form interactions ────────────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should load and display dynamic content" classname="app.spec.ts" time="6.435">
+<failure message="app.spec.ts:93:3 should load and display dynamic content" type="FAILURE">
+<![CDATA[  [webkit] › app.spec.ts:93:3 › Application E2E Tests › should load and display dynamic content ────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle accessibility requirements" classname="app.spec.ts" time="6.707">
+<failure message="app.spec.ts:110:3 should handle accessibility requirements" type="FAILURE">
+<![CDATA[  [webkit] › app.spec.ts:110:3 › Application E2E Tests › should handle accessibility requirements ──
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should perform well" classname="app.spec.ts" time="5.843">
+<failure message="app.spec.ts:138:3 should perform well" type="FAILURE">
+<![CDATA[  [webkit] › app.spec.ts:138:3 › Application E2E Tests › should perform well ───────────────────────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="app.spec.ts" timestamp="2025-09-18T12:19:47.427Z" hostname="Mobile Chrome" tests="7" failures="7" skipped="0" time="29.029" errors="0">
+<testcase name="Application E2E Tests › should load the homepage successfully" classname="app.spec.ts" time="3.759">
+<failure message="app.spec.ts:9:3 should load the homepage successfully" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › app.spec.ts:9:3 › Application E2E Tests › should load the homepage successfully 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should navigate between pages" classname="app.spec.ts" time="3.583">
+<failure message="app.spec.ts:31:3 should navigate between pages" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › app.spec.ts:31:3 › Application E2E Tests › should navigate between pages ───────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should be responsive on mobile devices" classname="app.spec.ts" time="4.727">
+<failure message="app.spec.ts:49:3 should be responsive on mobile devices" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › app.spec.ts:49:3 › Application E2E Tests › should be responsive on mobile devices 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle form interactions" classname="app.spec.ts" time="4.409">
+<failure message="app.spec.ts:64:3 should handle form interactions" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › app.spec.ts:64:3 › Application E2E Tests › should handle form interactions ─────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should load and display dynamic content" classname="app.spec.ts" time="4.523">
+<failure message="app.spec.ts:93:3 should load and display dynamic content" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › app.spec.ts:93:3 › Application E2E Tests › should load and display dynamic content 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle accessibility requirements" classname="app.spec.ts" time="4.023">
+<failure message="app.spec.ts:110:3 should handle accessibility requirements" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › app.spec.ts:110:3 › Application E2E Tests › should handle accessibility requirements 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should perform well" classname="app.spec.ts" time="4.005">
+<failure message="app.spec.ts:138:3 should perform well" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › app.spec.ts:138:3 › Application E2E Tests › should perform well ────────────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="app.spec.ts" timestamp="2025-09-18T12:19:47.427Z" hostname="Mobile Safari" tests="7" failures="7" skipped="0" time="27.756" errors="0">
+<testcase name="Application E2E Tests › should load the homepage successfully" classname="app.spec.ts" time="3.654">
+<failure message="app.spec.ts:9:3 should load the homepage successfully" type="FAILURE">
+<![CDATA[  [Mobile Safari] › app.spec.ts:9:3 › Application E2E Tests › should load the homepage successfully 
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Mobile-Safari\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should navigate between pages" classname="app.spec.ts" time="3.621">
+<failure message="app.spec.ts:31:3 should navigate between pages" type="FAILURE">
+<![CDATA[  [Mobile Safari] › app.spec.ts:31:3 › Application E2E Tests › should navigate between pages ───────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Mobile-Safari\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should be responsive on mobile devices" classname="app.spec.ts" time="3.485">
+<failure message="app.spec.ts:49:3 should be responsive on mobile devices" type="FAILURE">
+<![CDATA[  [Mobile Safari] › app.spec.ts:49:3 › Application E2E Tests › should be responsive on mobile devices 
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Mobile-Safari\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle form interactions" classname="app.spec.ts" time="4.701">
+<failure message="app.spec.ts:64:3 should handle form interactions" type="FAILURE">
+<![CDATA[  [Mobile Safari] › app.spec.ts:64:3 › Application E2E Tests › should handle form interactions ─────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Mobile-Safari\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should load and display dynamic content" classname="app.spec.ts" time="4.791">
+<failure message="app.spec.ts:93:3 should load and display dynamic content" type="FAILURE">
+<![CDATA[  [Mobile Safari] › app.spec.ts:93:3 › Application E2E Tests › should load and display dynamic content 
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Mobile-Safari\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle accessibility requirements" classname="app.spec.ts" time="3.75">
+<failure message="app.spec.ts:110:3 should handle accessibility requirements" type="FAILURE">
+<![CDATA[  [Mobile Safari] › app.spec.ts:110:3 › Application E2E Tests › should handle accessibility requirements 
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Mobile-Safari\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should perform well" classname="app.spec.ts" time="3.754">
+<failure message="app.spec.ts:138:3 should perform well" type="FAILURE">
+<![CDATA[  [Mobile Safari] › app.spec.ts:138:3 › Application E2E Tests › should perform well ────────────────
+
+    Error: page.goto: Could not connect to server
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Mobile-Safari\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="app.spec.ts" timestamp="2025-09-18T12:19:47.427Z" hostname="Microsoft Edge" tests="7" failures="7" skipped="0" time="106.798" errors="0">
+<testcase name="Application E2E Tests › should load the homepage successfully" classname="app.spec.ts" time="22.905">
+<failure message="app.spec.ts:9:3 should load the homepage successfully" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › app.spec.ts:9:3 › Application E2E Tests › should load the homepage successfully 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should navigate between pages" classname="app.spec.ts" time="7.583">
+<failure message="app.spec.ts:31:3 should navigate between pages" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › app.spec.ts:31:3 › Application E2E Tests › should navigate between pages ──────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should be responsive on mobile devices" classname="app.spec.ts" time="7.428">
+<failure message="app.spec.ts:49:3 should be responsive on mobile devices" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › app.spec.ts:49:3 › Application E2E Tests › should be responsive on mobile devices 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle form interactions" classname="app.spec.ts" time="9.547">
+<failure message="app.spec.ts:64:3 should handle form interactions" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › app.spec.ts:64:3 › Application E2E Tests › should handle form interactions ────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should load and display dynamic content" classname="app.spec.ts" time="22.751">
+<failure message="app.spec.ts:93:3 should load and display dynamic content" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › app.spec.ts:93:3 › Application E2E Tests › should load and display dynamic content 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle accessibility requirements" classname="app.spec.ts" time="22.68">
+<failure message="app.spec.ts:110:3 should handle accessibility requirements" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › app.spec.ts:110:3 › Application E2E Tests › should handle accessibility requirements 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should perform well" classname="app.spec.ts" time="13.904">
+<failure message="app.spec.ts:138:3 should perform well" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › app.spec.ts:138:3 › Application E2E Tests › should perform well ───────────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="app.spec.ts" timestamp="2025-09-18T12:19:47.427Z" hostname="Google Chrome" tests="7" failures="7" skipped="0" time="32.431" errors="0">
+<testcase name="Application E2E Tests › should load the homepage successfully" classname="app.spec.ts" time="6.22">
+<failure message="app.spec.ts:9:3 should load the homepage successfully" type="FAILURE">
+<![CDATA[  [Google Chrome] › app.spec.ts:9:3 › Application E2E Tests › should load the homepage successfully 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Google-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Google-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Google-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Google-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Google-Chrome\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--d8735-d-the-homepage-successfully-Google-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should navigate between pages" classname="app.spec.ts" time="5.592">
+<failure message="app.spec.ts:31:3 should navigate between pages" type="FAILURE">
+<![CDATA[  [Google Chrome] › app.spec.ts:31:3 › Application E2E Tests › should navigate between pages ───────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Google-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Google-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-navigate-between-pages-Google-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Google-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Google-Chrome\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-navigate-between-pages-Google-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should be responsive on mobile devices" classname="app.spec.ts" time="5.072">
+<failure message="app.spec.ts:49:3 should be responsive on mobile devices" type="FAILURE">
+<![CDATA[  [Google Chrome] › app.spec.ts:49:3 › Application E2E Tests › should be responsive on mobile devices 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Google-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Google-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Google-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Google-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Google-Chrome\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5005f-esponsive-on-mobile-devices-Google-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle form interactions" classname="app.spec.ts" time="3.552">
+<failure message="app.spec.ts:64:3 should handle form interactions" type="FAILURE">
+<![CDATA[  [Google Chrome] › app.spec.ts:64:3 › Application E2E Tests › should handle form interactions ─────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Google-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Google-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-handle-form-interactions-Google-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Google-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Google-Chrome\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-handle-form-interactions-Google-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should load and display dynamic content" classname="app.spec.ts" time="3.783">
+<failure message="app.spec.ts:93:3 should load and display dynamic content" type="FAILURE">
+<![CDATA[  [Google Chrome] › app.spec.ts:93:3 › Application E2E Tests › should load and display dynamic content 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Google-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Google-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--5465f-and-display-dynamic-content-Google-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Google-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Google-Chrome\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--5465f-and-display-dynamic-content-Google-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should handle accessibility requirements" classname="app.spec.ts" time="4.129">
+<failure message="app.spec.ts:110:3 should handle accessibility requirements" type="FAILURE">
+<![CDATA[  [Google Chrome] › app.spec.ts:110:3 › Application E2E Tests › should handle accessibility requirements 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Google-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Google-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests--fec0b--accessibility-requirements-Google-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Google-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Google-Chrome\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests--fec0b--accessibility-requirements-Google-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application E2E Tests › should perform well" classname="app.spec.ts" time="4.083">
+<failure message="app.spec.ts:138:3 should perform well" type="FAILURE">
+<![CDATA[  [Google Chrome] › app.spec.ts:138:3 › Application E2E Tests › should perform well ────────────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+    Call log:
+      - navigating to "http://localhost:5000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Navigate to the app before each test
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |   });
+      8 |
+      9 |   test('should load the homepage successfully', async ({ page }) => {
+        at C:\xampp\htdocs\Studiotreiax_1\src\test\e2e\app.spec.ts:6:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Google-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Google-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\test-results\app-Application-E2E-Tests-should-perform-well-Google-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Google-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Google-Chrome\video.webm]]
+
+[[ATTACHMENT|app-Application-E2E-Tests-should-perform-well-Google-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

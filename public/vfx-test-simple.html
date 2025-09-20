@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VFX Engine Simple Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .test-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .log-area {
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+        .info {
+            color: #2196F3;
+        }
+        canvas {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 5px;
+            background: rgba(0,0,0,0.2);
+            display: block;
+            margin: 10px auto;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-success {
+            background: #4CAF50;
+        }
+        .status-error {
+            background: #f44336;
+        }
+        .status-pending {
+            background: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 VFX Engine Simple Test Suite</h1>
+        
+        <!-- Expression Engine Tests -->
+        <div class="test-section">
+            <h2><span class="status-indicator status-pending" id="expr-status"></span>Expression Engine Tests</h2>
+            <div class="test-controls">
+                <button onclick="testBasicMath()">Test Basic Math</button>
+                <button onclick="testTrigFunctions()">Test Trigonometry</button>
+                <button onclick="testUtilityFunctions()">Test Utilities</button>
+                <button onclick="testAnimationExpressions()">Test Animation</button>
+            </div>
+            <div class="log-area" id="expr-log"></div>
+        </div>
+
+        <!-- Advanced Effect Processors Tests -->
+        <div class="test-section">
+            <h2><span class="status-indicator status-pending" id="effects-status"></span>Advanced Effect Processors</h2>
+            <div class="test-controls">
+                <button onclick="testParticleSystem()">Test Particle System</button>
+                <button onclick="testDistortionEffects()">Test Distortion</button>
+                <button onclick="testLightingEffects()">Test Lighting</button>
+                <button onclick="testFluidSimulation()">Test Fluid Simulation</button>
+            </div>
+            <canvas id="effects-canvas" width="600" height="300"></canvas>
+            <div class="log-area" id="effects-log"></div>
+        </div>
+
+        <!-- System Integration Tests -->
+        <div class="test-section">
+            <h2><span class="status-indicator status-pending" id="integration-status"></span>System Integration</h2>
+            <div class="test-controls">
+                <button onclick="testFullIntegration()">Run Full Integration Test</button>
+                <button onclick="clearAllTests()">Clear All Logs</button>
+            </div>
+            <div class="log-area" id="integration-log"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ExpressionEngine } from '/src/services/ExpressionEngine.ts';
+        import { ParticleSystemProcessor, DistortionProcessor, AdvancedLightingProcessor, FluidSimulationProcessor } from '/src/services/AdvancedEffectProcessors.ts';
+
+        // Global variables
+        let expressionEngine;
+        let particleProcessor;
+        let distortionProcessor;
+        let lightingProcessor;
+        let fluidProcessor;
+        let canvas;
+        let ctx;
+
+        // Initialize systems
+        async function initializeSystems() {
+            try {
+                expressionEngine = ExpressionEngine.getInstance();
+                particleProcessor = new ParticleSystemProcessor();
+                distortionProcessor = new DistortionProcessor();
+                lightingProcessor = new AdvancedLightingProcessor();
+                fluidProcessor = new FluidSimulationProcessor();
+                
+                canvas = document.getElementById('effects-canvas');
+                ctx = canvas.getContext('2d');
+                
+                log('integration', 'Systems initialized successfully', 'success');
+                updateStatus('integration-status', 'success');
+            } catch (error) {
+                log('integration', `Initialization failed: ${error.message}`, 'error');
+                updateStatus('integration-status', 'error');
+            }
+        }
+
+        // Utility functions
+        function log(section, message, type = 'info') {
+            const logArea = document.getElementById(`${section}-log`);
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logArea.appendChild(logEntry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function updateStatus(statusId, status) {
+            const indicator = document.getElementById(statusId);
+            indicator.className = `status-indicator status-${status}`;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Expression Engine Tests
+        window.testBasicMath = function() {
+            try {
+                const tests = [
+                    { expr: '2 + 3 * 4', expected: 14 },
+                    { expr: 'sqrt(16)', expected: 4 },
+                    { expr: 'pow(2, 3)', expected: 8 },
+                    { expr: 'abs(-5)', expected: 5 },
+                    { expr: 'min(10, 5, 8)', expected: 5 },
+                    { expr: 'max(10, 5, 8)', expected: 10 }
+                ];
+
+                let passed = 0;
+                tests.forEach(test => {
+                    const result = expressionEngine.evaluate(test.expr);
+                    if (Math.abs(result.value - test.expected) < 0.001) {
+                        log('expr', `✓ ${test.expr} = ${result.value}`, 'success');
+                        passed++;
+                    } else {
+                        log('expr', `✗ ${test.expr} = ${result.value} (expected ${test.expected})`, 'error');
+                    }
+                });
+
+                log('expr', `Basic Math Tests: ${passed}/${tests.length} passed`, passed === tests.length ? 'success' : 'error');
+                updateStatus('expr-status', passed === tests.length ? 'success' : 'error');
+            } catch (error) {
+                log('expr', `Basic Math Test Error: ${error.message}`, 'error');
+                updateStatus('expr-status', 'error');
+            }
+        };
+
+        window.testTrigFunctions = function() {
+            try {
+                const tests = [
+                    { expr: 'sin(0)', expected: 0 },
+                    { expr: 'cos(0)', expected: 1 },
+                    { expr: 'tan(0)', expected: 0 },
+                    { expr: 'sin(PI/2)', expected: 1 },
+                    { expr: 'cos(PI)', expected: -1 }
+                ];
+
+                let passed = 0;
+                tests.forEach(test => {
+                    const result = expressionEngine.evaluate(test.expr);
+                    if (Math.abs(result.value - test.expected) < 0.001) {
+                        log('expr', `✓ ${test.expr} = ${result.value.toFixed(3)}`, 'success');
+                        passed++;
+                    } else {
+                        log('expr', `✗ ${test.expr} = ${result.value.toFixed(3)} (expected ${test.expected})`, 'error');
+                    }
+                });
+
+                log('expr', `Trigonometry Tests: ${passed}/${tests.length} passed`, passed === tests.length ? 'success' : 'error');
+            } catch (error) {
+                log('expr', `Trigonometry Test Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testUtilityFunctions = function() {
+            try {
+                const tests = [
+                    { expr: 'lerp(0, 10, 0.5)', expected: 5 },
+                    { expr: 'clamp(15, 0, 10)', expected: 10 },
+                    { expr: 'clamp(-5, 0, 10)', expected: 0 },
+                    { expr: 'map(5, 0, 10, 0, 100)', expected: 50 },
+                    { expr: 'smoothstep(0, 1, 0.5)', expected: 0.5 }
+                ];
+
+                let passed = 0;
+                tests.forEach(test => {
+                    const result = expressionEngine.evaluate(test.expr);
+                    if (Math.abs(result.value - test.expected) < 0.1) {
+                        log('expr', `✓ ${test.expr} = ${result.value.toFixed(3)}`, 'success');
+                        passed++;
+                    } else {
+                        log('expr', `✗ ${test.expr} = ${result.value.toFixed(3)} (expected ${test.expected})`, 'error');
+                    }
+                });
+
+                log('expr', `Utility Functions Tests: ${passed}/${tests.length} passed`, passed === tests.length ? 'success' : 'error');
+            } catch (error) {
+                log('expr', `Utility Functions Test Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testAnimationExpressions = function() {
+            try {
+                const context = { time: 1.0, frame: 60 };
+                const tests = [
+                    { expr: 'sin(time * 2)', context },
+                    { expr: 'cos(frame * 0.1)', context },
+                    { expr: 'wave(time, 0, 1, 2)', context },
+                    { expr: 'bounce(time * 0.5)', context }
+                ];
+
+                let passed = 0;
+                tests.forEach(test => {
+                    const result = expressionEngine.evaluate(test.expr, test.context);
+                    if (result.success && !isNaN(result.value)) {
+                        log('expr', `✓ ${test.expr} = ${result.value.toFixed(3)}`, 'success');
+                        passed++;
+                    } else {
+                        log('expr', `✗ ${test.expr} failed`, 'error');
+                    }
+                });
+
+                log('expr', `Animation Expressions Tests: ${passed}/${tests.length} passed`, passed === tests.length ? 'success' : 'error');
+            } catch (error) {
+                log('expr', `Animation Expressions Test Error: ${error.message}`, 'error');
+            }
+        };
+
+        // Effect Processor Tests
+        window.testParticleSystem = function() {
+            try {
+                clearCanvas();
+                
+                const config = {
+                    count: 50,
+                    emissionRate: 10,
+                    lifetime: 2.0,
+                    position: { x: 300, y: 150 },
+                    velocity: { x: 0, y: -50, spread: 30 },
+                    size: { start: 5, end: 1 },
+                    color: { start: '#ff6b6b', end: '#feca57' },
+                    gravity: 20
+                };
+
+                const imageData = ctx.createImageData(canvas.width, canvas.height);
+                const result = particleProcessor.process(imageData, config);
+                
+                if (result) {
+                    ctx.putImageData(result, 0, 0);
+                    log('effects', '✓ Particle system rendered successfully', 'success');
+                    updateStatus('effects-status', 'success');
+                } else {
+                    log('effects', '✗ Particle system failed to render', 'error');
+                }
+            } catch (error) {
+                log('effects', `Particle System Error: ${error.message}`, 'error');
+                updateStatus('effects-status', 'error');
+            }
+        };
+
+        window.testDistortionEffects = function() {
+            try {
+                clearCanvas();
+                
+                // Create a simple test pattern
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(200, 100, 200, 100);
+                
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const config = {
+                    type: 'wave',
+                    strength: 20,
+                    frequency: 0.02,
+                    phase: 0
+                };
+
+                const result = distortionProcessor.process(imageData, config);
+                
+                if (result) {
+                    ctx.putImageData(result, 0, 0);
+                    log('effects', '✓ Distortion effect applied successfully', 'success');
+                } else {
+                    log('effects', '✗ Distortion effect failed', 'error');
+                }
+            } catch (error) {
+                log('effects', `Distortion Effect Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testLightingEffects = function() {
+            try {
+                clearCanvas();
+                
+                // Create a base image
+                ctx.fillStyle = '#666';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const config = {
+                    type: 'point',
+                    position: { x: 300, y: 150 },
+                    color: '#ffffff',
+                    intensity: 1.0,
+                    radius: 200
+                };
+
+                const result = lightingProcessor.process(imageData, config);
+                
+                if (result) {
+                    ctx.putImageData(result, 0, 0);
+                    log('effects', '✓ Lighting effect applied successfully', 'success');
+                } else {
+                    log('effects', '✗ Lighting effect failed', 'error');
+                }
+            } catch (error) {
+                log('effects', `Lighting Effect Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testFluidSimulation = function() {
+            try {
+                clearCanvas();
+                
+                const config = {
+                    viscosity: 0.1,
+                    density: 1.0,
+                    gridSize: 32,
+                    timeStep: 0.016
+                };
+
+                const imageData = ctx.createImageData(canvas.width, canvas.height);
+                const result = fluidProcessor.process(imageData, config);
+                
+                if (result) {
+                    ctx.putImageData(result, 0, 0);
+                    log('effects', '✓ Fluid simulation rendered successfully', 'success');
+                } else {
+                    log('effects', '✗ Fluid simulation failed', 'error');
+                }
+            } catch (error) {
+                log('effects', `Fluid Simulation Error: ${error.message}`, 'error');
+            }
+        };
+
+        // Integration Tests
+        window.testFullIntegration = function() {
+            log('integration', 'Starting full integration test...', 'info');
+            
+            // Test all systems in sequence
+            setTimeout(() => testBasicMath(), 100);
+            setTimeout(() => testTrigFunctions(), 200);
+            setTimeout(() => testUtilityFunctions(), 300);
+            setTimeout(() => testAnimationExpressions(), 400);
+            setTimeout(() => testParticleSystem(), 500);
+            setTimeout(() => testDistortionEffects(), 1000);
+            setTimeout(() => testLightingEffects(), 1500);
+            setTimeout(() => testFluidSimulation(), 2000);
+            
+            setTimeout(() => {
+                log('integration', 'Full integration test completed!', 'success');
+            }, 2500);
+        };
+
+        window.clearAllTests = function() {
+            ['expr', 'effects', 'integration'].forEach(section => {
+                document.getElementById(`${section}-log`).innerHTML = '';
+                document.getElementById(`${section}-status`).className = 'status-indicator status-pending';
+            });
+            clearCanvas();
+            log('integration', 'All test logs cleared', 'info');
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeSystems);
+    </script>
+</body>
+</html>

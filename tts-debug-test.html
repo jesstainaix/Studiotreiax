@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste TTS - Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .test-section h3 { margin-top: 0; }
+        .controls { margin: 10px 0; }
+        .controls button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+        .status { margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+        .error { background: #ffe6e6; color: #d00; }
+        .success { background: #e6ffe6; color: #0a0; }
+        .info { background: #e6f3ff; color: #006; }
+        #audioControls { margin: 10px 0; }
+        audio { width: 100%; margin: 10px 0; }
+        .volume-control { margin: 10px 0; }
+        .volume-control input { width: 200px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Teste de Diagnóstico - Sistema TTS</h1>
+        
+        <div class="test-section">
+            <h3>1. Verificação de Compatibilidade do Navegador</h3>
+            <div id="browserCompatibility" class="status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Teste Speech Synthesis API (Navegador)</h3>
+            <div class="controls">
+                <input type="text" id="browserTestText" value="Olá! Este é um teste do sistema de síntese de voz do navegador." style="width: 100%; margin: 5px 0;">
+                <br>
+                <label for="voiceSelect">Selecione uma voz:</label>
+                <select id="voiceSelect" style="width: 100%; margin: 5px 0;"></select>
+                <br>
+                <button onclick="testBrowserTTS()">🗣️ Falar com Speech Synthesis</button>
+                <button onclick="stopBrowserTTS()">⏹️ Parar</button>
+            </div>
+            <div class="volume-control">
+                <label for="volumeSlider">Volume: <span id="volumeValue">100</span>%</label>
+                <input type="range" id="volumeSlider" min="0" max="100" value="100" oninput="updateVolume(this.value)">
+            </div>
+            <div id="browserTTSStatus" class="status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Teste Audio Element HTML5</h3>
+            <div class="controls">
+                <button onclick="testAudioElement()">🔊 Testar Reprodução de Áudio</button>
+                <button onclick="stopAudio()">⏹️ Parar Áudio</button>
+            </div>
+            <div id="audioControls">
+                <audio id="testAudio" controls style="display: none;">
+                    <source src="" type="audio/mpeg">
+                    Seu navegador não suporta o elemento de áudio.
+                </audio>
+            </div>
+            <div id="audioStatus" class="status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Teste Integração com Sistema TTS Local</h3>
+            <div class="controls">
+                <button onclick="testLocalTTS()">🎯 Testar Sistema TTS Integrado</button>
+            </div>
+            <div id="localTTSStatus" class="status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Log de Depuração</h3>
+            <div id="debugLog" style="background: #f5f5f5; padding: 10px; border-radius: 4px; height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+            <button onclick="clearLog()">🗑️ Limpar Log</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUtterance = null;
+        let currentAudio = null;
+        let debugLog = document.getElementById('debugLog');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            div.textContent = `[${timestamp}] ${message}`;
+            debugLog.appendChild(div);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function clearLog() {
+            debugLog.innerHTML = '';
+        }
+
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+
+        function updateVolume(value) {
+            document.getElementById('volumeValue').textContent = value;
+        }
+
+        // 1. Verificação de compatibilidade
+        function checkBrowserCompatibility() {
+            log('Verificando compatibilidade do navegador...');
+            
+            const checks = [];
+            
+            // Speech Synthesis
+            if ('speechSynthesis' in window) {
+                checks.push('✓ Speech Synthesis API suportada');
+                log('Speech Synthesis API disponível', 'success');
+            } else {
+                checks.push('✗ Speech Synthesis API não suportada');
+                log('Speech Synthesis API NÃO disponível', 'error');
+            }
+
+            // Audio Element
+            if (typeof Audio !== 'undefined') {
+                checks.push('✓ HTML5 Audio Element suportado');
+                log('HTML5 Audio Element disponível', 'success');
+            } else {
+                checks.push('✗ HTML5 Audio Element não suportado');
+                log('HTML5 Audio Element NÃO disponível', 'error');
+            }
+
+            // Web Audio API
+            if ('AudioContext' in window || 'webkitAudioContext' in window) {
+                checks.push('✓ Web Audio API suportada');
+                log('Web Audio API disponível', 'success');
+            } else {
+                checks.push('✗ Web Audio API não suportada');
+                log('Web Audio API NÃO disponível', 'error');
+            }
+
+            updateStatus('browserCompatibility', checks.join('\\n'), 'info');
+        }
+
+        // 2. Teste Speech Synthesis
+        function loadVoices() {
+            log('Carregando vozes disponíveis...');
+            const voices = speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+
+            if (voices.length === 0) {
+                log('Nenhuma voz encontrada. Aguardando carregamento...', 'error');
+                voiceSelect.innerHTML = '<option>Carregando vozes...</option>';
+                return;
+            }
+
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang}) - ${voice.gender || 'N/A'}`;
+                voiceSelect.appendChild(option);
+                log(`Voz encontrada: ${voice.name} (${voice.lang})`);
+            });
+
+            log(`${voices.length} vozes carregadas`, 'success');
+        }
+
+        function testBrowserTTS() {
+            log('Iniciando teste Speech Synthesis...');
+            
+            if (!('speechSynthesis' in window)) {
+                updateStatus('browserTTSStatus', 'Speech Synthesis não suportado neste navegador', 'error');
+                log('Speech Synthesis não suportado', 'error');
+                return;
+            }
+
+            stopBrowserTTS(); // Para qualquer fala anterior
+
+            const text = document.getElementById('browserTestText').value;
+            const voiceSelect = document.getElementById('voiceSelect');
+            const volumeSlider = document.getElementById('volumeSlider');
+            
+            if (!text.trim()) {
+                updateStatus('browserTTSStatus', 'Por favor, insira um texto para teste', 'error');
+                log('Texto vazio fornecido', 'error');
+                return;
+            }
+
+            updateStatus('browserTTSStatus', 'Iniciando síntese de voz...', 'info');
+            log(`Sintetizando: "${text}"`);
+
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            // Configurar voz
+            const voices = speechSynthesis.getVoices();
+            if (voices.length > 0 && voiceSelect.selectedIndex >= 0) {
+                currentUtterance.voice = voices[voiceSelect.selectedIndex];
+                log(`Usando voz: ${currentUtterance.voice.name}`);
+            }
+
+            // Configurar volume
+            currentUtterance.volume = volumeSlider.value / 100;
+            currentUtterance.rate = 1.0;
+            currentUtterance.pitch = 1.0;
+
+            log(`Configurações: Volume=${currentUtterance.volume}, Rate=${currentUtterance.rate}, Pitch=${currentUtterance.pitch}`);
+
+            // Event listeners
+            currentUtterance.onstart = function() {
+                updateStatus('browserTTSStatus', 'Falando... 🗣️', 'success');
+                log('Speech Synthesis iniciada', 'success');
+            };
+
+            currentUtterance.onend = function() {
+                updateStatus('browserTTSStatus', 'Síntese concluída ✓', 'success');
+                log('Speech Synthesis finalizada', 'success');
+            };
+
+            currentUtterance.onerror = function(event) {
+                updateStatus('browserTTSStatus', `Erro na síntese: ${event.error}`, 'error');
+                log(`Erro na síntese: ${event.error}`, 'error');
+            };
+
+            currentUtterance.onpause = function() {
+                log('Speech Synthesis pausada');
+            };
+
+            currentUtterance.onresume = function() {
+                log('Speech Synthesis retomada');
+            };
+
+            // Iniciar síntese
+            try {
+                speechSynthesis.speak(currentUtterance);
+                log('Comando speak() executado');
+            } catch (error) {
+                updateStatus('browserTTSStatus', `Erro ao executar speak(): ${error.message}`, 'error');
+                log(`Erro ao executar speak(): ${error.message}`, 'error');
+            }
+        }
+
+        function stopBrowserTTS() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+                updateStatus('browserTTSStatus', 'Síntese interrompida', 'info');
+                log('Speech Synthesis cancelada');
+            }
+        }
+
+        // 3. Teste Audio Element
+        function testAudioElement() {
+            log('Testando reprodução de áudio...');
+            
+            stopAudio(); // Para qualquer áudio anterior
+
+            // Criar um beep sintético para teste
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1);
+            
+            updateStatus('audioStatus', 'Reproduzindo tom de teste (440Hz por 1 segundo)', 'success');
+            log('Tom de teste iniciado (440Hz)', 'success');
+            
+            oscillator.onended = function() {
+                updateStatus('audioStatus', 'Teste de áudio concluído ✓', 'success');
+                log('Tom de teste finalizado', 'success');
+            };
+        }
+
+        function stopAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+                log('Áudio interrompido');
+            }
+        }
+
+        // 4. Teste Sistema TTS Local
+        function testLocalTTS() {
+            log('Testando sistema TTS integrado...');
+            updateStatus('localTTSStatus', 'Verificando sistema TTS local...', 'info');
+            
+            // Simular teste do sistema local (substitua pela lógica real)
+            setTimeout(() => {
+                try {
+                    // Aqui você pode adicionar a lógica real do seu sistema TTS
+                    log('Sistema TTS local não implementado - usando fallback para Speech Synthesis', 'error');
+                    updateStatus('localTTSStatus', 'Sistema TTS local não disponível - usando Speech Synthesis como fallback', 'error');
+                    
+                    // Fallback para teste browser
+                    testBrowserTTS();
+                } catch (error) {
+                    updateStatus('localTTSStatus', `Erro no sistema TTS local: ${error.message}`, 'error');
+                    log(`Erro no sistema TTS local: ${error.message}`, 'error');
+                }
+            }, 1000);
+        }
+
+        // Inicialização
+        window.addEventListener('load', function() {
+            log('Página carregada - iniciando verificações...');
+            checkBrowserCompatibility();
+            
+            // Aguardar vozes carregarem
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+            
+            // Tentar carregar vozes imediatamente também
+            setTimeout(loadVoices, 100);
+            setTimeout(loadVoices, 1000); // Backup após 1 segundo
+            
+            log('Inicialização completa - pronto para testes');
+        });
+    </script>
+</body>
+</html>

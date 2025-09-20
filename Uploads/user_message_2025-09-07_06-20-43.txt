@@ -1,0 +1,246 @@
+⚠️ Google TTS API Key não configurada, usando fallback
+❌ Erro no upload S3: AccessDenied: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/man-young-casual/1757225750584.mp4" because no session policy allows the s3:PutObject action
+    at throwDefaultError (/opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:422:20)
+    at /opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:431:5
+    at de_CommandError (/opt/hostedapp/node/root/app/node_modules/@aws-sdk/client-s3/dist-cjs/index.js:5202:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-serde/dist-cjs/index.js:36:20
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:488:18
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-retry/dist-cjs/index.js:312:38
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/index.js:318:18
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:110:22
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:137:14
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-logger/dist-cjs/index.js:33:22
+    at async S3StorageService.uploadFile (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_s3-storage_ts.js:55:13)
+    at async TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:276:29)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:873:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28) {
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 403,
+    requestId: '47YG2JEXA24C9VPB',
+    extendedRequestId: 'LN+O6jXty8DbhKkPRAHMg1MtOYxJ9Bu1qnZapC/WZbFHvjs7dNhXsRPXPkdNA5JT4zSIv3QXjXA=',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'AccessDenied',
+  RequestId: '47YG2JEXA24C9VPB',
+  HostId: 'LN+O6jXty8DbhKkPRAHMg1MtOYxJ9Bu1qnZapC/WZbFHvjs7dNhXsRPXPkdNA5JT4zSIv3QXjXA='
+}
+❌ Erro no processamento: Error: Falha no upload do vídeo: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/man-young-casual/1757225750584.mp4" because no session policy allows the s3:PutObject action
+    at TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:282:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:873:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28)
+❌ Erro no job job_1757225748733_pvpfu7yal: Error: Falha no processamento de vídeo
+    at QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:881:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28)
+⚠️ Google TTS API Key não configurada, usando fallback
+❌ Erro no upload S3: AccessDenied: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/man-young-casual/1757225753173.mp4" because no session policy allows the s3:PutObject action
+    at throwDefaultError (/opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:422:20)
+    at /opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:431:5
+    at de_CommandError (/opt/hostedapp/node/root/app/node_modules/@aws-sdk/client-s3/dist-cjs/index.js:5202:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-serde/dist-cjs/index.js:36:20
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:488:18
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-retry/dist-cjs/index.js:312:38
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/index.js:318:18
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:110:22
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:137:14
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-logger/dist-cjs/index.js:33:22
+    at async S3StorageService.uploadFile (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_s3-storage_ts.js:55:13)
+    at async TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:276:29)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:873:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28) {
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 403,
+    requestId: '16SMG7TS7BXFVSFA',
+    extendedRequestId: 'utj28QCSRgiQyvpKxkq06wV6x0ZktVYBYV2R4BcCjHh/x5ny1SQVjMfkeM9ccmHQFZSrDVtlHXA=',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'AccessDenied',
+  RequestId: '16SMG7TS7BXFVSFA',
+  HostId: 'utj28QCSRgiQyvpKxkq06wV6x0ZktVYBYV2R4BcCjHh/x5ny1SQVjMfkeM9ccmHQFZSrDVtlHXA='
+}
+❌ Erro no processamento: Error: Falha no upload do vídeo: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/man-young-casual/1757225753173.mp4" because no session policy allows the s3:PutObject action
+    at TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:282:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:873:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28)
+❌ Erro no job job_1757225748733_pvpfu7yal: Error: Falha no processamento de vídeo
+    at QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:881:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28)
+⚠️ Google TTS API Key não configurada, usando fallback
+❌ Erro no upload S3: AccessDenied: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/man-young-casual/1757225755799.mp4" because no session policy allows the s3:PutObject action
+    at throwDefaultError (/opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:422:20)
+    at /opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:431:5
+    at de_CommandError (/opt/hostedapp/node/root/app/node_modules/@aws-sdk/client-s3/dist-cjs/index.js:5202:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-serde/dist-cjs/index.js:36:20
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:488:18
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-retry/dist-cjs/index.js:312:38
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/index.js:318:18
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:110:22
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:137:14
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-logger/dist-cjs/index.js:33:22
+    at async S3StorageService.uploadFile (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_s3-storage_ts.js:55:13)
+    at async TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:276:29)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:873:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28) {
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 403,
+    requestId: 'EV2FGGXFK68J6E6V',
+    extendedRequestId: '7da8jiNM2x2RREVxHvVlAUEtwGlSgPDlaeq6xGCAkVwRupClJvfvNnzOBPZueGsfAvreQs8tnb8=',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'AccessDenied',
+  RequestId: 'EV2FGGXFK68J6E6V',
+  HostId: '7da8jiNM2x2RREVxHvVlAUEtwGlSgPDlaeq6xGCAkVwRupClJvfvNnzOBPZueGsfAvreQs8tnb8='
+}
+❌ Erro no processamento: Error: Falha no upload do vídeo: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/man-young-casual/1757225755799.mp4" because no session policy allows the s3:PutObject action
+    at TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:282:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:873:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28)
+❌ Erro no job job_1757225748733_pvpfu7yal: Error: Falha no processamento de vídeo
+    at QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:881:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/generate-production/route.js:817:28)
+⚠️ Google TTS API Key não configurada, usando fallback
+❌ Erro no upload S3: AccessDenied: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/custom-upload/1757226016575.mp4" because no session policy allows the s3:PutObject action
+    at throwDefaultError (/opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:422:20)
+    at /opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:431:5
+    at de_CommandError (/opt/hostedapp/node/root/app/node_modules/@aws-sdk/client-s3/dist-cjs/index.js:5202:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-serde/dist-cjs/index.js:36:20
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:488:18
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-retry/dist-cjs/index.js:312:38
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/index.js:318:18
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:110:22
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:137:14
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-logger/dist-cjs/index.js:33:22
+    at async S3StorageService.uploadFile (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_s3-storage_ts.js:55:13)
+    at async TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:276:29)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:473:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28) {
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 403,
+    requestId: 'Z8RT0JR8PKP9SKCW',
+    extendedRequestId: 'PGaME0q9yhygpusiKa09LAPzvMwTglmyjVQlAaYLCWJfRir3GvhzVN0MGMNgWXerWHE3ig0F3AecYOTY1GAA2gG1f8wyi0Du',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'AccessDenied',
+  RequestId: 'Z8RT0JR8PKP9SKCW',
+  HostId: 'PGaME0q9yhygpusiKa09LAPzvMwTglmyjVQlAaYLCWJfRir3GvhzVN0MGMNgWXerWHE3ig0F3AecYOTY1GAA2gG1f8wyi0Du'
+}
+❌ Erro no processamento: Error: Falha no upload do vídeo: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/custom-upload/1757226016575.mp4" because no session policy allows the s3:PutObject action
+    at TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:282:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:473:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28)
+❌ Erro no job job_1757226014879_860teb66v: Error: Falha no processamento de vídeo
+    at QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:481:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28)
+⚠️ Google TTS API Key não configurada, usando fallback
+❌ Erro no upload S3: AccessDenied: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/custom-upload/1757226019251.mp4" because no session policy allows the s3:PutObject action
+    at throwDefaultError (/opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:422:20)
+    at /opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:431:5
+    at de_CommandError (/opt/hostedapp/node/root/app/node_modules/@aws-sdk/client-s3/dist-cjs/index.js:5202:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-serde/dist-cjs/index.js:36:20
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:488:18
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-retry/dist-cjs/index.js:312:38
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/index.js:318:18
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:110:22
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:137:14
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-logger/dist-cjs/index.js:33:22
+    at async S3StorageService.uploadFile (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_s3-storage_ts.js:55:13)
+    at async TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:276:29)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:473:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28) {
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 403,
+    requestId: '5X3W9K3TGKRJVTWR',
+    extendedRequestId: '6qGNzp71HxhAqfxCi5XU6njluy+7QGGFUR8Nwd12gj1o/dIUXuX6wc5fm3NedHUzVr7vr4VZeKM=',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'AccessDenied',
+  RequestId: '5X3W9K3TGKRJVTWR',
+  HostId: '6qGNzp71HxhAqfxCi5XU6njluy+7QGGFUR8Nwd12gj1o/dIUXuX6wc5fm3NedHUzVr7vr4VZeKM='
+}
+❌ Erro no processamento: Error: Falha no upload do vídeo: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/custom-upload/1757226019251.mp4" because no session policy allows the s3:PutObject action
+    at TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:282:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:473:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28)
+❌ Erro no job job_1757226014879_860teb66v: Error: Falha no processamento de vídeo
+    at QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:481:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28)
+⚠️ Google TTS API Key não configurada, usando fallback
+❌ Erro no upload S3: AccessDenied: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/custom-upload/1757226021885.mp4" because no session policy allows the s3:PutObject action
+    at throwDefaultError (/opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:422:20)
+    at /opt/hostedapp/node/root/app/node_modules/@smithy/smithy-client/dist-cjs/index.js:431:5
+    at de_CommandError (/opt/hostedapp/node/root/app/node_modules/@aws-sdk/client-s3/dist-cjs/index.js:5202:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-serde/dist-cjs/index.js:36:20
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:488:18
+    at async /opt/hostedapp/node/root/app/node_modules/@smithy/middleware-retry/dist-cjs/index.js:312:38
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/index.js:318:18
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:110:22
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:137:14
+    at async /opt/hostedapp/node/root/app/node_modules/@aws-sdk/middleware-logger/dist-cjs/index.js:33:22
+    at async S3StorageService.uploadFile (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_s3-storage_ts.js:55:13)
+    at async TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:276:29)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:473:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28) {
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 403,
+    requestId: 'GPJTATD5WXVK9PWM',
+    extendedRequestId: 'wM1nnH3/Qte5IRRxv3h2AjGLkqJHNbTyKxsrn7ehg7W+8D23Gcj92rT1uT88Fan+sc4+++dSD0TO/+cEKeMn21aKkRVJFo1Mw0RmeaZ8NPA=',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'AccessDenied',
+  RequestId: 'GPJTATD5WXVK9PWM',
+  HostId: 'wM1nnH3/Qte5IRRxv3h2AjGLkqJHNbTyKxsrn7ehg7W+8D23Gcj92rT1uT88Fan+sc4+++dSD0TO/+cEKeMn21aKkRVJFo1Mw0RmeaZ8NPA='
+}
+❌ Erro no processamento: Error: Falha no upload do vídeo: User: arn:aws:sts::732411223161:assumed-role/DeepAgentCrossAccountAccess/AbacusAIS3Session-cross-account-sts-id is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::abacusai-apps-c690816a19227f6ad979098f-us-west-2/687/videos/talking-head/custom-upload/1757226021885.mp4" because no session policy allows the s3:PutObject action
+    at TalkingHeadProcessor.uploadToS3 (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:282:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async TalkingHeadProcessor.processVideo (/home/ubuntu/estudio_ia_videos/app/.next/server/_rsc_lib_talking-head-processor_ts.js:71:35)
+    at async QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:473:29)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28)
+❌ Erro no job job_1757226014879_860teb66v: Error: Falha no processamento de vídeo
+    at QueueService.processTalkingPhotoJob (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:481:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async QueueService.processJobAsync (/home/ubuntu/estudio_ia_videos/app/.next/server/app/api/talking-photo/status/[jobId]/route.js:417:28)

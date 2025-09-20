@@ -1,0 +1,1327 @@
+// Interface para sistema de templates de Normas Regulamentadoras
+import React, { useState, useEffect, useCallback } from 'react';
+import { 
+  NRTemplateSystem, 
+  NRTemplate, 
+  NRCategory, 
+  TemplateCustomization,
+  ComplianceValidationResult
+} from '../../services/NRTemplateSystem';
+import { VideoProject } from '../../types/video';
+import { 
+  Search, 
+  Filter, 
+  Download, 
+  Play, 
+  Settings, 
+  CheckCircle, 
+  AlertTriangle, 
+  FileText, 
+  Palette, 
+  Type, 
+  Image, 
+  Volume2,
+  Eye,
+  Edit3,
+  Save,
+  Share2,
+  X,
+  Tag,
+  Folder,
+  Shield,
+  Clock,
+  ChevronUp,
+  ChevronDown,
+  Activity,
+  BarChart3,
+  TrendingUp
+} from 'lucide-react';
+
+interface NRTemplateInterfaceProps {
+  onTemplateSelected?: (template: NRTemplate) => void;
+  onProjectGenerated?: (project: VideoProject) => void;
+  onCustomizationSaved?: (templateId: string, customization: TemplateCustomization) => void;
+}
+
+interface FilterState {
+  category: NRCategory | 'all';
+  searchQuery: string;
+  compliance: 'all' | 'compliant' | 'non-compliant';
+  duration: 'all' | 'short' | 'medium' | 'long';
+  sortBy: 'name' | 'category' | 'duration' | 'compliance' | 'recent';
+  sortOrder: 'asc' | 'desc';
+  tags: string[];
+  difficulty: 'all' | 'basic' | 'intermediate' | 'advanced';
+  lastUpdated: 'all' | 'week' | 'month' | 'quarter';
+}
+
+interface SearchSuggestion {
+  text: string;
+  type: 'template' | 'category' | 'tag' | 'norma' | 'history';
+  count: number;
+}
+
+const NRTemplateInterface: React.FC<NRTemplateInterfaceProps> = ({
+  onTemplateSelected,
+  onProjectGenerated,
+  onCustomizationSaved
+}) => {
+  const [templateSystem] = useState(() => new NRTemplateSystem());
+  const [templates, setTemplates] = useState<NRTemplate[]>([]);
+  const [filteredTemplates, setFilteredTemplates] = useState<NRTemplate[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<NRTemplate | null>(null);
+  const [activeTab, setActiveTab] = useState<'browse' | 'customize' | 'preview' | 'compliance'>('browse');
+  const [isLoading, setIsLoading] = useState(false);
+  const [validationResults, setValidationResults] = useState<Map<string, ComplianceValidationResult>>(new Map());
+
+  // Estados de filtro
+  const [filters, setFilters] = useState<FilterState>({
+    category: 'all',
+    searchQuery: '',
+    compliance: 'all',
+    duration: 'all',
+    sortBy: 'name',
+    sortOrder: 'asc',
+    tags: [],
+    difficulty: 'all',
+    lastUpdated: 'all'
+  });
+
+  // Estados de busca inteligente
+  const [searchSuggestions, setSearchSuggestions] = useState<SearchSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [popularTags, setPopularTags] = useState<string[]>(['Seguranca', 'Saude', 'Meio Ambiente', 'Qualidade', 'Treinamento']);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [recentTemplates, setRecentTemplates] = useState<string[]>(['NR-6 EPI', 'NR-10 Eletrica', 'NR-35 Altura']);
+  const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
+  
+  // Estados de analytics
+  const [analytics, setAnalytics] = useState({
+    mostUsed: 15,
+    complianceRate: 87,
+    avgUsageTime: 23,
+    engagementScore: 8.5
+  });
+
+  // Estados de customizacao
+  const [customization, setCustomization] = useState<TemplateCustomization>({
+    colors: {
+      primary: '#1a365d',
+      secondary: '#2d3748',
+      accent: '#3182ce',
+      background: '#f7fafc',
+      text: '#2d3748'
+    },
+    fonts: {
+      primary: 'Inter',
+      secondary: 'Roboto',
+      sizes: { small: 14, medium: 18, large: 24, xlarge: 32 }
+    },
+    logos: [],
+    branding: {
+      companyName: '',
+      companyLogo: '',
+      colors: [],
+      watermark: false
+    },
+    content: {
+      language: 'pt-BR',
+      terminology: 'technical',
+      complexity: 'intermediate',
+      examples: 'industry-specific'
+    }
+  });
+
+  // Inicializacao
+  useEffect(() => {
+    loadTemplates();
+  }, []);
+
+  // Filtros
+  useEffect(() => {
+    applyFilters();
+  }, [templates, filters]);
+
+  const loadTemplates = async () => {
+    try {
+      setIsLoading(true);
+      const allTemplates = templateSystem.getAllTemplates();
+      setTemplates(allTemplates);
+      
+      // Validar compliance de todos os templates
+      const validations = new Map<string, ComplianceValidationResult>();
+      for (const template of allTemplates) {
+        try {
+          const validation = templateSystem.validateCompliance(template.id);
+          validations.set(template.id, validation);
+        } catch (error) {
+          console.warn(`Erro ao validar template ${template.id}:`, error);
+        }
+      }
+      setValidationResults(validations);
+      
+    } catch (error) {
+      console.error('Erro ao carregar templates:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Funcao para gerar sugestoes de busca
+  const generateSearchSuggestions = useCallback((query: string): SearchSuggestion[] => {
+    if (!query || query.length < 2) return [];
+    
+    const suggestions: SearchSuggestion[] = [];
+    const queryLower = query.toLowerCase();
+    
+    // Sugestoes de templates
+    templates.forEach(template => {
+      if (template.name.toLowerCase().includes(queryLower)) {
+        suggestions.push({
+          text: template.name,
+          type: 'template',
+          count: 1
+        });
+      }
+    });
+    
+    // Sugestoes de categorias
+    const categories = ['safety', 'health', 'environment', 'quality', 'training'];
+    categories.forEach(category => {
+      if (category.toLowerCase().includes(queryLower)) {
+        const count = templates.filter(t => t.category === category).length;
+        suggestions.push({
+          text: getCategoryLabel(category as NRCategory),
+          type: 'category',
+          count
+        });
+      }
+    });
+    
+    // Sugestoes de tags populares
+    popularTags.forEach(tag => {
+      if (tag.toLowerCase().includes(queryLower)) {
+        suggestions.push({
+          text: tag,
+          type: 'tag',
+          count: Math.floor(Math.random() * 10) + 1
+        });
+      }
+    });
+    
+    return suggestions.slice(0, 8);
+  }, [templates, popularTags]);
+
+  // Handlers de busca inteligente
+  const handleSearchChange = (value: string) => {
+    setFilters(prev => ({ ...prev, searchQuery: value }));
+    
+    if (value.length >= 2) {
+      const suggestions = generateSearchSuggestions(value);
+      setSearchSuggestions(suggestions);
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+    
+    // Adicionar ao historico se nao estiver vazio
+    if (value.trim() && !searchHistory.includes(value.trim())) {
+      setSearchHistory(prev => [value.trim(), ...prev.slice(0, 4)]);
+    }
+  };
+
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+    setShowSuggestions(true);
+    if (!filters.searchQuery) {
+      // Mostrar historico e tags populares quando foco sem query
+      const historySuggestions: SearchSuggestion[] = searchHistory.map(item => ({
+        text: item,
+        type: 'history',
+        count: 0
+      }));
+      const tagSuggestions: SearchSuggestion[] = popularTags.slice(0, 5).map(tag => ({
+        text: tag,
+        type: 'tag',
+        count: Math.floor(Math.random() * 10) + 1
+      }));
+      setSearchSuggestions([...historySuggestions, ...tagSuggestions]);
+    }
+  };
+
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+    // Delay para permitir clique nas sugestoes
+    setTimeout(() => setShowSuggestions(false), 200);
+  };
+
+  const handleSuggestionClick = (suggestion: SearchSuggestion) => {
+    setFilters(prev => ({ ...prev, searchQuery: suggestion.text }));
+    setShowSuggestions(false);
+    
+    // Adicionar ao historico
+    setSearchHistory(prev => {
+      const newHistory = [suggestion.text, ...prev.filter(item => item !== suggestion.text)];
+      return newHistory.slice(0, 10);
+    });
+    
+    // Adicionar aos templates recentes se for um template
+    if (suggestion.type === 'template') {
+      const template = templates.find(t => t.name === suggestion.text);
+      if (template && !recentTemplates.find(rt => rt.id === template.id)) {
+        setRecentTemplates(prev => [template, ...prev.slice(0, 4)]);
+      }
+    }
+  };
+
+  const handleTagAdd = (tag: string) => {
+    if (!filters.tags.includes(tag)) {
+      setFilters(prev => ({ ...prev, tags: [...prev.tags, tag] }));
+    }
+  };
+
+  const handleTagRemove = (tag: string) => {
+    setFilters(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tag) }));
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      category: 'all',
+      searchQuery: '',
+      compliance: 'all',
+      duration: 'all',
+      sortBy: 'name',
+      sortOrder: 'asc',
+      tags: [],
+      difficulty: 'all',
+      lastUpdated: 'all'
+    });
+  };
+
+  const applyFilters = useCallback(() => {
+    let filtered = [...templates];
+
+    // Filtro por categoria
+    if (filters.category !== 'all') {
+      filtered = filtered.filter(template => template.category === filters.category);
+    }
+
+    // Filtro por busca (mais abrangente)
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      filtered = filtered.filter(template => 
+        template.name.toLowerCase().includes(query) ||
+        template.description.toLowerCase().includes(query) ||
+        template.norma.toLowerCase().includes(query) ||
+        getCategoryLabel(template.category).toLowerCase().includes(query)
+      );
+    }
+
+    // Filtro por tags
+    if (filters.tags.length > 0) {
+      filtered = filtered.filter(template => {
+        // Simular tags baseadas no conteudo do template
+        const templateTags = [
+          template.category,
+          template.norma.toLowerCase(),
+          ...template.description.toLowerCase().split(' ').slice(0, 3)
+        ];
+        return filters.tags.some(tag => 
+          templateTags.some(templateTag => 
+            templateTag.toLowerCase().includes(tag.toLowerCase())
+          )
+        );
+      });
+    }
+
+    // Filtro por dificuldade
+    if (filters.difficulty !== 'all') {
+      filtered = filtered.filter(template => {
+        // Simular dificuldade baseada na duracao e complexidade
+        const duration = template.duration;
+        let difficulty: string;
+        if (duration <= 900) difficulty = 'basic';
+        else if (duration <= 1800) difficulty = 'intermediate';
+        else difficulty = 'advanced';
+        return difficulty === filters.difficulty;
+      });
+    }
+
+    // Filtro por ultima atualizacao
+    if (filters.lastUpdated !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter(template => {
+        // Simular data de atualizacao
+        const templateDate = new Date(now.getTime() - Math.random() * 90 * 24 * 60 * 60 * 1000);
+        const daysDiff = (now.getTime() - templateDate.getTime()) / (1000 * 60 * 60 * 24);
+        
+        switch (filters.lastUpdated) {
+          case 'week': return daysDiff <= 7;
+          case 'month': return daysDiff <= 30;
+          case 'quarter': return daysDiff <= 90;
+          default: return true;
+        }
+      });
+    }
+
+    // Filtro por compliance
+    if (filters.compliance !== 'all') {
+      filtered = filtered.filter(template => {
+        const validation = validationResults.get(template.id);
+        if (!validation) return false;
+        return filters.compliance === 'compliant' ? validation.isCompliant : !validation.isCompliant;
+      });
+    }
+
+    // Filtro por duracao
+    if (filters.duration !== 'all') {
+      filtered = filtered.filter(template => {
+        const duration = template.duration;
+        switch (filters.duration) {
+          case 'short': return duration <= 900; // ate 15 min
+          case 'medium': return duration > 900 && duration <= 1800; // 15-30 min
+          case 'long': return duration > 1800; // mais de 30 min
+          default: return true;
+        }
+      });
+    }
+
+    // Ordenacao
+    filtered.sort((a, b) => {
+      let comparison = 0;
+      
+      switch (filters.sortBy) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'category':
+          comparison = getCategoryLabel(a.category).localeCompare(getCategoryLabel(b.category));
+          break;
+        case 'duration':
+          comparison = a.duration - b.duration;
+          break;
+        case 'compliance':
+          const aCompliant = validationResults.get(a.id)?.isCompliant || false;
+          const bCompliant = validationResults.get(b.id)?.isCompliant || false;
+          comparison = Number(bCompliant) - Number(aCompliant);
+          break;
+        case 'recent':
+          // Simular ordenacao por data de atualizacao
+          comparison = Math.random() - 0.5;
+          break;
+        default:
+          comparison = 0;
+      }
+      
+      return filters.sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    setFilteredTemplates(filtered);
+  }, [templates, filters, validationResults]);
+
+  const handleTemplateSelect = (template: NRTemplate) => {
+    setSelectedTemplate(template);
+    setCustomization(template.customization);
+    onTemplateSelected?.(template);
+  };
+
+  const handleGenerateProject = async () => {
+    if (!selectedTemplate) return;
+
+    try {
+      setIsLoading(true);
+      const project = templateSystem.generateVideoProject(selectedTemplate.id, customization);
+      onProjectGenerated?.(project);
+    } catch (error) {
+      console.error('Erro ao gerar projeto:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveCustomization = () => {
+    if (!selectedTemplate) return;
+
+    try {
+      const customTemplate = templateSystem.createCustomTemplate(selectedTemplate.id, customization);
+      setTemplates(prev => [...prev, customTemplate]);
+      onCustomizationSaved?.(selectedTemplate.id, customization);
+    } catch (error) {
+      console.error('Erro ao salvar customizacao:', error);
+    }
+  };
+
+  // Handlers para busca inteligente removidos (duplicados)
+
+  const handleSortChange = (sortBy: string, sortOrder: 'asc' | 'desc') => {
+    setFilters(prev => ({ ...prev, sortBy, sortOrder }));
+  };
+
+
+
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes} min`;
+  };
+
+  const getCategoryLabel = (category: NRCategory): string => {
+    const labels = {
+      [NRCategory.SEGURANCA_TRABALHO]: 'Seguranca do Trabalho',
+      [NRCategory.SAUDE_OCUPACIONAL]: 'Saude Ocupacional',
+      [NRCategory.MEIO_AMBIENTE]: 'Meio Ambiente',
+      [NRCategory.EQUIPAMENTOS]: 'Equipamentos',
+      [NRCategory.PROCEDIMENTOS]: 'Procedimentos',
+      [NRCategory.EMERGENCIA]: 'Emergencia',
+      [NRCategory.TREINAMENTO]: 'Treinamento'
+    };
+    return labels[category] || category;
+  };
+
+  const getComplianceIcon = (templateId: string) => {
+    const validation = validationResults.get(templateId);
+    if (!validation) return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+    return validation.isCompliant ? 
+      <CheckCircle className="w-4 h-4 text-green-500" /> : 
+      <AlertTriangle className="w-4 h-4 text-red-500" />;
+  };
+
+  const renderBrowseTab = () => (
+    <div className="space-y-6">
+      {/* Filtros */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="space-y-4">
+          {/* Busca Inteligente */}
+          <div className="relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Buscar templates, normas, categorias..."
+                value={filters.searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onFocus={handleSearchFocus}
+                onBlur={handleSearchBlur}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              />
+              {filters.searchQuery && (
+                <button
+                  onClick={() => handleSearchChange('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            
+            {/* Sugestoes de Busca */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 mt-1 max-h-64 overflow-y-auto">
+                {searchSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center justify-between border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="flex items-center space-x-2">
+                      {suggestion.type === 'template' && <FileText className="w-4 h-4 text-blue-500" />}
+                      {suggestion.type === 'category' && <Folder className="w-4 h-4 text-green-500" />}
+                      {suggestion.type === 'tag' && <Tag className="w-4 h-4 text-purple-500" />}
+                      {suggestion.type === 'norma' && <Shield className="w-4 h-4 text-red-500" />}
+                      {suggestion.type === 'history' && <Clock className="w-4 h-4 text-gray-400" />}
+                      <span className="text-sm">{suggestion.text}</span>
+                    </div>
+                    {suggestion.count !== undefined && suggestion.count > 0 && (
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {suggestion.count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* Tags Ativas */}
+          {filters.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-gray-600 mr-2">Tags ativas:</span>
+              {filters.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                >
+                  {tag}
+                  <button
+                    onClick={() => handleTagRemove(tag)}
+                    className="ml-1 hover:text-blue-600"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          
+          {/* Filtros Basicos */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+          {/* Categoria */}
+          <select
+            value={filters.category}
+            onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value as any }))}
+            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todas as categorias</option>
+            {Object.values(NRCategory).map(category => (
+              <option key={category} value={category}>
+                {getCategoryLabel(category)}
+              </option>
+            ))}
+          </select>
+
+          {/* Compliance */}
+          <select
+            value={filters.compliance}
+            onChange={(e) => setFilters(prev => ({ ...prev, compliance: e.target.value as any }))}
+            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todos os status</option>
+            <option value="compliant">Conformes</option>
+            <option value="non-compliant">Nao conformes</option>
+          </select>
+
+          {/* Duracao */}
+          <select
+            value={filters.duration}
+            onChange={(e) => setFilters(prev => ({ ...prev, duration: e.target.value as any }))}
+            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todas as duracoes</option>
+            <option value="short">Curto (ate 15 min)</option>
+            <option value="medium">Medio (15-30 min)</option>
+            <option value="long">Longo (30+ min)</option>
+          </select>
+          
+          {/* Filtros Avancados Toggle */}
+          <button
+            onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
+            className="px-3 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
+          >
+            <Filter className="w-4 h-4" />
+            Filtros Avancados
+          </button>
+        </div>
+        
+        {/* Acoes dos Filtros */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-500">
+              {filteredTemplates.length} de {templates.length} templates
+            </span>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={clearAllFilters}
+              className="text-sm text-gray-600 hover:text-gray-800 px-3 py-1 rounded border border-gray-300 hover:bg-gray-50"
+            >
+              Limpar Filtros
+            </button>
+            
+            {/* Ordenacao */}
+            <select
+              value={`${filters.sortBy}-${filters.sortOrder}`}
+              onChange={(e) => {
+                const [sortBy, sortOrder] = e.target.value.split('-');
+                setFilters(prev => ({ ...prev, sortBy: sortBy as any, sortOrder: sortOrder as any }));
+              }}
+              className="text-sm px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="name-asc">Nome A-Z</option>
+              <option value="name-desc">Nome Z-A</option>
+              <option value="duration-asc">Duracao (crescente)</option>
+              <option value="duration-desc">Duracao (decrescente)</option>
+              <option value="category-asc">Categoria A-Z</option>
+              <option value="recent-desc">Mais Recentes</option>
+            </select>
+          </div>
+        </div>
+        
+        {/* Filtros Avancados */}
+        {isAdvancedFiltersOpen && (
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Dificuldade */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Dificuldade</label>
+                <select
+                  value={filters.difficulty}
+                  onChange={(e) => setFilters(prev => ({ ...prev, difficulty: e.target.value as any }))}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">Todas</option>
+                  <option value="basic">Basica</option>
+                  <option value="intermediate">Intermediaria</option>
+                  <option value="advanced">Avancada</option>
+                </select>
+              </div>
+              
+              {/* Ultima Atualizacao */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Ultima Atualizacao</label>
+                <select
+                  value={filters.lastUpdated}
+                  onChange={(e) => setFilters(prev => ({ ...prev, lastUpdated: e.target.value as any }))}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">Qualquer periodo</option>
+                  <option value="week">Ultima semana</option>
+                  <option value="month">Ultimo mes</option>
+                  <option value="quarter">Ultimo trimestre</option>
+                </select>
+              </div>
+              
+              {/* Ordenacao */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+                <div className="flex gap-2">
+                  <select
+                    value={filters.sortBy}
+                    onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as any }))}
+                    className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="name">Nome</option>
+                    <option value="category">Categoria</option>
+                    <option value="duration">Duracao</option>
+                    <option value="compliance">Conformidade</option>
+                    <option value="recent">Recentes</option>
+                  </select>
+                  <button
+                    onClick={() => setFilters(prev => ({ 
+                      ...prev, 
+                      sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' 
+                    }))}
+                    className="px-3 py-2 border rounded-lg hover:bg-gray-50"
+                  >
+                    {filters.sortOrder === 'asc' ? '(crescente)' : '(decrescente)'}
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Tags Populares */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tags Populares</label>
+              <div className="flex flex-wrap gap-2">
+                {popularTags.map((tag, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleTagAdd(tag)}
+                    disabled={filters.tags.includes(tag)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                      filters.tags.includes(tag)
+                        ? 'bg-blue-100 text-blue-800 cursor-not-allowed'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Limpar Filtros */}
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={clearAllFilters}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg"
+              >
+                Limpar todos os filtros
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Analytics Dashboard */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <BarChart3 className="h-5 w-5" />
+          Analytics de Uso
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {/* Templates Mais Usados */}
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-600">Mais Usados</p>
+                <p className="text-2xl font-bold text-blue-900">{analytics.mostUsed}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-blue-500" />
+            </div>
+          </div>
+          
+          {/* Taxa de Conformidade */}
+          <div className="bg-green-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-600">Conformidade</p>
+                <p className="text-2xl font-bold text-green-900">{analytics.complianceRate}%</p>
+              </div>
+              <Shield className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
+          
+          {/* Tempo Medio de Uso */}
+          <div className="bg-purple-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-purple-600">Tempo Medio</p>
+                <p className="text-2xl font-bold text-purple-900">{analytics.avgUsageTime}min</p>
+              </div>
+              <Clock className="h-8 w-8 text-purple-500" />
+            </div>
+          </div>
+          
+          {/* Engagement Score */}
+          <div className="bg-orange-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-orange-600">Engagement</p>
+                <p className="text-2xl font-bold text-orange-900">{analytics.engagementScore}/10</p>
+              </div>
+              <Activity className="h-8 w-8 text-orange-500" />
+            </div>
+          </div>
+        </div>
+        
+        {/* Templates Recentes */}
+        <div className="border-t pt-4">
+          <h4 className="text-sm font-medium text-gray-700 mb-3">Templates Recentemente Acessados</h4>
+          <div className="flex flex-wrap gap-2">
+            {recentTemplates.map((template, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer"
+                onClick={() => setFilters(prev => ({ ...prev, searchQuery: template }))}
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                {template}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de templates */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredTemplates.map((template) => (
+          <div 
+            key={template.id} 
+            className={`bg-white rounded-lg shadow-sm border-2 cursor-pointer transition-all ${
+              selectedTemplate?.id === template.id 
+                ? 'border-blue-500 shadow-md' 
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+            onClick={() => handleTemplateSelect(template)}
+          >
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-600">{template.norma}</span>
+                </div>
+                {getComplianceIcon(template.id)}
+              </div>
+
+              {/* Titulo e descricao */}
+              <h3 className="font-semibold text-lg mb-2">{template.name}</h3>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-3">{template.description}</p>
+
+              {/* Metadados */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Categoria:</span>
+                  <span className="font-medium">{getCategoryLabel(template.category)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Duracao:</span>
+                  <span className="font-medium">{formatDuration(template.duration)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Versao:</span>
+                  <span className="font-medium">{template.version}</span>
+                </div>
+              </div>
+
+              {/* Acoes */}
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTab('preview');
+                  }}
+                  className="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 flex items-center justify-center gap-1"
+                >
+                  <Eye className="w-4 h-4" />
+                  Preview
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTab('customize');
+                  }}
+                  className="flex-1 bg-gray-600 text-white py-2 px-3 rounded text-sm hover:bg-gray-700 flex items-center justify-center gap-1"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  Editar
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredTemplates.length === 0 && (
+        <div className="text-center py-12">
+          <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum template encontrado</h3>
+          <p className="text-gray-600">Tente ajustar os filtros para encontrar templates.</p>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderCustomizeTab = () => {
+    if (!selectedTemplate) {
+      return (
+        <div className="text-center py-12">
+          <Settings className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Selecione um template</h3>
+          <p className="text-gray-600">Escolha um template para personalizar.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-8">
+        {/* Cores */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Palette className="w-5 h-5" />
+            Esquema de Cores
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {Object.entries(customization.colors).map(([key, value]) => (
+              <div key={key}>
+                <label className="block text-sm font-medium mb-2 capitalize">
+                  {key === 'primary' ? 'Primaria' : 
+                   key === 'secondary' ? 'Secundaria' :
+                   key === 'accent' ? 'Destaque' :
+                   key === 'background' ? 'Fundo' : 'Texto'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={value}
+                    onChange={(e) => setCustomization(prev => ({
+                      ...prev,
+                      colors: { ...prev.colors, [key]: e.target.value }
+                    }))}
+                    className="w-12 h-10 border rounded cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={value}
+                    onChange={(e) => setCustomization(prev => ({
+                      ...prev,
+                      colors: { ...prev.colors, [key]: e.target.value }
+                    }))}
+                    className="flex-1 px-3 py-2 border rounded text-sm"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tipografia */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Type className="w-5 h-5" />
+            Tipografia
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Fonte Primaria</label>
+              <select
+                value={customization.fonts.primary}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  fonts: { ...prev.fonts, primary: e.target.value }
+                }))}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="Inter">Inter</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Lato">Lato</option>
+                <option value="Montserrat">Montserrat</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Fonte Secundaria</label>
+              <select
+                value={customization.fonts.secondary}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  fonts: { ...prev.fonts, secondary: e.target.value }
+                }))}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="Roboto">Roboto</option>
+                <option value="Inter">Inter</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Lato">Lato</option>
+                <option value="Source Sans Pro">Source Sans Pro</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="mt-4">
+            <label className="block text-sm font-medium mb-2">Tamanhos de Fonte</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Object.entries(customization.fonts.sizes).map(([size, value]) => (
+                <div key={size}>
+                  <label className="block text-xs text-gray-600 mb-1 capitalize">{size}</label>
+                  <input
+                    type="number"
+                    min="8"
+                    max="72"
+                    value={value}
+                    onChange={(e) => setCustomization(prev => ({
+                      ...prev,
+                      fonts: {
+                        ...prev.fonts,
+                        sizes: { ...prev.fonts.sizes, [size]: parseInt(e.target.value) }
+                      }
+                    }))}
+                    className="w-full px-2 py-1 border rounded text-sm"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Branding */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Image className="w-5 h-5" />
+            Identidade Visual
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Nome da Empresa</label>
+              <input
+                type="text"
+                value={customization.branding.companyName}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  branding: { ...prev.branding, companyName: e.target.value }
+                }))}
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="Digite o nome da empresa..."
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">URL do Logo</label>
+              <input
+                type="url"
+                value={customization.branding.companyLogo}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  branding: { ...prev.branding, companyLogo: e.target.value }
+                }))}
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="https://exemplo.com/logo.png"
+              />
+            </div>
+            
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="watermark"
+                checked={customization.branding.watermark}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  branding: { ...prev.branding, watermark: e.target.checked }
+                }))}
+                className="mr-2"
+              />
+              <label htmlFor="watermark" className="text-sm">Adicionar marca d'agua</label>
+            </div>
+          </div>
+        </div>
+
+        {/* Conteudo */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Volume2 className="w-5 h-5" />
+            Configuracoes de Conteudo
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Terminologia</label>
+              <select
+                value={customization.content.terminology}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  content: { ...prev.content, terminology: e.target.value as any }
+                }))}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="simple">Simples</option>
+                <option value="technical">Tecnica</option>
+                <option value="advanced">Avancada</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">Complexidade</label>
+              <select
+                value={customization.content.complexity}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  content: { ...prev.content, complexity: e.target.value as any }
+                }))}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="basic">Basica</option>
+                <option value="intermediate">Intermediaria</option>
+                <option value="advanced">Avancada</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">Exemplos</label>
+              <select
+                value={customization.content.examples}
+                onChange={(e) => setCustomization(prev => ({
+                  ...prev,
+                  content: { ...prev.content, examples: e.target.value as any }
+                }))}
+                className="w-full px-3 py-2 border rounded-lg"
+              >
+                <option value="generic">Genericos</option>
+                <option value="industry-specific">Especificos da Industria</option>
+                <option value="company-specific">Especificos da Empresa</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Acoes */}
+        <div className="flex gap-4">
+          <button
+            onClick={handleSaveCustomization}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center gap-2"
+          >
+            <Save className="w-4 h-4" />
+            Salvar Customizacao
+          </button>
+          
+          <button
+            onClick={handleGenerateProject}
+            disabled={isLoading}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+          >
+            <Play className="w-4 h-4" />
+            {isLoading ? 'Gerando...' : 'Gerar Projeto'}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderComplianceTab = () => {
+    if (!selectedTemplate) {
+      return (
+        <div className="text-center py-12">
+          <CheckCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Selecione um template</h3>
+          <p className="text-gray-600">Escolha um template para ver informacoes de compliance.</p>
+        </div>
+      );
+    }
+
+    const validation = validationResults.get(selectedTemplate.id);
+    
+    return (
+      <div className="space-y-6">
+        {/* Status geral */}
+        <div className={`p-6 rounded-lg border-2 ${
+          validation?.isCompliant ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+        }`}>
+          <div className="flex items-center gap-3 mb-4">
+            {validation?.isCompliant ? 
+              <CheckCircle className="w-8 h-8 text-green-600" /> :
+              <AlertTriangle className="w-8 h-8 text-red-600" />
+            }
+            <div>
+              <h3 className="text-xl font-semibold">
+                {validation?.isCompliant ? 'Template Conforme' : 'Template Nao Conforme'}
+              </h3>
+              <p className="text-gray-600">{selectedTemplate.norma} - {selectedTemplate.name}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Informacoes da norma */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <h3 className="text-lg font-semibold mb-4">Informacoes da Norma</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm text-gray-600">Norma:</span>
+              <p className="font-medium">{selectedTemplate.compliance.normaNumber}</p>
+            </div>
+            <div>
+              <span className="text-sm text-gray-600">Ultima Atualizacao:</span>
+              <p className="font-medium">{selectedTemplate.compliance.lastUpdate}</p>
+            </div>
+          </div>
+          
+          <div className="mt-4">
+            <span className="text-sm text-gray-600">Requisitos:</span>
+            <ul className="mt-2 space-y-1">
+              {selectedTemplate.compliance.requirements.map((req, index) => (
+                <li key={index} className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span className="text-sm">{req}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Resultados da validacao */}
+        {validation && (
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h3 className="text-lg font-semibold mb-4">Resultados da Validacao</h3>
+            <div className="space-y-3">
+              {validation.results.map((result, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
+                  {result.passed ? 
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" /> :
+                    <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
+                  }
+                  <div className="flex-1">
+                    <p className="font-medium">{result.description}</p>
+                    <p className="text-sm text-gray-600">{result.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {validation.recommendations.length > 0 && (
+              <div className="mt-6">
+                <h4 className="font-medium mb-2">Recomendacoes:</h4>
+                <ul className="space-y-1">
+                  {validation.recommendations.map((rec, index) => (
+                    <li key={index} className="text-sm text-gray-600">- {rec}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="h-screen bg-gray-50 flex flex-col">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Templates de Normas Regulamentadoras</h1>
+            <p className="text-gray-600">Biblioteca completa de templates para treinamentos de seguranca</p>
+          </div>
+          
+          {selectedTemplate && (
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="font-medium">{selectedTemplate.name}</p>
+                <p className="text-sm text-gray-600">{selectedTemplate.norma}</p>
+              </div>
+              <button
+                onClick={handleGenerateProject}
+                disabled={isLoading}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                {isLoading ? 'Gerando...' : 'Gerar Projeto'}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="bg-white border-b">
+        <div className="px-6">
+          <div className="flex space-x-8">
+            {[
+              { id: 'browse', label: 'Navegar', icon: Search },
+              { id: 'customize', label: 'Personalizar', icon: Settings },
+              { id: 'compliance', label: 'Conformidade', icon: CheckCircle }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Conteudo */}
+      <div className="flex-1 overflow-auto p-6">
+        {isLoading && (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p>Carregando...</p>
+            </div>
+          </div>
+        )}
+        
+        {!isLoading && (
+          <>
+            {activeTab === 'browse' && renderBrowseTab()}
+            {activeTab === 'customize' && renderCustomizeTab()}
+            {activeTab === 'compliance' && renderComplianceTab()}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default NRTemplateInterface;

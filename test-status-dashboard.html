@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Status Dashboard - Studio Treia IX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #3b82f6;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .main {
+            flex: 1;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .editor-area {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(51, 65, 85, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 600px;
+        }
+
+        .editor-placeholder {
+            opacity: 0.6;
+        }
+
+        .editor-placeholder h2 {
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .editor-placeholder p {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-area {
+            position: relative;
+        }
+
+        /* Dashboard Styles - Simulando o componente React */
+        .status-dashboard {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(55, 65, 81, 0.5);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .status-dashboard.open {
+            transform: translateX(0);
+        }
+
+        .dashboard-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .dashboard-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid rgba(55, 65, 81, 0.5);
+            color: #e2e8f0;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: rgba(55, 65, 81, 0.3);
+            border-color: #3b82f6;
+        }
+
+        .quick-stats {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: rgba(30, 41, 59, 0.4);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(51, 65, 85, 0.3);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .stat-value {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.healthy {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge.warning {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .badge.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .tabs {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: rgba(31, 41, 55, 0.6);
+            margin: 1rem;
+            margin-bottom: 0;
+            border-radius: 8px;
+            padding: 0.25rem;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .tab-button.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .card {
+            background: rgba(31, 41, 55, 0.6);
+            border: 1px solid rgba(55, 65, 81, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(55, 65, 81, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .system-metrics {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .metric-value {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            text-align: right;
+            min-width: 2.5rem;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(17, 24, 39, 0.9);
+            border: 1px solid rgba(55, 65, 81, 0.5);
+            color: #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            z-index: 999;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(17, 24, 39, 1);
+            border-color: #3b82f6;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Projeto Status */
+        .project-item {
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid rgba(55, 65, 81, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .project-badges {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .project-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .error-item {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .error-text {
+            font-size: 0.75rem;
+            color: #f87171;
+        }
+
+        .history-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid rgba(55, 65, 81, 0.3);
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .status-dot.success { background: #4ade80; }
+        .status-dot.error { background: #f87171; }
+        .status-dot.warning { background: #facc15; }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.25rem;
+        }
+
+        .history-action {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .history-details {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-dashboard {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎬 Editor de Vídeo - Status Dashboard</h1>
+        </header>
+
+        <main class="main">
+            <div class="editor-area">
+                <div class="editor-placeholder">
+                    <h2>Área do Editor de Vídeo</h2>
+                    <p>O Status Dashboard aparece como um painel lateral direito</p>
+                    <p>Clique no botão "Status" para abrir/fechar o dashboard</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Status Dashboard -->
+        <div class="status-dashboard" id="statusDashboard">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    Status Dashboard
+                </div>
+                
+                <div class="dashboard-controls">
+                    <button class="btn" id="refreshBtn" title="Auto-refresh">
+                        <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23 4v6h-6M1 20v-6h6m16-8a9 9 0 11-15.9 3.6"></path>
+                        </svg>
+                    </button>
+                    <button class="btn" onclick="toggleDashboard()" title="Fechar">
+                        <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-header">
+                            <span class="stat-label">Sistema</span>
+                            <span class="badge healthy">healthy</span>
+                        </div>
+                        <div class="stat-value">Uptime: 2d 15h 32m</div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-header">
+                            <span class="stat-label">Projetos</span>
+                            <span class="stat-value">1/3</span>
+                        </div>
+                        <div class="stat-value">3 erros pendentes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab-list">
+                    <button class="tab-button active" onclick="showTab('overview')">
+                        <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        Visão
+                    </button>
+                    <button class="tab-button" onclick="showTab('projects')">
+                        <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                        </svg>
+                        Projetos
+                    </button>
+                    <button class="tab-button" onclick="showTab('performance')">
+                        <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Performance
+                    </button>
+                    <button class="tab-button" onclick="showTab('history')">
+                        <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                        Histórico
+                    </button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div class="tab-content" id="tab-overview">
+                    <!-- System Health -->
+                    <div class="card">
+                        <h3 class="card-title">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 24 24" style="color: #f87171;">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            Saúde do Sistema
+                        </h3>
+                        
+                        <div class="system-metrics">
+                            <div class="metric-label">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 24 24" style="color: #60a5fa;">
+                                    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                                CPU
+                            </div>
+                            <div style="flex: 1; margin: 0 1rem;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 45%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric-value">45%</div>
+                        </div>
+                        
+                        <div class="system-metrics">
+                            <div class="metric-label">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 24 24" style="color: #4ade80;">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                                RAM
+                            </div>
+                            <div style="flex: 1; margin: 0 1rem;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 67%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric-value">67%</div>
+                        </div>
+                        
+                        <div class="system-metrics">
+                            <div class="metric-label">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 24 24" style="color: #a855f7;">
+                                    <rect x="2" y="6" width="20" height="8" rx="1"></rect>
+                                    <line x1="6" y1="10" x2="6" y2="10"></line>
+                                    <line x1="10" y1="10" x2="10" y2="10"></line>
+                                </svg>
+                                Disco
+                            </div>
+                            <div style="flex: 1; margin: 0 1rem;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 23%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric-value">23%</div>
+                        </div>
+                        
+                        <div class="system-metrics">
+                            <div class="metric-label">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 24 24" style="color: #facc15;">
+                                    <path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path>
+                                    <line x1="2" y1="20" x2="2.01" y2="20"></line>
+                                </svg>
+                                Rede
+                            </div>
+                            <div style="flex: 1; margin: 0 1rem;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 89%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric-value">89%</div>
+                        </div>
+                    </div>
+
+                    <!-- Error Summary -->
+                    <div class="card">
+                        <h3 class="card-title">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 24 24" style="color: #fb923c;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Resumo de Erros
+                        </h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #f87171;">3</div>
+                                <div style="font-size: 0.75rem; color: #9ca3af;">Pendentes</div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #4ade80;">9</div>
+                                <div style="font-size: 0.75rem; color: #9ca3af;">Resolvidos</div>
+                            </div>
+                        </div>
+                        
+                        <div style="padding-top: 0.75rem; border-top: 1px solid rgba(55, 65, 81, 0.5);">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                                <span style="color: #9ca3af;">Taxa de sucesso</span>
+                                <span style="color: #4ade80; font-weight: 600;">97.7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Tab -->
+                <div class="tab-content" id="tab-projects" style="display: none;">
+                    <div class="project-item">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-name">Treinamento NR12 - Segurança</div>
+                                <div class="project-badges">
+                                    <span class="badge warning">processing</span>
+                                    <span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #facc15;">high</span>
+                                </div>
+                            </div>
+                            <div class="project-time">15:23</div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.25rem;">
+                                <span style="color: #9ca3af;">Progresso</span>
+                                <span style="color: #9ca3af;">75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%;"></div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+                                ETA: 15:33
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-item">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-name">Vídeo Institucional</div>
+                                <div class="project-badges">
+                                    <span class="badge healthy">completed</span>
+                                    <span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80;">medium</span>
+                                </div>
+                            </div>
+                            <div class="project-time">14:53</div>
+                        </div>
+                    </div>
+
+                    <div class="project-item">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-name">Template Corporativo</div>
+                                <div class="project-badges">
+                                    <span class="badge error">error</span>
+                                    <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">urgent</span>
+                                </div>
+                            </div>
+                            <div class="project-time">15:08</div>
+                        </div>
+                        
+                        <div class="error-item">
+                            <div class="error-text">• Falha na renderização</div>
+                            <div class="error-text">• Arquivo corrompido</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Tab -->
+                <div class="tab-content" id="tab-performance" style="display: none;">
+                    <div class="card">
+                        <h3 class="card-title">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 24 24" style="color: #60a5fa;">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                            </svg>
+                            Métricas de Performance
+                        </h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.125rem; font-weight: bold; color: #60a5fa;">245ms</div>
+                                <div style="font-size: 0.75rem; color: #9ca3af;">Tempo de Resposta</div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.125rem; font-weight: bold; color: #4ade80;">1250</div>
+                                <div style="font-size: 0.75rem; color: #9ca3af;">Throughput/min</div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.125rem; font-weight: bold; color: #fb923c;">2.3%</div>
+                                <div style="font-size: 0.75rem; color: #9ca3af;">Taxa de Erro</div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.125rem; font-weight: bold; color: #a855f7;">35s</div>
+                                <div style="font-size: 0.75rem; color: #9ca3af;">Proc. Médio</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Tipos de Erro</h3>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0;">
+                            <span style="font-size: 0.75rem; color: #9ca3af;">conversion</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 4rem; background: rgba(55, 65, 81, 0.5); border-radius: 4px; height: 8px;">
+                                    <div style="background: #f87171; height: 8px; border-radius: 4px; width: 42%;"></div>
+                                </div>
+                                <span style="font-size: 0.75rem; color: #e5e7eb; width: 1.5rem; text-align: right;">5</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0;">
+                            <span style="font-size: 0.75rem; color: #9ca3af;">upload</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 4rem; background: rgba(55, 65, 81, 0.5); border-radius: 4px; height: 8px;">
+                                    <div style="background: #f87171; height: 8px; border-radius: 4px; width: 25%;"></div>
+                                </div>
+                                <span style="font-size: 0.75rem; color: #e5e7eb; width: 1.5rem; text-align: right;">3</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0;">
+                            <span style="font-size: 0.75rem; color: #9ca3af;">render</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 4rem; background: rgba(55, 65, 81, 0.5); border-radius: 4px; height: 8px;">
+                                    <div style="background: #f87171; height: 8px; border-radius: 4px; width: 17%;"></div>
+                                </div>
+                                <span style="font-size: 0.75rem; color: #e5e7eb; width: 1.5rem; text-align: right;">2</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0;">
+                            <span style="font-size: 0.75rem; color: #9ca3af;">network</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 4rem; background: rgba(55, 65, 81, 0.5); border-radius: 4px; height: 8px;">
+                                    <div style="background: #f87171; height: 8px; border-radius: 4px; width: 17%;"></div>
+                                </div>
+                                <span style="font-size: 0.75rem; color: #e5e7eb; width: 1.5rem; text-align: right;">2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-content" id="tab-history" style="display: none;">
+                    <div class="history-item">
+                        <div class="status-dot success"></div>
+                        <div class="history-content">
+                            <div class="history-header">
+                                <div class="history-action">Conversão PPTX iniciada</div>
+                                <div class="history-time">15:20</div>
+                            </div>
+                            <div class="history-details">Sistema → Treinamento NR12</div>
+                            <div class="history-details">Duração: 45s</div>
+                        </div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="status-dot success"></div>
+                        <div class="history-content">
+                            <div class="history-header">
+                                <div class="history-action">Upload de mídia</div>
+                                <div class="history-time">15:14</div>
+                            </div>
+                            <div class="history-details">Admin → arquivo_video.mp4</div>
+                            <div class="history-details">Duração: 12s</div>
+                        </div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="status-dot error"></div>
+                        <div class="history-content">
+                            <div class="history-header">
+                                <div class="history-action">Erro na renderização</div>
+                                <div class="history-time">15:08</div>
+                            </div>
+                            <div class="history-details">Sistema → Template Corporativo</div>
+                            <div style="background: rgba(55, 65, 81, 0.5); padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; font-size: 0.75rem; color: #6b7280;">
+                                Falha no processamento do slide 15
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <button class="toggle-btn" onclick="toggleDashboard()">
+            <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+            Status
+        </button>
+    </div>
+
+    <script>
+        let dashboardOpen = false;
+        let currentTab = 'overview';
+        let autoRefresh = true;
+
+        function toggleDashboard() {
+            const dashboard = document.getElementById('statusDashboard');
+            dashboardOpen = !dashboardOpen;
+            
+            if (dashboardOpen) {
+                dashboard.classList.add('open');
+                startAutoRefresh();
+            } else {
+                dashboard.classList.remove('open');
+                stopAutoRefresh();
+            }
+        }
+
+        function showTab(tabName) {
+            // Esconder todas as abas
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.style.display = 'none');
+            
+            // Remover classe active de todos os botões
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Mostrar aba selecionada
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+            }
+            
+            // Adicionar classe active ao botão
+            const selectedButton = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+            }
+            
+            currentTab = tabName;
+        }
+
+        function updateMetrics() {
+            // Simular atualização das métricas do sistema
+            const cpuBar = document.querySelector('.progress-fill');
+            if (cpuBar) {
+                const currentWidth = parseInt(cpuBar.style.width);
+                const newWidth = Math.max(0, Math.min(100, currentWidth + (Math.random() - 0.5) * 10));
+                cpuBar.style.width = newWidth + '%';
+            }
+            
+            // Atualizar progresso do projeto
+            const projectProgress = document.querySelector('.project-item .progress-fill');
+            if (projectProgress) {
+                const currentProgress = parseInt(projectProgress.style.width);
+                if (currentProgress < 100) {
+                    const newProgress = Math.min(100, currentProgress + Math.random() * 5);
+                    projectProgress.style.width = newProgress + '%';
+                    
+                    // Atualizar texto do progresso
+                    const progressText = document.querySelector('.project-item .progress-bar').previousElementSibling.lastElementChild;
+                    if (progressText) {
+                        progressText.textContent = Math.round(newProgress) + '%';
+                    }
+                }
+            }
+        }
+
+        let refreshInterval;
+
+        function startAutoRefresh() {
+            if (autoRefresh) {
+                refreshInterval = setInterval(updateMetrics, 2000);
+            }
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        }
+
+        // Auto-refresh button toggle
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            autoRefresh = !autoRefresh;
+            this.style.color = autoRefresh ? '#4ade80' : '#9ca3af';
+            
+            if (autoRefresh && dashboardOpen) {
+                startAutoRefresh();
+            } else {
+                stopAutoRefresh();
+            }
+        });
+
+        // Simular atualizações periódicas quando o dashboard está aberto
+        setInterval(() => {
+            if (dashboardOpen && autoRefresh) {
+                updateMetrics();
+            }
+        }, 3000);
+
+        // Mostrar/ocultar dashboard com tecla de atalho
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                toggleDashboard();
+            }
+        });
+
+        console.log('✅ Status Dashboard Interface carregada');
+        console.log('📊 Funcionalidades disponíveis:');
+        console.log('  - Monitoramento em tempo real do sistema');
+        console.log('  - Acompanhamento de projetos e progresso');
+        console.log('  - Histórico detalhado de ações');
+        console.log('  - Métricas de performance e erros');
+        console.log('  - Auto-refresh configurável');
+        console.log('⌨️  Atalho: Ctrl+D para abrir/fechar dashboard');
+    </script>
+</body>
+</html>
