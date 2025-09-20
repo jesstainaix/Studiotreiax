@@ -144,6 +144,14 @@ export default defineConfig(({ mode }) => ({
     host: '0.0.0.0',
     strictPort: true,
     cors: true,
+    // Proxy API requests to backend
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      }
+    },
     // Otimizações para reduzir TTFB
     hmr: {
       overlay: false // Reduz overhead em desenvolvimento
