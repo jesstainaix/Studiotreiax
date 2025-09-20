@@ -80,18 +80,22 @@ export const TimelineProvider: React.FC<TimelineProviderProps> = ({ children }) 
       const audioMap = new Map<string, HTMLAudioElement>();
       
       for (const scene of currentProject.scenes) {
-        if (scene.voice) {
+        if (scene.voice && scene.slideData.textContent) {
           try {
-            // Generate audio for scene if not already available
-            const audio = new Audio();
+            // Generate real audio using TTS service
+            const audioBlob = await audioExportService.generateSceneAudio(scene);
+            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            const audio = new Audio(audioUrl);
             audio.preload = 'auto';
             audio.volume = timelineState.volume;
             
-            // In a real implementation, this would use the TTS service
-            // For now, we'll create a placeholder
             audioMap.set(scene.id, audio);
           } catch (error) {
-            console.error(`Failed to load audio for scene ${scene.id}:`, error);
+            console.error(`Failed to generate audio for scene ${scene.id}:`, error);
+            // Create silent placeholder if TTS fails
+            const audio = new Audio();
+            audioMap.set(scene.id, audio);
           }
         }
       }

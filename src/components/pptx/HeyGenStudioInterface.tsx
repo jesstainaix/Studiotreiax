@@ -34,6 +34,7 @@ import { VoicePreviewPanel } from './VoicePreviewPanel';
 import { TimelineEditor } from './TimelineEditor';
 import { ttsService, TTSVoice } from '../../lib/tts/TTSService';
 import { TimelineProvider } from '../../context/TimelineContext';
+import HeyGenStudioContent from './HeyGenStudioContent';
 
 // Use unified HeyGen data model from scene manager
 // No local interface definitions needed - use HeyGenProject and HeyGenScene directly
@@ -121,7 +122,7 @@ const VOICE_LIBRARY = initializeVoiceLibrary();
 
 const HeyGenStudioInterface: React.FC = () => {
   const [currentProject, setCurrentProject] = useState<HeyGenProject | null>(null);
-  const [selectedScene, setSelectedScene] = useState<string | null>(null);
+  const [selectedScene, setSelectedScene] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -299,7 +300,8 @@ const HeyGenStudioInterface: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col">
+    <TimelineProvider>
+      <div className="h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <div className="bg-white border-b px-6 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4">
