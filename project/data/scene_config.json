@@ -16,7 +16,12 @@
         "voice": "br-female-adult-1",
         "expression": "neutral",
         "animation": "idle-neutral"
-      }
+      },
+      "audio": null,
+      "audio_duration": null,
+      "markers": null,
+      "generated_at": null,
+      "voice_used": null
     },
     {
       "slide_id": 2,
@@ -31,7 +36,12 @@
         "voice": "br-male-adult-1",
         "expression": "confident",
         "animation": "gesture-hello"
-      }
+      },
+      "audio": null,
+      "audio_duration": null,
+      "markers": null,
+      "generated_at": null,
+      "voice_used": null
     }
   ],
   "defaultSettings": {
