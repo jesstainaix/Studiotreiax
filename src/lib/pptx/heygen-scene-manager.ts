@@ -56,6 +56,14 @@ export interface HeyGenScene {
     speechSpeed: number;
     pronunciation: Record<string, string>; // Custom pronunciations for technical terms
   };
+  
+  // Transition settings for scene transitions
+  transition?: {
+    type: 'cut' | 'fade' | 'dissolve' | 'slide' | 'wipe';
+    duration: number; // in milliseconds
+    easing?: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+    properties?: Record<string, any>;
+  };
 }
 
 export interface HeyGenProject {

@@ -31,7 +31,9 @@ import { HeyGenSceneManager, HeyGenProject, HeyGenScene } from '../../lib/pptx/h
 import { AvatarSelectionPanel } from './AvatarSelectionPanel';
 import { ScenePreviewWithAvatar } from './ScenePreviewWithAvatar';
 import { VoicePreviewPanel } from './VoicePreviewPanel';
+import { TimelineEditor } from './TimelineEditor';
 import { ttsService, TTSVoice } from '../../lib/tts/TTSService';
+import { TimelineProvider } from '../../context/TimelineContext';
 
 // Use unified HeyGen data model from scene manager
 // No local interface definitions needed - use HeyGenProject and HeyGenScene directly
@@ -507,41 +509,18 @@ const HeyGenStudioInterface: React.FC = () => {
 
       {/* Bottom Timeline (only when project is loaded) */}
       {currentProject && (
-        <div className="bg-white border-t p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium text-gray-900">Timeline</h3>
-            <div className="flex items-center space-x-2">
-              <Button size="sm" variant="outline">
-                <Zap className="w-4 h-4 mr-1" />
-                Auto-editar
-              </Button>
-              <Button size="sm" variant="outline">
-                <Eye className="w-4 h-4 mr-1" />
-                Preview Completo
-              </Button>
-            </div>
-          </div>
-          <div className="flex space-x-2 overflow-x-auto py-2">
-            {currentProject.scenes.map((scene, index) => (
-              <div
-                key={scene.id}
-                className={`flex-shrink-0 w-32 h-20 border-2 rounded cursor-pointer transition-colors ${
-                  selectedScene === scene.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-gray-100'
-                }`}
-                onClick={() => handleSceneSelect(scene.id)}
-              >
-                <div className="p-2 h-full flex flex-col justify-between">
-                  <div className="text-xs font-medium text-gray-900 truncate">
-                    Cena {index + 1}
-                  </div>
-                  <div className="text-xs text-gray-600">{formatDuration(scene.duration)}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="h-72 border-t bg-gray-50">
+          <TimelineEditor
+            project={currentProject}
+            onProjectUpdate={setCurrentProject}
+            onSceneSelect={setSelectedScene}
+            selectedSceneId={selectedScene}
+            className="h-full"
+          />
         </div>
       )}
-    </div>
+      </div>
+    </TimelineProvider>
   );
 };
 
