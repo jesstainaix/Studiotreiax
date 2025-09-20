@@ -29,9 +29,9 @@ import {
 import { toast } from 'sonner';
 import { HeyGenSceneManager, HeyGenProject, HeyGenScene } from '../../lib/pptx/heygen-scene-manager';
 import { AvatarSelectionPanel } from './AvatarSelectionPanel';
-import { ScenePreviewWithAvatar } from './ScenePreviewWithAvatar';
+import { EnhancedScenePlayer } from './EnhancedScenePlayer';
 import { VoicePreviewPanel } from './VoicePreviewPanel';
-import { TimelineEditor } from './TimelineEditor';
+import { EnhancedTimelineEditor } from './EnhancedTimelineEditor';
 import { ttsService, TTSVoice } from '../../lib/tts/TTSService';
 import { TimelineProvider } from '../../context/TimelineContext';
 import HeyGenStudioContent from './HeyGenStudioContent';
@@ -419,11 +419,11 @@ const HeyGenStudioInterface: React.FC = () => {
             </div>
           </div>
 
-          {/* Center Panel - Enhanced Preview with Avatar Integration */}
+          {/* Center Panel - Enhanced Scene Player with Elements */}
           <div className="flex-1 flex flex-col">
-            <div className="flex-1 bg-gray-50 p-4">
+            <div className="flex-1 bg-gray-50">
               {getCurrentScene() ? (
-                <ScenePreviewWithAvatar
+                <EnhancedScenePlayer
                   scene={getCurrentScene()!}
                   isPlaying={isPlaying}
                   currentTime={currentTime}
@@ -435,13 +435,13 @@ const HeyGenStudioInterface: React.FC = () => {
                 />
               ) : (
                 <div className="h-full flex items-center justify-center">
-                  <div className="text-center">
+                  <div className="text-center p-8">
                     <Video className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                     <h3 className="text-xl font-medium text-gray-600 mb-2">
                       Selecione uma cena para visualizar
                     </h3>
                     <p className="text-gray-500">
-                      O preview 3D com avatar será exibido aqui
+                      O editor avançado com elementos será exibido aqui
                     </p>
                   </div>
                 </div>
@@ -509,10 +509,10 @@ const HeyGenStudioInterface: React.FC = () => {
         </div>
       )}
 
-      {/* Bottom Timeline (only when project is loaded) */}
+      {/* Bottom Enhanced Timeline (only when project is loaded) */}
       {currentProject && (
-        <div className="h-72 border-t bg-gray-50">
-          <TimelineEditor
+        <div className="h-80 border-t bg-gray-50">
+          <EnhancedTimelineEditor
             project={currentProject}
             onProjectUpdate={setCurrentProject}
             onSceneSelect={setSelectedScene}
