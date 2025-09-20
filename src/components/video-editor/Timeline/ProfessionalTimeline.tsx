@@ -37,6 +37,10 @@ import { TimelineEngine } from '../../../modules/video-editor/core/TimelineEngin
 import { WaveformRenderer } from './WaveformRenderer';
 import AudioScrubber from './AudioScrubber';
 import MultiTrackAudioMixer from './MultiTrackAudioMixer';
+import UndoRedoToolbar from './UndoRedoToolbar';
+import { useCommandManager } from '../../../hooks/useCommandManager';
+import { createTimelineCommands } from './TimelineCommands';
+import { HistoryPanel } from '../../HistoryPanel';
 
 // Import types from TimelineEngine
 import { TimelineTrack, TimelineItem } from '../../../modules/video-editor/types/Timeline.types';
@@ -112,11 +116,19 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
   isPlaying = false,
   onPlayPause
 }) => {
+  // Command Management Integration
+  const { execute, getHistoryState } = useCommandManager();
+  const timelineCommands = useMemo(() => createTimelineCommands(engine), [engine]);
+  
   // Refs
   const timelineRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rulerRef = useRef<HTMLCanvasElement>(null);
   const tracksRef = useRef<HTMLDivElement>(null);
+
+  // Undo/Redo and History Panel State
+  const [showHistoryPanel, setShowHistoryPanel] = useState(false);
+  const [showAutomation, setShowAutomation] = useState(false);
 
   // Estados
   const [timelineState, setTimelineState] = useState<TimelineState>({
@@ -187,6 +199,69 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
     const endTime = startTime + (containerWidth / timelineState.zoom);
     return { startTime, endTime };
   }, [timelineState.scrollX, timelineState.zoom]);
+
+  // Enhanced command-based operations
+  const handleAddItem = useCallback(async (item: TimelineItem, trackId: string) => {
+    try {
+      const command = timelineCommands.addItem(item, trackId);
+      await execute(command);
+      
+      // Update local state if needed
+      setTimelineState(prev => ({
+        ...prev,
+        tracks: engine.getTracks(),
+        items: engine.getTracks().flatMap(track => track.items)
+      }));
+    } catch (error) {
+      console.error('Failed to add item:', error);
+    }
+  }, [timelineCommands, execute, engine]);
+
+  const handleRemoveItem = useCallback(async (itemId: string) => {
+    try {
+      const command = timelineCommands.removeItem(itemId);
+      await execute(command);
+      
+      setTimelineState(prev => ({
+        ...prev,
+        tracks: engine.getTracks(),
+        items: engine.getTracks().flatMap(track => track.items),
+        selectedItems: prev.selectedItems.filter(id => id !== itemId)
+      }));
+    } catch (error) {
+      console.error('Failed to remove item:', error);
+    }
+  }, [timelineCommands, execute, engine]);
+
+  const handleMoveItem = useCallback(async (itemId: string, trackId: string, startTime: number) => {
+    try {
+      const command = timelineCommands.moveItem(itemId, trackId, startTime);
+      await execute(command);
+      
+      setTimelineState(prev => ({
+        ...prev,
+        tracks: engine.getTracks(),
+        items: engine.getTracks().flatMap(track => track.items)
+      }));
+    } catch (error) {
+      console.error('Failed to move item:', error);
+    }
+  }, [timelineCommands, execute, engine]);
+
+  const handleResizeItem = useCallback(async (itemId: string, duration: number, startTime?: number) => {
+    try {
+      const command = timelineCommands.resizeItem(itemId, duration, startTime);
+      await execute(command);
+      
+      setTimelineState(prev => ({
+        ...prev,
+        tracks: engine.getTracks(),
+        items: engine.getTracks().flatMap(track => track.items)
+      }));
+    } catch (error) {
+      console.error('Failed to resize item:', error);
+    }
+  }, [timelineCommands, execute, engine]);
 
   const snapPoints = useMemo(() => {
     const points: number[] = [];
@@ -1291,9 +1366,18 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
       className="relative bg-gray-900 border border-gray-700 rounded-lg overflow-hidden"
       style={{ height }}
     >
-      {/* Toolbar */}
+      {/* Enhanced Toolbar with Undo/Redo */}
       <div className="flex items-center justify-between p-2 bg-gray-800 border-b border-gray-700">
         <div className="flex items-center space-x-2">
+          {/* Undo/Redo Toolbar */}
+          <UndoRedoToolbar 
+            showHistoryPanel={showHistoryPanel}
+            onToggleHistoryPanel={() => setShowHistoryPanel(!showHistoryPanel)}
+            className="mr-4"
+          />
+          
+          <div className="w-px h-6 bg-gray-600" />
+          
           <Button variant="outline" size="sm" onClick={zoomOut}>
             <ZoomOut className="w-4 h-4" />
           </Button>
@@ -1512,6 +1596,33 @@ export const ProfessionalTimeline: React.FC<ProfessionalTimelineProps> = ({
           <span>Sample Rate: 48kHz</span>
         </div>
       </div>
+
+      {/* History Panel Overlay */}
+      {showHistoryPanel && (
+        <div className="absolute top-0 right-0 w-80 h-full bg-gray-800 border-l border-gray-700 z-50 overflow-hidden">
+          <HistoryPanel
+            historyState={{
+              canUndo: getHistoryState().canUndo,
+              canRedo: getHistoryState().canRedo,
+              history: [],
+              undoStack: [],
+              redoStack: []
+            }}
+            onUndo={async () => {
+              const { undo } = require('../../../hooks/useCommandManager');
+              await undo();
+            }}
+            onRedo={async () => {
+              const { redo } = require('../../../hooks/useCommandManager');
+              await redo();
+            }}
+            onClearHistory={() => {
+              const { clearHistory } = require('../../../hooks/useCommandManager');
+              clearHistory();
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

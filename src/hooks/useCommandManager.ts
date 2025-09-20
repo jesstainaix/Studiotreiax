@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { CommandManager, Command } from '../core/commandManager';
+import { CommandManager, EditorCommand as Command } from '../utils/commandManager';
 
 /**
  * React hook for using the CommandManager in components
