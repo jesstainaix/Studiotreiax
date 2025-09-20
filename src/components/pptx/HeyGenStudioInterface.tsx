@@ -28,11 +28,13 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { HeyGenSceneManager, HeyGenProject, HeyGenScene } from '../../lib/pptx/heygen-scene-manager';
+import { AvatarSelectionPanel } from './AvatarSelectionPanel';
+import { ScenePreviewWithAvatar } from './ScenePreviewWithAvatar';
 
 // Use unified HeyGen data model from scene manager
 // No local interface definitions needed - use HeyGenProject and HeyGenScene directly
 
-// Avatar library with proper HeyGen structure
+// Enhanced avatar library with 3D integration and Brazilian safety training focus
 const AVATAR_LIBRARY = [
   {
     id: 'avatar-1',
@@ -41,7 +43,10 @@ const AVATAR_LIBRARY = [
     style: 'professional' as const,
     thumbnailUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=150&h=150&fit=crop&crop=face',
     modelPath: '/models/avatars/ana-silva.glb',
-    description: 'Instrutora de segurança experiente'
+    description: 'Instrutora de segurança experiente especializada em NR-6 (EPIs)',
+    clothingOptions: ['Uniforme Corporativo', 'EPI Completo', 'Casual Profissional'],
+    poses: ['standing', 'presenting', 'sitting'],
+    expressions: ['neutral', 'smiling', 'serious']
   },
   {
     id: 'avatar-2', 
@@ -50,7 +55,10 @@ const AVATAR_LIBRARY = [
     style: 'corporate' as const,
     thumbnailUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
     modelPath: '/models/avatars/carlos-santos.glb',
-    description: 'Especialista em NRs'
+    description: 'Especialista em NRs e inspetor de segurança do trabalho',
+    clothingOptions: ['Terno Executivo', 'Uniforme Técnico', 'EPI Industrial'],
+    poses: ['standing', 'presenting', 'sitting'],
+    expressions: ['neutral', 'smiling', 'serious']
   },
   {
     id: 'avatar-3',
@@ -59,7 +67,34 @@ const AVATAR_LIBRARY = [
     style: 'casual' as const,
     thumbnailUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
     modelPath: '/models/avatars/marina-costa.glb',
-    description: 'Treinadora dinâmica'
+    description: 'Treinadora dinâmica focada em CIPA e brigada de emergência',
+    clothingOptions: ['Casual Corporativo', 'Uniforme CIPA', 'Roupa de Campo'],
+    poses: ['standing', 'presenting', 'sitting'],
+    expressions: ['neutral', 'smiling', 'serious']
+  },
+  {
+    id: 'avatar-4',
+    name: 'Dr. Roberto Ferreira',
+    gender: 'male' as const,
+    style: 'professional' as const,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
+    modelPath: '/models/avatars/roberto-ferreira.glb',
+    description: 'Médico do trabalho especialista em ergonomia (NR-17)',
+    clothingOptions: ['Jaleco Médico', 'Terno Profissional', 'Casual Médico'],
+    poses: ['standing', 'presenting', 'sitting'],
+    expressions: ['neutral', 'smiling', 'serious']
+  },
+  {
+    id: 'avatar-5',
+    name: 'Engª Priscila Oliveira',
+    gender: 'female' as const,
+    style: 'corporate' as const,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+    modelPath: '/models/avatars/priscila-oliveira.glb',
+    description: 'Engenheira de segurança especializada em altura e espaços confinados',
+    clothingOptions: ['Uniforme Engenharia', 'EPI Altura', 'Executivo Técnico'],
+    poses: ['standing', 'presenting', 'sitting'],
+    expressions: ['neutral', 'smiling', 'serious']
   }
 ];
 
@@ -359,45 +394,30 @@ const HeyGenStudioInterface: React.FC = () => {
             </div>
           </div>
 
-          {/* Center Panel - Preview */}
+          {/* Center Panel - Enhanced Preview with Avatar Integration */}
           <div className="flex-1 flex flex-col">
-            <div className="flex-1 bg-gray-900 relative">
+            <div className="flex-1 bg-gray-50 p-4">
               {getCurrentScene() ? (
-                <div className="h-full flex items-center justify-center">
-                  <div className="bg-white rounded-lg p-8 max-w-2xl mx-auto">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                      {getCurrentScene()?.title}
-                    </h2>
-                    <p className="text-gray-700 mb-6">
-                      {getCurrentScene()?.content}
-                    </p>
-                    <div className="flex items-center justify-center space-x-4">
-                      {getCurrentScene()?.avatar ? (
-                        <div className="flex items-center space-x-3">
-                          <img
-                            src={getCurrentScene()?.avatar?.thumbnailUrl}
-                            alt={getCurrentScene()?.avatar?.name}
-                            className="w-16 h-16 rounded-full object-cover"
-                          />
-                          <div>
-                            <p className="font-medium">{getCurrentScene()?.avatar?.name}</p>
-                            <p className="text-sm text-gray-600">Avatar Selecionado</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-center text-gray-500">
-                          <User className="w-16 h-16 mx-auto mb-2 opacity-50" />
-                          <p>Selecione um avatar para esta cena</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <ScenePreviewWithAvatar
+                  scene={getCurrentScene()!}
+                  isPlaying={isPlaying}
+                  currentTime={currentTime}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onTimeUpdate={setCurrentTime}
+                  onVolumeChange={(volume) => console.log('Volume changed:', volume)}
+                  className="w-full h-full"
+                />
               ) : (
-                <div className="h-full flex items-center justify-center text-white">
+                <div className="h-full flex items-center justify-center">
                   <div className="text-center">
-                    <Video className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p>Selecione uma cena para visualizar</p>
+                    <Video className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <h3 className="text-xl font-medium text-gray-600 mb-2">
+                      Selecione uma cena para visualizar
+                    </h3>
+                    <p className="text-gray-500">
+                      O preview 3D com avatar será exibido aqui
+                    </p>
                   </div>
                 </div>
               )}
@@ -439,33 +459,16 @@ const HeyGenStudioInterface: React.FC = () => {
                 <TabsTrigger value="voices">Vozes</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="avatars" className="flex-1 overflow-y-auto px-4">
-                <div className="space-y-3">
-                  {AVATAR_LIBRARY.map((avatar) => (
-                    <Card 
-                      key={avatar.id} 
-                      className="cursor-pointer hover:shadow-md transition-shadow"
-                      onClick={() => selectedScene && assignAvatarToScene(selectedScene, avatar.id)}
-                    >
-                      <CardContent className="p-3">
-                        <div className="flex items-center space-x-3">
-                          <img
-                            src={avatar.thumbnailUrl}
-                            alt={avatar.name}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">{avatar.name}</h4>
-                            <p className="text-sm text-gray-600">{avatar.description}</p>
-                            <Badge variant="secondary" className="text-xs mt-1">
-                              {avatar.style}
-                            </Badge>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+              <TabsContent value="avatars" className="flex-1 overflow-hidden">
+                <AvatarSelectionPanel
+                  selectedScene={getCurrentScene()}
+                  avatarLibrary={AVATAR_LIBRARY}
+                  onAvatarSelect={assignAvatarToScene}
+                  onAvatarCustomize={(avatarId, customization) => {
+                    console.log('Avatar customization:', avatarId, customization);
+                    // TODO: Implement avatar customization in scene manager
+                  }}
+                />
               </TabsContent>
               
               <TabsContent value="voices" className="flex-1 overflow-y-auto px-4">
