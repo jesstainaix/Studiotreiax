@@ -15,7 +15,7 @@ import {
   Headphones, 
   Mic, 
   FileAudio, 
-  Waveform,
+  AudioWaveform,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
@@ -61,7 +61,7 @@ export const AudioSystemExample: React.FC<AudioExampleProps> = ({ onComplete }) 
     custom: {
       title: 'Configuração Personalizada',
       description: 'Controle total sobre todos os parâmetros de áudio',
-      icon: Waveform,
+      icon: AudioWaveform,
       preset: 'custom',
       color: 'bg-orange-500'
     }

@@ -12,7 +12,7 @@ import {
   Download,
   Settings,
   Mic,
-  Waveform,
+  AudioWaveform,
   TestTube,
   RefreshCw,
   CheckCircle,
@@ -364,7 +364,7 @@ export const VoicePreviewPanel: React.FC<VoicePreviewPanelProps> = ({
               </>
             ) : (
               <>
-                <Waveform className="w-4 h-4 mr-2" />
+                <AudioWaveform className="w-4 h-4 mr-2" />
                 Gerar Preview
               </>
             )}

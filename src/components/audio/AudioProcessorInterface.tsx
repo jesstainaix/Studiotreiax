@@ -26,7 +26,7 @@ import {
   Download,
   Settings,
   BarChart3,
-  Waveform,
+  AudioWaveform,
   Volume2,
   Mic,
   Headphones
@@ -344,7 +344,7 @@ export const AudioProcessorInterface: React.FC<AudioProcessorInterfaceProps> = (
             { id: 'equalizer', label: 'Equalização', icon: BarChart3 },
             { id: 'compressor', label: 'Compressor', icon: Volume2 },
             { id: 'effects', label: 'Efeitos', icon: Settings },
-            { id: 'analysis', label: 'Análise', icon: Waveform }
+            { id: 'analysis', label: 'Análise', icon: AudioWaveform }
           ].map(tab => (
             <button
               key={tab.id}
